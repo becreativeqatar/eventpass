@@ -4,7 +4,6 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search } from 'lucide-react';
 import {
   LayoutDashboard,
   FileText,
@@ -113,17 +112,6 @@ export function AppSidebar() {
           </div>
         )}
       </SidebarHeader>
-
-      <div className="px-4 pb-2 group-data-[collapsible=icon]:hidden">
-        <button
-          onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
-          className="flex items-center gap-2 w-full px-3 py-1.5 rounded-lg bg-sidebar-accent text-sidebar-accent-foreground text-sm hover:bg-sidebar-accent/80 transition-colors"
-        >
-          <Search className="h-3.5 w-3.5" />
-          <span className="flex-1 text-left text-xs">Search...</span>
-          <kbd className="text-[10px] bg-sidebar-border/50 px-1.5 py-0.5 rounded">Ctrl+K</kbd>
-        </button>
-      </div>
 
       <Separator className="bg-sidebar-border" />
 
