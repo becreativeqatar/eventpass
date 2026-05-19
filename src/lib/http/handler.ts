@@ -4,7 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { formatError } from './errors';
 
 export type RouteContext = {
-  params?: Record<string, string | string[] | undefined>;
+  params?: Promise<Record<string, string>>;
 };
 
 export type APIHandler = (

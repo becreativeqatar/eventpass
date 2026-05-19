@@ -8,7 +8,7 @@ import { AccreditationStatus } from '@/lib/validations/accreditation';
 // PATCH /api/accreditations/[id]/reject - Reject accreditation
 export const PATCH = withErrorHandler(async (
   request: NextRequest,
-  context: { params?: { id?: string } }
+  context
 ) => {
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -19,7 +19,7 @@ export const PATCH = withErrorHandler(async (
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const id = context?.params?.id;
+  const id = (await context.params)?.id;
   if (!id) {
     return NextResponse.json({ error: 'ID required' }, { status: 400 });
   }

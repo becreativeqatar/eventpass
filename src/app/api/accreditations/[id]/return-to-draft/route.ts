@@ -8,14 +8,14 @@ import { AccreditationStatus } from '@/lib/validations/accreditation';
 // PATCH /api/accreditations/[id]/return-to-draft - Return a pending/rejected accreditation to draft
 export const PATCH = withErrorHandler(async (
   request: NextRequest,
-  context: { params?: { id?: string } }
+  context
 ) => {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const id = context?.params?.id;
+  const id = (await context.params)?.id;
   if (!id) {
     return NextResponse.json({ error: 'ID required' }, { status: 400 });
   }
