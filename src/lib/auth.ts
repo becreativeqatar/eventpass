@@ -1,6 +1,5 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { compare } from 'bcryptjs';
 import { prisma } from './prisma';
 import { Role } from './validations/accreditation';
@@ -8,7 +7,6 @@ import { Role } from './validations/accreditation';
 type RoleType = typeof Role[keyof typeof Role];
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       id: 'credentials',
