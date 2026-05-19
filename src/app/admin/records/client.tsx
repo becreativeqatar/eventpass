@@ -175,6 +175,21 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
     setBulkConfirm(null);
   };
 
+  const handleQuickAction = async (id: string, action: 'approve' | 'reject') => {
+    try {
+      const res = await fetch(`/api/accreditations/${id}/${action}`, { method: 'PATCH' });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || `Failed to ${action}`);
+      }
+      toast.success(`Record ${action}d`);
+      fetchAccreditations();
+      fetchStats();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : `Failed to ${action}`);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const styles = {
       DRAFT: 'bg-muted text-foreground border-border',
@@ -349,6 +364,13 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
             <Upload className="h-4 w-4" />
           </Button>
         </Link>
+
+        <Link href="/admin/records/new">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            New Record
+          </Button>
+        </Link>
       </div>
 
       {/* Table */}
@@ -454,11 +476,23 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
                     </td>
                     <td className="px-4 py-4">{getStatusBadge(acc.status)}</td>
                     <td className="px-4 py-4 text-right">
-                      <Link href={`/admin/records/${acc.id}`}>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </Link>
+                      <div className="flex items-center justify-end gap-1">
+                        {acc.status === 'PENDING' && (
+                          <>
+                            <Button variant="ghost" size="sm" onClick={() => handleQuickAction(acc.id, 'approve')} title="Approve">
+                              <CheckCircle className="h-4 w-4 text-success" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleQuickAction(acc.id, 'reject')} title="Reject">
+                              <XCircle className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </>
+                        )}
+                        <Link href={`/admin/records/${acc.id}`}>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))
