@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { LogOut, ChevronsUpDown, KeyRound, Loader2, Users } from 'lucide-react';
+import { LogOut, ChevronsUpDown, KeyRound, Loader2, Users, CalendarDays } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -133,6 +133,14 @@ export function UserNav() {
             </Badge>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
+          {(role === 'ADMIN' || role === 'MANAGER') && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin/events">
+                <CalendarDays className="mr-2 h-4 w-4" />
+                Manage Events
+              </Link>
+            </DropdownMenuItem>
+          )}
           {role === 'ADMIN' && (
             <DropdownMenuItem asChild>
               <Link href="/admin/users">

@@ -1,21 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { Check, ChevronsUpDown, Settings } from 'lucide-react';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from '@/components/ui/command';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { SidebarMenuButton } from '@/components/ui/sidebar';
 import { useEventContext, type EventSummary } from '@/contexts/event-context';
 
 const STATUS_DOT: Record<string, string> = {
@@ -23,13 +20,6 @@ const STATUS_DOT: Record<string, string> = {
   COMPLETED: 'bg-primary',
   ARCHIVED: 'bg-muted-foreground',
   DRAFT: 'bg-muted-foreground/50',
-};
-
-const STATUS_BADGE: Record<string, string> = {
-  ACTIVE: 'bg-success/20 text-success',
-  COMPLETED: 'bg-primary/10 text-primary',
-  ARCHIVED: 'bg-muted text-muted-foreground',
-  DRAFT: 'bg-secondary text-secondary-foreground',
 };
 
 function groupEvents(events: EventSummary[], isAdmin: boolean) {
@@ -49,7 +39,6 @@ function groupEvents(events: EventSummary[], isAdmin: boolean) {
 }
 
 export function EventSwitcher() {
-  const [open, setOpen] = useState(false);
   const { data: session } = useSession();
   const { selectedProject, events, isLoading, selectEvent } = useEventContext();
   const isAdmin = session?.user?.role === 'ADMIN' || session?.user?.role === 'MANAGER';
@@ -66,81 +55,58 @@ export function EventSwitcher() {
 
   return (
     <div className="mt-2 group-data-[collapsible=icon]:hidden">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <button
-            role="combobox"
-            aria-expanded={open}
-            className="flex w-full items-center gap-2 rounded-md border border-sidebar-border bg-sidebar-accent/30 px-2.5 py-1.5 text-left text-sm hover:bg-sidebar-accent/50 transition-colors"
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent w-full"
           >
             <span
               className={cn('h-2 w-2 shrink-0 rounded-full', STATUS_DOT[selectedProject.status] || 'bg-muted-foreground')}
             />
-            <span className="flex-1 truncate text-sidebar-foreground font-medium text-xs">
-              {selectedProject.name}
-            </span>
-            <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-sidebar-foreground/50" />
-          </button>
-        </PopoverTrigger>
-        <PopoverContent className="w-64 p-0" align="start" side="right" sideOffset={8}>
-          <Command>
-            <CommandInput placeholder="Search events..." />
-            <CommandList>
-              <CommandEmpty>No events found.</CommandEmpty>
-              {groups.map((group) => (
-                <CommandGroup key={group.label} heading={group.label}>
-                  {group.events.map((event) => (
-                    <CommandItem
-                      key={event.id}
-                      value={`${event.name} ${event.code}`}
-                      onSelect={() => {
-                        selectEvent(event.id);
-                        setOpen(false);
-                      }}
-                      className="flex items-center gap-2"
-                    >
-                      <Check
-                        className={cn(
-                          'h-3.5 w-3.5 shrink-0',
-                          selectedProject.id === event.id ? 'opacity-100' : 'opacity-0'
-                        )}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className="truncate text-sm font-medium">{event.name}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span>{event.code}</span>
-                          <span>&middot;</span>
-                          <span>{event._count.accreditations} records</span>
-                        </div>
-                      </div>
-                      <Badge className={cn('text-[10px] px-1.5 py-0', STATUS_BADGE[event.status] || '')}>
-                        {event.status}
-                      </Badge>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              ))}
-            </CommandList>
-            {isAdmin && (
-              <>
-                <CommandSeparator />
-                <div className="p-1">
-                  <Link
-                    href="/admin/events"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium text-sidebar-foreground">
+                {selectedProject.name}
+              </span>
+              <span className="truncate text-xs text-sidebar-foreground/60">
+                {selectedProject.code}
+              </span>
+            </div>
+            <ChevronsUpDown className="ml-auto h-4 w-4 text-sidebar-foreground/50" />
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side="bottom"
+          align="start"
+          className="w-56"
+        >
+          {groups.map((group, i) => (
+            <div key={group.label}>
+              {i > 0 && <DropdownMenuSeparator />}
+              <DropdownMenuLabel className="text-xs text-muted-foreground">{group.label}</DropdownMenuLabel>
+              <DropdownMenuGroup>
+                {group.events.map((event) => (
+                  <DropdownMenuItem
+                    key={event.id}
+                    onClick={() => selectEvent(event.id)}
+                    className="flex items-center gap-2"
                   >
-                    <Settings className="h-3.5 w-3.5" />
-                    Manage Events
-                  </Link>
-                </div>
-              </>
-            )}
-          </Command>
-        </PopoverContent>
-      </Popover>
+                    <span
+                      className={cn('h-2 w-2 shrink-0 rounded-full', STATUS_DOT[event.status] || 'bg-muted-foreground')}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <span className="truncate text-sm">{event.name}</span>
+                    </div>
+                    {selectedProject.id === event.id && (
+                      <Check className="h-4 w-4 shrink-0" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </div>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
