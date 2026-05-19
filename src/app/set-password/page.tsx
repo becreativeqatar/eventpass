@@ -1,0 +1,182 @@
+'use client';
+
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Loader2, Lock, CheckCircle, XCircle } from 'lucide-react';
+
+function SetPasswordForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
+
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  if (!token) {
+    return (
+      <div className="w-full max-w-sm mx-4">
+        <div className="flex flex-col items-center mb-10">
+          <Image src="/images/bce-logo.webp" alt="BCE" width={180} height={54} className="h-16 w-auto object-contain" priority />
+        </div>
+        <div className="bg-white rounded-2xl shadow-xl shadow-black/5 p-8 text-center">
+          <XCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <h1 className="text-xl font-bold mb-2">Invalid Link</h1>
+          <p className="text-sm text-muted-foreground mb-6">This link is missing or malformed.</p>
+          <Button onClick={() => router.push('/login')} className="w-full bce-gradient hover:opacity-90 text-white rounded-xl">
+            Go to Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (success) {
+    return (
+      <div className="w-full max-w-sm mx-4">
+        <div className="flex flex-col items-center mb-10">
+          <Image src="/images/bce-logo.webp" alt="BCE" width={180} height={54} className="h-16 w-auto object-contain" priority />
+        </div>
+        <div className="bg-white rounded-2xl shadow-xl shadow-black/5 p-8 text-center">
+          <CheckCircle className="h-12 w-12 text-success mx-auto mb-4" />
+          <h1 className="text-xl font-bold mb-2">Password Set</h1>
+          <p className="text-sm text-muted-foreground mb-6">Your password has been set successfully. You can now sign in.</p>
+          <Button onClick={() => router.push('/login')} className="w-full bce-gradient hover:opacity-90 text-white rounded-xl">
+            Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/set-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Failed to set password');
+      } else {
+        setSuccess(true);
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="w-full max-w-sm mx-4">
+      <div className="flex flex-col items-center mb-10">
+        <Image src="/images/bce-logo.webp" alt="BCE" width={180} height={54} className="h-16 w-auto object-contain" priority />
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-xl shadow-black/5 p-8">
+        <div className="text-center mb-6">
+          <h1 className="text-xl font-bold tracking-tight">Set Your Password</h1>
+          <p className="text-sm text-muted-foreground mt-1">Choose a secure password for your account</p>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              New Password
+            </Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Min 6 characters"
+                required
+                minLength={6}
+                autoFocus
+                className="pl-10 h-11 bg-[#f5f3f0] border-0 focus-visible:ring-primary"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="confirmPassword" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Confirm Password
+            </Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Repeat password"
+                required
+                minLength={6}
+                className="pl-10 h-11 bg-[#f5f3f0] border-0 focus-visible:ring-primary"
+              />
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full h-11 bce-gradient hover:opacity-90 text-white font-semibold text-sm tracking-wide rounded-xl mt-2"
+            disabled={loading}
+          >
+            {loading ? (
+              <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Setting password...</>
+            ) : (
+              'Set Password'
+            )}
+          </Button>
+        </form>
+      </div>
+
+      <p className="text-center text-xs text-muted-foreground mt-8">
+        Powered by <span className="font-semibold">b.creative events</span>
+      </p>
+    </div>
+  );
+}
+
+export default function SetPasswordPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#f5f3f0]">
+      <Suspense fallback={<div className="flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}>
+        <SetPasswordForm />
+      </Suspense>
+    </div>
+  );
+}

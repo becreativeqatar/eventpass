@@ -1,0 +1,225 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  passwordHash  String?
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("STAFF") // ADMIN, MANAGER, STAFF, VALIDATOR
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts               Account[]
+  sessions               Session[]
+  projects               AccreditationProject[]
+  accreditations         Accreditation[]
+  approvedAccreditations Accreditation[]        @relation("ApprovedBy")
+  revokedAccreditations  Accreditation[]        @relation("RevokedBy")
+  scans                  AccreditationScan[]
+  historyActions         AccreditationHistory[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Valid roles: ADMIN, MANAGER, STAFF, VALIDATOR
+
+model AccreditationProject {
+  id          String    @id @default(cuid())
+  name        String
+  code        String?   @unique // Project code for easy reference
+  description String?
+  eventDate   DateTime?
+  venue       String?
+  status      String    @default("ACTIVE") // DRAFT, ACTIVE, COMPLETED, ARCHIVED
+
+  // Access groups (comma-separated)
+  accessGroups String @default("General")
+
+  // Phase control - all phases are required for active projects
+  bumpInStart  DateTime?
+  bumpInEnd    DateTime?
+  liveStart    DateTime?
+  liveEnd      DateTime?
+  bumpOutStart DateTime?
+  bumpOutEnd   DateTime?
+
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  accreditations Accreditation[]
+}
+
+// Valid project statuses: DRAFT, ACTIVE, COMPLETED, ARCHIVED
+
+model Accreditation {
+  id                  String               @id @default(cuid())
+  accreditationNumber String               @unique // Auto-generated ACC-XXXX
+  projectId           String
+  project             AccreditationProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Person details
+  firstName   String
+  lastName    String
+  email       String?
+  phone       String?
+  company     String?
+  role        String?
+  accessGroup String  @default("General") // Which access group (VIP, Staff, Media, etc.)
+  photoUrl    String?
+
+  // Identification - Either QID OR Passport+Hayya
+  identificationType String    @default("qid") // qid, passport
+  qidNumber          String?
+  qidExpiry          DateTime?
+  passportNumber     String?
+  passportCountry    String?
+  passportExpiry     DateTime?
+  hayyaNumber        String?
+  hayyaExpiry        DateTime?
+
+  // Access control
+  status String @default("DRAFT") // DRAFT, PENDING, APPROVED, REJECTED, REVOKED, EXPIRED
+  phases String @default("") // Comma-separated: BUMP_IN,LIVE,BUMP_OUT
+
+  // Per-accreditation phase dates (if different from project dates)
+  hasBumpInAccess  Boolean   @default(false)
+  bumpInStart      DateTime?
+  bumpInEnd        DateTime?
+  hasLiveAccess    Boolean   @default(false)
+  liveStart        DateTime?
+  liveEnd          DateTime?
+  hasBumpOutAccess Boolean   @default(false)
+  bumpOutStart     DateTime?
+  bumpOutEnd       DateTime?
+
+  // Verification
+  verificationToken String  @unique @default(cuid())
+  qrCode            String?
+
+  // Approval tracking
+  approvedById String?
+  approvedBy   User?     @relation("ApprovedBy", fields: [approvedById], references: [id])
+  approvedAt   DateTime?
+
+  // Revocation tracking
+  revokedById  String?
+  revokedBy    User?     @relation("RevokedBy", fields: [revokedById], references: [id])
+  revokedAt    DateTime?
+  revokeReason String?
+
+  // Notes
+  notes String?
+
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  scans   AccreditationScan[]
+  history AccreditationHistory[]
+
+  @@index([projectId])
+  @@index([verificationToken])
+  @@index([status])
+  @@index([qidNumber])
+  @@index([accreditationNumber])
+}
+
+// Valid accreditation statuses: PENDING, APPROVED, REJECTED, REVOKED, EXPIRED
+// Valid phases: BUMP_IN, LIVE, BUMP_OUT
+
+model AccreditationHistory {
+  id              String        @id @default(cuid())
+  accreditationId String
+  accreditation   Accreditation @relation(fields: [accreditationId], references: [id], onDelete: Cascade)
+
+  action    String // CREATED, APPROVED, REJECTED, REVOKED, REINSTATED, UPDATED
+  oldStatus String?
+  newStatus String?
+  notes     String?
+
+  performedById String
+  performedBy   User     @relation(fields: [performedById], references: [id])
+  performedAt   DateTime @default(now())
+
+  @@index([accreditationId])
+  @@index([performedAt])
+}
+
+model AccreditationScan {
+  id              String        @id @default(cuid())
+  accreditationId String
+  accreditation   Accreditation @relation(fields: [accreditationId], references: [id], onDelete: Cascade)
+
+  scannedById String
+  scannedBy   User   @relation(fields: [scannedById], references: [id])
+
+  phase     String // BUMP_IN, LIVE, BUMP_OUT
+  location  String?
+  result    String // ALLOWED, DENIED, EXPIRED, REVOKED, WRONG_PHASE
+  notes     String?
+  device    String? // Device/browser info (user agent)
+  ipAddress String? // IP address of scanner
+
+  scannedAt DateTime @default(now())
+
+  @@index([accreditationId])
+  @@index([scannedAt])
+  @@index([scannedById])
+}
+
+// Valid scan results: ALLOWED, DENIED, EXPIRED, REVOKED, WRONG_PHASE
+
+model SystemSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
