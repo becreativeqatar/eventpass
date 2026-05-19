@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { Suspense } from 'react';
 import { getActiveProject } from '@/lib/active-project';
 import { redirect } from 'next/navigation';
