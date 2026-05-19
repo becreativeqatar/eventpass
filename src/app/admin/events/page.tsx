@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,9 +40,15 @@ const STATUS_STYLES: Record<string, string> = {
   ARCHIVED: 'bg-muted text-muted-foreground',
 };
 
+const FILTERS = ['All', 'Active', 'Draft', 'Completed', 'Archived'] as const;
+
 export default function EventsPage() {
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === 'ADMIN' || session?.user?.role === 'MANAGER';
+
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<string>('All');
   const [actionEvent, setActionEvent] = useState<{ event: Event; action: string } | null>(null);
   const [processing, setProcessing] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
@@ -122,54 +129,78 @@ export default function EventsPage() {
   };
 
   const activeEvent = events.find((e) => e.status === 'ACTIVE');
+  const filteredEvents = events.filter((e) => {
+    if (filter === 'All') return e.status !== 'ACTIVE';
+    return e.status === filter.toUpperCase();
+  });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Event Management</h1>
-          <p className="text-muted-foreground">Create, activate, and manage events</p>
+          <h1 className="text-2xl font-bold tracking-tight">Events</h1>
+          <p className="text-muted-foreground">Manage and browse all events</p>
         </div>
-        <Link href="/admin/events/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New Event
-          </Button>
-        </Link>
+        {isAdmin && (
+          <Link href="/admin/events/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              New Event
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Active Event Banner */}
       {activeEvent && (
-        <Card className="border-success/30 bg-success/5">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <Badge className="bg-success/20 text-success">ACTIVE</Badge>
-                  <CardTitle className="text-lg">{activeEvent.name}</CardTitle>
+        <Link href={`/admin/events/${activeEvent.id}`}>
+          <Card className="border-success/30 bg-success/5 transition-colors hover:border-success/50">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-success/20 text-success">ACTIVE</Badge>
+                    <CardTitle className="text-lg">{activeEvent.name}</CardTitle>
+                  </div>
+                  <CardDescription className="mt-1">
+                    {activeEvent.venue && <span className="inline-flex items-center gap-1 mr-4"><MapPin className="h-3 w-3" />{activeEvent.venue}</span>}
+                    {activeEvent.eventDate && <span className="inline-flex items-center gap-1 mr-4"><Calendar className="h-3 w-3" />{new Date(activeEvent.eventDate).toLocaleDateString()}</span>}
+                    <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" />{activeEvent._count.accreditations} records</span>
+                  </CardDescription>
                 </div>
-                <CardDescription className="mt-1">
-                  {activeEvent.venue && <span className="inline-flex items-center gap-1 mr-4"><MapPin className="h-3 w-3" />{activeEvent.venue}</span>}
-                  {activeEvent.eventDate && <span className="inline-flex items-center gap-1 mr-4"><Calendar className="h-3 w-3" />{new Date(activeEvent.eventDate).toLocaleDateString()}</span>}
-                  <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" />{activeEvent._count.accreditations} records</span>
-                </CardDescription>
+                {isAdmin && (
+                  <div className="flex gap-2" onClick={(e) => e.preventDefault()}>
+                    <Button variant="outline" size="sm" onClick={() => openEditDialog(activeEvent)}>
+                      <Pencil className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setActionEvent({ event: activeEvent, action: 'complete' })}>
+                      <CheckCircle className="h-4 w-4 mr-1" />
+                      Complete
+                    </Button>
+                  </div>
+                )}
               </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => openEditDialog(activeEvent)}>
-                  <Pencil className="h-4 w-4 mr-1" />
-                  Edit
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => setActionEvent({ event: activeEvent, action: 'complete' })}>
-                  <CheckCircle className="h-4 w-4 mr-1" />
-                  Complete
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </Card>
+        </Link>
       )}
 
-      {/* All Events */}
+      {/* Status Filter */}
+      <div className="flex gap-2">
+        {FILTERS.map((f) => (
+          <Button
+            key={f}
+            variant={filter === f ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter(f)}
+          >
+            {f}
+          </Button>
+        ))}
+      </div>
+
+      {/* Events Grid */}
       {loading ? (
         <div className="text-center py-8 text-muted-foreground">Loading events...</div>
       ) : events.length === 0 ? (
@@ -178,63 +209,75 @@ export default function EventsPage() {
             <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium mb-2">No events yet</h3>
             <p className="text-muted-foreground mb-4">Create your first event to get started.</p>
-            <Link href="/admin/events/new">
-              <Button><Plus className="h-4 w-4 mr-2" />Create Event</Button>
-            </Link>
+            {isAdmin && (
+              <Link href="/admin/events/new">
+                <Button><Plus className="h-4 w-4 mr-2" />Create Event</Button>
+              </Link>
+            )}
           </CardContent>
         </Card>
+      ) : filteredEvents.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground">
+          No {filter.toLowerCase()} events found.
+        </div>
       ) : (
-        <div className="space-y-3">
-          {events.filter((e) => e.status !== 'ACTIVE').map((event) => (
-            <Card key={event.id}>
-              <CardContent className="flex items-center justify-between py-4">
-                <div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredEvents.map((event) => (
+            <Link key={event.id} href={`/admin/events/${event.id}`}>
+              <Card className="transition-colors hover:border-primary/30 h-full">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge className={STATUS_STYLES[event.status] || ''}>{event.status}</Badge>
+                      <span className="text-xs text-muted-foreground">{event.code}</span>
+                    </div>
+                    {isAdmin && (
+                      <div className="flex gap-1" onClick={(e) => e.preventDefault()}>
+                        {(event.status === 'DRAFT' || event.status === 'COMPLETED') && (
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(event)} title="Edit">
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        {event.status === 'DRAFT' && (
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setActionEvent({ event, action: 'activate' })} title="Activate">
+                            <Play className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        {event.status === 'COMPLETED' && (
+                          <>
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setActionEvent({ event, action: 'activate' })} title="Reactivate">
+                              <Play className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setActionEvent({ event, action: 'archive' })} title="Archive">
+                              <Archive className="h-3.5 w-3.5" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <CardTitle className="text-base">{event.name}</CardTitle>
+                  {event.description && (
+                    <CardDescription className="line-clamp-2">{event.description}</CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent className="text-sm text-muted-foreground space-y-1">
+                  {event.venue && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-3.5 w-3.5" />{event.venue}
+                    </div>
+                  )}
+                  {event.eventDate && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-3.5 w-3.5" />{new Date(event.eventDate).toLocaleDateString()}
+                    </div>
+                  )}
                   <div className="flex items-center gap-2">
-                    <Badge className={STATUS_STYLES[event.status] || ''}>
-                      {event.status}
-                    </Badge>
-                    <span className="font-medium">{event.name}</span>
-                    <span className="text-sm text-muted-foreground">({event.code})</span>
+                    <Users className="h-3.5 w-3.5" />{event._count.accreditations} records
                   </div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    {event.venue && <span className="mr-3">{event.venue}</span>}
-                    {event.eventDate && <span className="mr-3">{new Date(event.eventDate).toLocaleDateString()}</span>}
-                    <span>{event._count.accreditations} records</span>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  {(event.status === 'DRAFT' || event.status === 'ACTIVE') && (
-                    <Button variant="outline" size="sm" onClick={() => openEditDialog(event)}>
-                      <Pencil className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
-                  )}
-                  {event.status === 'DRAFT' && (
-                    <Button variant="outline" size="sm" onClick={() => setActionEvent({ event, action: 'activate' })}>
-                      <Play className="h-4 w-4 mr-1" />
-                      Activate
-                    </Button>
-                  )}
-                  {event.status === 'COMPLETED' && (
-                    <>
-                      <Button variant="outline" size="sm" onClick={() => setActionEvent({ event, action: 'activate' })}>
-                        <Play className="h-4 w-4 mr-1" />
-                        Reactivate
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => setActionEvent({ event, action: 'archive' })}>
-                        <Archive className="h-4 w-4 mr-1" />
-                        Archive
-                      </Button>
-                    </>
-                  )}
-                  {(event.status === 'COMPLETED' || event.status === 'ARCHIVED') && (
-                    <Link href={`/admin/archive/${event.id}`}>
-                      <Button variant="ghost" size="sm">View Archive</Button>
-                    </Link>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       )}

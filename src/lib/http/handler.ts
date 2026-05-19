@@ -3,10 +3,13 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { formatError } from './errors';
 
+export type RouteContext = {
+  params?: Record<string, string | string[] | undefined>;
+};
+
 export type APIHandler = (
   request: NextRequest,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context?: any
+  context: RouteContext
 ) => Promise<NextResponse>;
 
 export interface HandlerOptions {
@@ -22,8 +25,7 @@ export function withErrorHandler(
   handler: APIHandler,
   options: HandlerOptions = {}
 ): APIHandler {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return async (request: NextRequest, context?: any) => {
+  return async (request: NextRequest, context: RouteContext = {}) => {
     const requestId = request.headers.get('x-request-id') || generateRequestId();
 
     try {

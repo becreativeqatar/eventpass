@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
 } from '@/components/ui/table';
-import { useActiveProject } from '@/hooks/use-active-project';
+import { useEventContext } from '@/contexts/event-context';
 
 interface ImportError {
   row: number;
@@ -17,7 +17,7 @@ interface ImportError {
 }
 
 export default function ImportPage() {
-  const { project: activeProject, isLoading: projectLoading } = useActiveProject();
+  const { selectedProject, isLoading, isReadOnly } = useEventContext();
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{
@@ -38,7 +38,7 @@ export default function ImportPage() {
   };
 
   const handleImport = async () => {
-    if (!activeProject) {
+    if (!selectedProject) {
       setError('No active event');
       return;
     }
@@ -54,7 +54,7 @@ export default function ImportPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('projectId', activeProject.id);
+      formData.append('projectId', selectedProject.id);
 
       const res = await fetch('/api/import', {
         method: 'POST',
@@ -98,11 +98,11 @@ export default function ImportPage() {
     URL.revokeObjectURL(url);
   };
 
-  if (projectLoading) {
+  if (isLoading) {
     return <div className="py-8 text-center text-muted-foreground">Loading...</div>;
   }
 
-  if (!activeProject) {
+  if (!selectedProject) {
     return (
       <div className="py-12 text-center">
         <h2 className="text-lg font-semibold mb-2">No Active Event</h2>
@@ -112,12 +112,25 @@ export default function ImportPage() {
     );
   }
 
+  if (isReadOnly) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="py-12 text-center">
+            <h3 className="text-lg font-medium mb-2">Not available</h3>
+            <p className="text-muted-foreground">This feature is only available for the active event.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Bulk Import</h1>
         <p className="text-muted-foreground">
-          Import accreditations into <strong>{activeProject.name}</strong>
+          Import accreditations into <strong>{selectedProject.name}</strong>
         </p>
       </div>
 

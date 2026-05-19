@@ -87,7 +87,7 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
     <div className="space-y-6">
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <p className="text-gray-500">Loading project overview...</p>
+          <p className="text-muted-foreground">Loading project overview...</p>
         </div>
       ) : (
         <>
@@ -107,10 +107,10 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
               </CardHeader>
               <CardContent>
                 <div className="text-4xl font-bold text-purple-600">{stats.totalAccreditations}</div>
-                <div className="mt-3 flex gap-3 text-sm text-gray-600">
+                <div className="mt-3 flex gap-3 text-sm text-muted-foreground">
                   <span><span className="font-semibold text-green-600">{stats.approvedAccreditations}</span> approved</span>
                   <span>|</span>
-                  <span><span className="font-semibold text-gray-700">{stats.draftAccreditations}</span> drafts</span>
+                  <span><span className="font-semibold text-foreground">{stats.draftAccreditations}</span> drafts</span>
                 </div>
               </CardContent>
             </Card>
@@ -134,7 +134,7 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
               </CardHeader>
               <CardContent>
                 <div className="text-4xl font-bold text-yellow-600">{stats.pendingAccreditations}</div>
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-muted-foreground mt-2">
                   {stats.pendingAccreditations > 0 ? 'Needs review' : 'All caught up'}
                 </p>
               </CardContent>
@@ -153,8 +153,8 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-sm font-medium text-gray-600">Analyze data</div>
-                <p className="text-sm text-gray-600 mt-2">View project analytics</p>
+                <div className="text-sm font-medium text-muted-foreground">Analyze data</div>
+                <p className="text-sm text-muted-foreground mt-2">View project analytics</p>
               </CardContent>
             </Card>
 
@@ -172,7 +172,7 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
               </CardHeader>
               <CardContent>
                 <div className="text-4xl font-bold text-blue-600">{stats.totalScans}</div>
-                <p className="text-sm text-gray-600 mt-2">Total scan events</p>
+                <p className="text-sm text-muted-foreground mt-2">Total scan events</p>
               </CardContent>
             </Card>
           </div>
@@ -183,8 +183,8 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-base font-semibold text-gray-900 mb-1">Create New</h3>
-                    <p className="text-sm text-gray-600">Add personnel accreditation</p>
+                    <h3 className="text-base font-semibold text-foreground mb-1">Create New</h3>
+                    <p className="text-sm text-muted-foreground">Add personnel accreditation</p>
                   </div>
                   <Button
                     onClick={() => router.push(`/admin/accreditation/projects/${projectId}/records/new`)}
@@ -200,8 +200,8 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-base font-semibold text-gray-900 mb-1">Import CSV</h3>
-                    <p className="text-sm text-gray-600">Bulk import accreditations</p>
+                    <h3 className="text-base font-semibold text-foreground mb-1">Import CSV</h3>
+                    <p className="text-sm text-muted-foreground">Bulk import accreditations</p>
                   </div>
                   <Button
                     variant="outline"

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { getActiveProject } from '@/lib/active-project';
+import { getSelectedProject } from '@/lib/active-project';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const activeProject = await getActiveProject();
+  const activeProject = await getSelectedProject();
   if (!activeProject) {
     return NextResponse.json({ stats: null });
   }

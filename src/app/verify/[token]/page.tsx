@@ -153,40 +153,40 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
                   <CardContent className="p-4 bg-white">
                     <div className="text-center mb-4">
                       {errorDetails && errorDetails.name && (
-                        <h2 className="text-2xl font-bold text-gray-900 mt-3 mb-1">
+                        <h2 className="text-2xl font-bold text-foreground mt-3 mb-1">
                           {errorDetails.name}
                         </h2>
                       )}
                     </div>
 
                     <div className="text-center mb-4">
-                      <p className="text-gray-600 text-base leading-relaxed">{error}</p>
+                      <p className="text-muted-foreground text-base leading-relaxed">{error}</p>
                     </div>
 
                     {errorType === 'NOT_VALID_TODAY' && errorDetails?.phases && (
                       <div className="space-y-2">
-                        <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <div className="bg-muted/50 rounded-lg p-3 border border-border">
                           <div className="flex items-center gap-2 mb-2">
-                            <Calendar className="h-4 w-4 text-gray-600 flex-shrink-0" />
-                            <span className="text-xs text-gray-500 font-semibold uppercase">Valid Periods</span>
+                            <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            <span className="text-xs text-muted-foreground font-semibold uppercase">Valid Periods</span>
                           </div>
                           <div className="space-y-1 text-xs">
                             {errorDetails.phases.bumpIn && (
                               <div>
-                                <span className="font-semibold text-gray-700">Bump-In:</span>{' '}
-                                <span className="text-gray-600">{formatDateRange(errorDetails.phases.bumpIn.start, errorDetails.phases.bumpIn.end)}</span>
+                                <span className="font-semibold text-foreground">Bump-In:</span>{' '}
+                                <span className="text-muted-foreground">{formatDateRange(errorDetails.phases.bumpIn.start, errorDetails.phases.bumpIn.end)}</span>
                               </div>
                             )}
                             {errorDetails.phases.live && (
                               <div>
-                                <span className="font-semibold text-gray-700">Live:</span>{' '}
-                                <span className="text-gray-600">{formatDateRange(errorDetails.phases.live.start, errorDetails.phases.live.end)}</span>
+                                <span className="font-semibold text-foreground">Live:</span>{' '}
+                                <span className="text-muted-foreground">{formatDateRange(errorDetails.phases.live.start, errorDetails.phases.live.end)}</span>
                               </div>
                             )}
                             {errorDetails.phases.bumpOut && (
                               <div>
-                                <span className="font-semibold text-gray-700">Bump-Out:</span>{' '}
-                                <span className="text-gray-600">{formatDateRange(errorDetails.phases.bumpOut.start, errorDetails.phases.bumpOut.end)}</span>
+                                <span className="font-semibold text-foreground">Bump-Out:</span>{' '}
+                                <span className="text-muted-foreground">{formatDateRange(errorDetails.phases.bumpOut.start, errorDetails.phases.bumpOut.end)}</span>
                               </div>
                             )}
                           </div>
@@ -199,7 +199,7 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
                 <div className="text-center">
                   <Button
                     onClick={() => router.push('/validator?autoScan=true')}
-                    className="bg-white text-gray-900 hover:bg-gray-100 shadow-lg font-semibold w-full max-w-xs"
+                    className="bg-white text-foreground hover:bg-muted shadow-lg font-semibold w-full max-w-xs"
                   >
                     Scan Next
                     <ArrowRight className="h-4 w-4 ml-1" />
@@ -270,69 +270,69 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
                         alt={`${accreditation.firstName} ${accreditation.lastName}`}
                         width={100}
                         height={100}
-                        className="rounded-xl object-cover border-3 border-gray-200 shadow-lg hover:opacity-90 transition-opacity"
+                        className="rounded-xl object-cover border-3 border-border shadow-lg hover:opacity-90 transition-opacity"
                       />
                     </div>
                   ) : (
-                    <div className="w-24 h-24 mx-auto rounded-xl flex items-center justify-center border-3 border-gray-200 bg-gray-100 shadow-lg">
-                      <span className="text-3xl font-bold text-gray-600">
+                    <div className="w-24 h-24 mx-auto rounded-xl flex items-center justify-center border-3 border-border bg-muted shadow-lg">
+                      <span className="text-3xl font-bold text-muted-foreground">
                         {accreditation.firstName[0]}{accreditation.lastName[0]}
                       </span>
                     </div>
                   )}
 
-                  <h2 className="text-2xl font-bold text-gray-900 mt-3 mb-1">
+                  <h2 className="text-2xl font-bold text-foreground mt-3 mb-1">
                     {accreditation.firstName} {accreditation.lastName}
                   </h2>
                   {accreditation.qidNumber && (
-                    <p className="text-sm text-gray-700 font-semibold">QID: {accreditation.qidNumber}</p>
+                    <p className="text-sm text-foreground font-semibold">QID: {accreditation.qidNumber}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                  <div className="bg-muted/50 rounded-lg p-3 border border-border">
                     <div className="flex items-center gap-2">
-                      <Building2 className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                      <Building2 className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs text-gray-500 font-semibold uppercase">Organization</p>
-                        <p className="text-base font-bold text-gray-900 truncate">{accreditation.company || 'N/A'}</p>
+                        <p className="text-xs text-muted-foreground font-semibold uppercase">Organization</p>
+                        <p className="text-base font-bold text-foreground truncate">{accreditation.company || 'N/A'}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                  <div className="bg-muted/50 rounded-lg p-3 border border-border">
                     <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                      <Shield className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs text-gray-500 font-semibold uppercase">Access Group</p>
-                        <p className="text-base font-bold text-gray-900 truncate">{accreditation.accessGroup}</p>
+                        <p className="text-xs text-muted-foreground font-semibold uppercase">Access Group</p>
+                        <p className="text-base font-bold text-foreground truncate">{accreditation.accessGroup}</p>
                       </div>
                     </div>
                   </div>
 
                   {(accreditation.phases.bumpIn || accreditation.phases.live || accreditation.phases.bumpOut) && (
-                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div className="bg-muted/50 rounded-lg p-3 border border-border">
                       <div className="flex items-center gap-2 mb-2">
-                        <Calendar className="h-4 w-4 text-gray-600 flex-shrink-0" />
-                        <span className="text-xs text-gray-500 font-semibold uppercase">Valid Periods</span>
+                        <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        <span className="text-xs text-muted-foreground font-semibold uppercase">Valid Periods</span>
                       </div>
                       <div className="space-y-1 text-xs">
                         {accreditation.phases.bumpIn && (
                           <div>
-                            <span className="font-semibold text-gray-700">Bump-In:</span>{' '}
-                            <span className="text-gray-600">{formatDateRange(accreditation.phases.bumpIn.start, accreditation.phases.bumpIn.end)}</span>
+                            <span className="font-semibold text-foreground">Bump-In:</span>{' '}
+                            <span className="text-muted-foreground">{formatDateRange(accreditation.phases.bumpIn.start, accreditation.phases.bumpIn.end)}</span>
                           </div>
                         )}
                         {accreditation.phases.live && (
                           <div>
-                            <span className="font-semibold text-gray-700">Live:</span>{' '}
-                            <span className="text-gray-600">{formatDateRange(accreditation.phases.live.start, accreditation.phases.live.end)}</span>
+                            <span className="font-semibold text-foreground">Live:</span>{' '}
+                            <span className="text-muted-foreground">{formatDateRange(accreditation.phases.live.start, accreditation.phases.live.end)}</span>
                           </div>
                         )}
                         {accreditation.phases.bumpOut && (
                           <div>
-                            <span className="font-semibold text-gray-700">Bump-Out:</span>{' '}
-                            <span className="text-gray-600">{formatDateRange(accreditation.phases.bumpOut.start, accreditation.phases.bumpOut.end)}</span>
+                            <span className="font-semibold text-foreground">Bump-Out:</span>{' '}
+                            <span className="text-muted-foreground">{formatDateRange(accreditation.phases.bumpOut.start, accreditation.phases.bumpOut.end)}</span>
                           </div>
                         )}
                       </div>
@@ -346,7 +346,7 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
             <div className="text-center">
               <Button
                 onClick={() => router.push('/validator?autoScan=true')}
-                className="bg-white text-gray-900 hover:bg-gray-100 shadow-lg font-semibold w-full max-w-xs"
+                className="bg-white text-foreground hover:bg-muted shadow-lg font-semibold w-full max-w-xs"
               >
                 Scan Next
                 <ArrowRight className="h-4 w-4 ml-1" />
@@ -361,7 +361,7 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
                 <div className="relative max-w-4xl max-h-full">
                   <button
                     onClick={() => setShowPhotoModal(false)}
-                    className="absolute -top-12 right-0 text-white hover:text-gray-300 text-4xl font-bold"
+                    className="absolute -top-12 right-0 text-white hover:text-muted-foreground text-4xl font-bold"
                   >
                     x
                   </button>

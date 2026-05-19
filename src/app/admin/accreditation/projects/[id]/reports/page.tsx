@@ -115,7 +115,7 @@ export default function ProjectReportsPage() {
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Loading report data...</p>
+        <p className="text-muted-foreground">Loading report data...</p>
       </div>
     );
   }
@@ -123,7 +123,7 @@ export default function ProjectReportsPage() {
   if (!reportData) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No report data available</p>
+        <p className="text-muted-foreground">No report data available</p>
       </div>
     );
   }
@@ -135,8 +135,8 @@ export default function ProjectReportsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Reports & Analytics</h2>
-          <p className="text-gray-600 mt-1">Project Code: {project.code}</p>
+          <h2 className="text-xl font-semibold text-foreground">Reports & Analytics</h2>
+          <p className="text-muted-foreground mt-1">Project Code: {project.code}</p>
         </div>
         <Button onClick={exportToCSV}>
           <Download className="h-4 w-4 mr-2" />
@@ -169,9 +169,9 @@ export default function ProjectReportsPage() {
 
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card className="bg-white shadow-sm border border-border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Accreditations</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Accreditations</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
@@ -181,9 +181,9 @@ export default function ProjectReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card className="bg-white shadow-sm border border-border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Approved</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Approved</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
@@ -193,9 +193,9 @@ export default function ProjectReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card className="bg-white shadow-sm border border-border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Pending</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Pending</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
@@ -205,9 +205,9 @@ export default function ProjectReportsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card className="bg-white shadow-sm border border-border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Rejected</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Rejected</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
@@ -219,7 +219,7 @@ export default function ProjectReportsPage() {
       </div>
 
       {/* Status Breakdown */}
-      <Card className="bg-white shadow-sm border border-gray-200">
+      <Card className="bg-white shadow-sm border border-border">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
@@ -231,9 +231,9 @@ export default function ProjectReportsPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium">Pending Review</span>
-                <span className="text-sm text-gray-600">{stats.byStatus.PENDING}</span>
+                <span className="text-sm text-muted-foreground">{stats.byStatus.PENDING}</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
                   className="bg-yellow-500 h-2 rounded-full"
                   style={{ width: `${stats.total > 0 ? (stats.byStatus.PENDING / stats.total) * 100 : 0}%` }}
@@ -243,9 +243,9 @@ export default function ProjectReportsPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium">Approved</span>
-                <span className="text-sm text-gray-600">{stats.byStatus.APPROVED}</span>
+                <span className="text-sm text-muted-foreground">{stats.byStatus.APPROVED}</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
                   className="bg-green-500 h-2 rounded-full"
                   style={{ width: `${stats.total > 0 ? (stats.byStatus.APPROVED / stats.total) * 100 : 0}%` }}
@@ -255,9 +255,9 @@ export default function ProjectReportsPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium">Rejected</span>
-                <span className="text-sm text-gray-600">{stats.byStatus.REJECTED}</span>
+                <span className="text-sm text-muted-foreground">{stats.byStatus.REJECTED}</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
                   className="bg-red-500 h-2 rounded-full"
                   style={{ width: `${stats.total > 0 ? (stats.byStatus.REJECTED / stats.total) * 100 : 0}%` }}
@@ -269,7 +269,7 @@ export default function ProjectReportsPage() {
       </Card>
 
       {/* Scan Activity */}
-      <Card className="bg-white shadow-sm border border-gray-200">
+      <Card className="bg-white shadow-sm border border-border">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
@@ -278,7 +278,7 @@ export default function ProjectReportsPage() {
           <CardDescription>Badge scan statistics</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
             <span className="font-medium">Total Scans</span>
             <Badge variant="outline">{stats.recentScans.total}</Badge>
           </div>

@@ -52,7 +52,7 @@ const RESULT_COLORS: Record<string, string> = {
   ALLOWED: 'bg-green-100 text-green-800',
   DENIED: 'bg-red-100 text-red-800',
   REVOKED: 'bg-red-100 text-red-800',
-  EXPIRED: 'bg-gray-100 text-gray-800',
+  EXPIRED: 'bg-muted text-foreground',
   WRONG_PHASE: 'bg-orange-100 text-orange-800',
 };
 
@@ -203,7 +203,7 @@ export function ScanHistory({
                             <div className="font-medium">
                               {scan.accreditation.firstName} {scan.accreditation.lastName}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-muted-foreground">
                               {scan.accreditation.accreditationNumber}
                             </div>
                           </div>
@@ -213,14 +213,14 @@ export function ScanHistory({
                         <Badge variant="secondary">{scan.phase.replace('_', ' ')}</Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge className={RESULT_COLORS[scan.result] || 'bg-gray-100'}>
+                        <Badge className={RESULT_COLORS[scan.result] || 'bg-muted'}>
                           {scan.result.replace('_', ' ')}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         {scan.location ? (
                           <div className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-gray-400" />
+                            <MapPin className="h-3 w-3 text-muted-foreground" />
                             {scan.location}
                           </div>
                         ) : (
@@ -234,8 +234,8 @@ export function ScanHistory({
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div className="flex items-center gap-1 cursor-help">
-                                  <Monitor className="h-3 w-3 text-gray-400" />
-                                  <span className="text-xs text-gray-500 truncate max-w-[100px]">
+                                  <Monitor className="h-3 w-3 text-muted-foreground" />
+                                  <span className="text-xs text-muted-foreground truncate max-w-[100px]">
                                     {scan.ipAddress || 'Device info'}
                                   </span>
                                 </div>
@@ -264,7 +264,7 @@ export function ScanHistory({
             {/* Pagination */}
             {pagination.pages > 1 && (
               <div className="flex items-center justify-between pt-4 border-t mt-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   Page {pagination.page} of {pagination.pages}
                 </p>
                 <div className="flex gap-2">

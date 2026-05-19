@@ -236,7 +236,7 @@ export default function ImportAccreditationsPage({ params }: ImportAccreditation
   return (
     <div className="container mx-auto py-8 px-4">
       {!projectId ? (
-        <p className="text-gray-500">Loading project...</p>
+        <p className="text-muted-foreground">Loading project...</p>
       ) : (
         <div className="max-w-5xl mx-auto">
           <div className="mb-6">
@@ -247,8 +247,8 @@ export default function ImportAccreditationsPage({ params }: ImportAccreditation
           </div>
 
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Import Accreditations</h1>
-            <p className="text-gray-600 mt-1">Upload a CSV file to create multiple accreditation records</p>
+            <h1 className="text-3xl font-bold text-foreground">Import Accreditations</h1>
+            <p className="text-muted-foreground mt-1">Upload a CSV file to create multiple accreditation records</p>
           </div>
 
           {/* Step 1: Upload File */}
@@ -261,10 +261,10 @@ export default function ImportAccreditationsPage({ params }: ImportAccreditation
               {project && (
                 <div>
                   <Label>Project</Label>
-                  <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200 mt-1">
+                  <div className="flex items-center p-3 bg-muted/50 rounded-lg border border-border mt-1">
                     <div>
-                      <p className="font-medium text-gray-900">{project.name}</p>
-                      <p className="text-sm text-gray-600">Code: {project.code}</p>
+                      <p className="font-medium text-foreground">{project.name}</p>
+                      <p className="text-sm text-muted-foreground">Code: {project.code}</p>
                     </div>
                   </div>
                 </div>
@@ -273,7 +273,7 @@ export default function ImportAccreditationsPage({ params }: ImportAccreditation
               <div>
                 <Label>CSV File *</Label>
                 <Input type="file" accept=".csv" onChange={handleFileChange} />
-                <p className="text-xs text-gray-500 mt-1">Upload a CSV file with accreditation data</p>
+                <p className="text-xs text-muted-foreground mt-1">Upload a CSV file with accreditation data</p>
               </div>
 
               <div className="flex items-center gap-4">
@@ -312,7 +312,7 @@ export default function ImportAccreditationsPage({ params }: ImportAccreditation
 
                   <div className="max-h-96 overflow-y-auto border rounded-lg">
                     <table className="w-full text-sm">
-                      <thead className="bg-gray-50 sticky top-0">
+                      <thead className="bg-muted/50 sticky top-0">
                         <tr>
                           <th className="px-4 py-2 text-left">Row</th>
                           <th className="px-4 py-2 text-left">Name</th>

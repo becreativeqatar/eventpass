@@ -83,7 +83,7 @@ export function AccreditationListTable({ projectId, accreditations }: Accreditat
           <Link href={`/admin/records/${acc.id}`}>
             <Button variant="outline" size="sm">View</Button>
           </Link>
-          <Link href={`/admin/projects/${projectId}/records/${acc.id}/edit`}>
+          <Link href={`/admin/records/${projectId}/records/${acc.id}/edit`}>
             <Button variant="outline" size="sm">Edit</Button>
           </Link>
         </div>
@@ -93,7 +93,7 @@ export function AccreditationListTable({ projectId, accreditations }: Accreditat
           <Link href={`/admin/records/${acc.id}`} className="flex-1">
             <Button variant="outline" size="sm" className="w-full">View</Button>
           </Link>
-          <Link href={`/admin/projects/${projectId}/records/${acc.id}/edit`} className="flex-1">
+          <Link href={`/admin/records/${projectId}/records/${acc.id}/edit`} className="flex-1">
             <Button variant="outline" size="sm" className="w-full">Edit</Button>
           </Link>
         </div>

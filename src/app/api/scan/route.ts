@@ -18,7 +18,11 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
   }
 
   const body = await request.json();
-  const { verificationToken, phase, location, notes } = scanSchema.parse(body);
+  const parsed = scanSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+  }
+  const { verificationToken, phase, location, notes } = parsed.data;
 
   // Find accreditation by token
   const accreditation = await prisma.accreditation.findUnique({

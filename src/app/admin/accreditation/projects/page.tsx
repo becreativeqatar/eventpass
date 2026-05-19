@@ -199,13 +199,13 @@ export default function AccreditationProjectsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted/50">
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-semibold text-gray-900">Accreditation Projects</h1>
-              <p className="text-gray-600 mt-1">View and manage event accreditation projects</p>
+              <h1 className="text-3xl font-semibold text-foreground">Accreditation Projects</h1>
+              <p className="text-muted-foreground mt-1">View and manage event accreditation projects</p>
             </div>
             <Button onClick={() => setIsDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
@@ -215,14 +215,14 @@ export default function AccreditationProjectsPage() {
 
           {isLoading ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">Loading projects...</p>
+              <p className="text-muted-foreground">Loading projects...</p>
             </div>
           ) : projects.length === 0 ? (
-            <Card className="bg-white border-gray-200 shadow-sm">
+            <Card className="shadow-sm">
               <CardContent className="py-12 text-center">
-                <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No accreditation projects</h3>
-                <p className="text-gray-600 mb-4">Get started by creating your first accreditation project</p>
+                <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">No accreditation projects</h3>
+                <p className="text-muted-foreground mb-4">Get started by creating your first accreditation project</p>
                 <Button onClick={() => setIsDialogOpen(true)} className="bg-slate-700 hover:bg-slate-800 text-white shadow-sm">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Project
@@ -236,18 +236,18 @@ export default function AccreditationProjectsPage() {
                 const status = getProjectStatus(project.bumpOutEnd);
 
                 return (
-                  <Card key={project.id} className={`bg-white border-gray-200 shadow-sm hover:shadow-md transition-all ${isCompleted ? 'opacity-75' : ''}`}>
+                  <Card key={project.id} className={`shadow-sm hover:shadow-md transition-all ${isCompleted ? 'opacity-75' : ''}`}>
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div>
-                          <CardTitle className={`text-lg ${isCompleted ? 'text-gray-500' : 'text-gray-900'}`}>
+                          <CardTitle className={`text-lg ${isCompleted ? 'text-muted-foreground' : 'text-foreground'}`}>
                             {project.name}
                           </CardTitle>
-                          <CardDescription className="text-sm text-gray-600">Code: {project.code}</CardDescription>
+                          <CardDescription className="text-sm text-muted-foreground">Code: {project.code}</CardDescription>
                         </div>
                         <Badge
                           variant="outline"
-                          className={isCompleted ? 'bg-gray-100 text-gray-600 border-gray-300' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}
+                          className={isCompleted ? 'bg-muted text-muted-foreground' : 'bg-success/10 text-success border-success/30'}
                         >
                           {status}
                         </Badge>
@@ -256,46 +256,46 @@ export default function AccreditationProjectsPage() {
                     <CardContent className="space-y-4">
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Bump-In:</span>
-                          <span className="font-medium text-gray-900">
+                          <span className="text-muted-foreground">Bump-In:</span>
+                          <span className="font-medium text-foreground">
                             {formatDate(project.bumpInStart)} - {formatDate(project.bumpInEnd)}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Live:</span>
-                          <span className="font-medium text-gray-900">
+                          <span className="text-muted-foreground">Live:</span>
+                          <span className="font-medium text-foreground">
                             {formatDate(project.liveStart)} - {formatDate(project.liveEnd)}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Bump-Out:</span>
-                          <span className="font-medium text-gray-900">
+                          <span className="text-muted-foreground">Bump-Out:</span>
+                          <span className="font-medium text-foreground">
                             {formatDate(project.bumpOutStart)} - {formatDate(project.bumpOutEnd)}
                           </span>
                         </div>
                       </div>
 
                       <div>
-                        <p className="text-sm text-gray-600 mb-2">Access Groups:</p>
+                        <p className="text-sm text-muted-foreground mb-2">Access Groups:</p>
                         <div className="flex flex-wrap gap-1">
                           {Array.isArray(project.accessGroups) && project.accessGroups.map((group) => (
-                            <Badge key={group} variant="outline" className="text-xs text-gray-700 border-gray-300">
+                            <Badge key={group} variant="outline" className="text-xs text-foreground">
                               {group}
                             </Badge>
                           ))}
                         </div>
                       </div>
 
-                      <div className="pt-4 border-t border-gray-200">
+                      <div className="pt-4 border-t border-border">
                         <div className="flex items-center justify-between mb-3">
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-muted-foreground">
                             {project._count.accreditations} accreditation record{project._count.accreditations !== 1 ? 's' : ''}
                           </span>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEditProject(project)}
-                            className="text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                            className="text-foreground hover:bg-muted hover:text-foreground"
                           >
                             <Edit className="h-4 w-4 mr-1" />
                             Edit

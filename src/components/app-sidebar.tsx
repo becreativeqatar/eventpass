@@ -7,15 +7,9 @@ import Image from 'next/image';
 import {
   LayoutDashboard,
   FileText,
-  ClipboardCheck,
-  Upload,
   ScanLine,
   BarChart3,
-  Users,
-  Settings,
   QrCode,
-  Archive,
-  CalendarDays,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -29,10 +23,8 @@ import {
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { UserNav } from '@/components/user-nav';
-import { useActiveProject } from '@/hooks/use-active-project';
+import { EventSwitcher } from '@/components/event-switcher';
 
 const NAV_GROUPS = [
   {
@@ -47,32 +39,15 @@ const NAV_GROUPS = [
     roles: ['ADMIN', 'MANAGER', 'STAFF'] as string[],
     items: [
       { href: '/admin/records', label: 'Records', icon: FileText },
-      { href: '/admin/approvals', label: 'Approvals', icon: ClipboardCheck },
-      { href: '/admin/import', label: 'Bulk Import', icon: Upload },
-    ],
-  },
-  {
-    label: 'Monitoring',
-    roles: ['ADMIN', 'MANAGER', 'STAFF'] as string[],
-    items: [
       { href: '/admin/scans', label: 'Scan History', icon: ScanLine },
       { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
     ],
   },
   {
-    label: 'Archive',
-    roles: ['ADMIN', 'MANAGER', 'STAFF'] as string[],
+    label: 'Scanner',
+    roles: ['VALIDATOR'] as string[],
     items: [
-      { href: '/admin/archive', label: 'Past Events', icon: Archive },
-    ],
-  },
-  {
-    label: 'System',
-    roles: ['ADMIN'] as string[],
-    items: [
-      { href: '/admin/events', label: 'Event Management', icon: CalendarDays },
-      { href: '/admin/users', label: 'Users', icon: Users },
-      { href: '/admin/settings', label: 'Settings', icon: Settings },
+      { href: '/validator', label: 'QR Scanner', icon: QrCode },
     ],
   },
 ];
@@ -80,7 +55,6 @@ const NAV_GROUPS = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const { project: activeProject } = useActiveProject();
   const userRole = (session?.user?.role as string) || 'STAFF';
 
   const isActive = (href: string, exact?: boolean) => {
@@ -101,16 +75,7 @@ export function AppSidebar() {
           />
           <span className="text-base text-sidebar-foreground group-data-[collapsible=icon]:hidden">EventPass</span>
         </Link>
-        {activeProject && (
-          <div className="mt-2 group-data-[collapsible=icon]:hidden">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-xs bg-success/20 text-success border-success/30">
-                ACTIVE
-              </Badge>
-              <span className="text-xs font-medium truncate text-sidebar-foreground">{activeProject.name}</span>
-            </div>
-          </div>
-        )}
+        <EventSwitcher />
       </SidebarHeader>
 
       <Separator className="bg-sidebar-border" />
@@ -137,34 +102,9 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroup>
         ))}
-
-        {/* QR Scanner — always visible */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Tools</SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={isActive('/validator')}
-                tooltip="QR Scanner"
-              >
-                <Link href="/validator">
-                  <QrCode className="h-4 w-4" />
-                  <span>QR Scanner</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <ThemeToggle />
-          </SidebarMenuItem>
-        </SidebarMenu>
-        <Separator className="bg-sidebar-border" />
         <UserNav />
       </SidebarFooter>
     </Sidebar>

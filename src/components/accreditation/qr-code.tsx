@@ -26,7 +26,7 @@ export function QRCodeDisplay({ token, size = 200 }: QRCodeDisplayProps) {
   if (!qrDataUrl) {
     return (
       <div
-        className="animate-pulse bg-gray-200 rounded"
+        className="animate-pulse bg-muted rounded"
         style={{ width: size, height: size }}
       />
     );

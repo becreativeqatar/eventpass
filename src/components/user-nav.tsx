@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { signOut, useSession } from 'next-auth/react';
-import { LogOut, ChevronsUpDown, KeyRound, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { LogOut, ChevronsUpDown, KeyRound, Loader2, Users } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -132,6 +133,14 @@ export function UserNav() {
             </Badge>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
+          {role === 'ADMIN' && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin/users">
+                <Users className="mr-2 h-4 w-4" />
+                Manage Users
+              </Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={() => setShowPasswordDialog(true)}>
             <KeyRound className="mr-2 h-4 w-4" />
             Change Password

@@ -157,7 +157,7 @@ export function QRScanner() {
         <CardContent className="space-y-4">
           <div
             id="qr-reader"
-            className="w-full max-w-md mx-auto bg-gray-100 rounded-lg overflow-hidden"
+            className="w-full max-w-md mx-auto bg-muted rounded-lg overflow-hidden"
             style={{ minHeight: isScanning ? 300 : 0 }}
           />
 

@@ -157,7 +157,7 @@ export default function UsersPage() {
   const getRoleBadge = (role: string) => {
     const roleInfo = ROLES.find(r => r.value === role);
     return (
-      <Badge className={roleInfo?.color || 'bg-gray-100 text-gray-800'}>
+      <Badge className={roleInfo?.color || 'bg-muted text-foreground'}>
         {roleInfo?.label || role}
       </Badge>
     );

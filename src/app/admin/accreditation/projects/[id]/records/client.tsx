@@ -126,7 +126,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      DRAFT: 'bg-gray-100 text-gray-700 border-gray-300',
+      DRAFT: 'bg-muted text-foreground border-border',
       PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-300',
       APPROVED: 'bg-green-100 text-green-700 border-green-300',
       REJECTED: 'bg-red-100 text-red-700 border-red-300',
@@ -206,19 +206,19 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
       <div className="grid md:grid-cols-5 gap-3">
         <Card>
           <CardHeader className="pb-1 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
               <Users className="h-3.5 w-3.5" />
               Total Records
             </CardTitle>
           </CardHeader>
           <CardContent className="pb-3 px-4">
-            <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+            <div className="text-2xl font-bold text-foreground">{stats.total}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-1 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
               <CheckCircle className="h-3.5 w-3.5" />
               Approved
             </CardTitle>
@@ -230,7 +230,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
 
         <Card>
           <CardHeader className="pb-1 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
               <FileText className="h-3.5 w-3.5" />
               Pending
             </CardTitle>
@@ -242,19 +242,19 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
 
         <Card>
           <CardHeader className="pb-1 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
               <FileText className="h-3.5 w-3.5" />
               Draft
             </CardTitle>
           </CardHeader>
           <CardContent className="pb-3 px-4">
-            <div className="text-2xl font-bold text-gray-600">{stats.draft}</div>
+            <div className="text-2xl font-bold text-muted-foreground">{stats.draft}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-1 pt-3 px-4">
-            <CardTitle className="text-xs font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
               <XCircle className="h-3.5 w-3.5" />
               Rejected
             </CardTitle>
@@ -268,7 +268,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
       {/* Filters & Actions */}
       <div className="flex items-center gap-3">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by name, company, or accreditation number..."
             className="pl-10"
@@ -312,19 +312,19 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-muted/50 border-b border-border">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Photo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Number</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Company</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Role</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Access Group</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Photo</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Number</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Company</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Role</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Access Group</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-border">
               {isLoading ? (
                 [...Array(5)].map((_, i) => (
                   <tr key={i}>
@@ -358,9 +358,9 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
                 </tr>
               ) : (
                 accreditations.map((acc) => (
-                  <tr key={acc.id} className="hover:bg-gray-50">
+                  <tr key={acc.id} className="hover:bg-muted/50">
                     <td className="px-6 py-4">
-                      <div className="h-10 w-10 bg-gray-100 rounded-full overflow-hidden flex items-center justify-center">
+                      <div className="h-10 w-10 bg-muted rounded-full overflow-hidden flex items-center justify-center">
                         {acc.photoUrl ? (
                           <Image
                             src={acc.photoUrl}
@@ -370,25 +370,25 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
                             className="object-cover"
                           />
                         ) : (
-                          <span className="text-gray-500 font-medium text-sm">
+                          <span className="text-muted-foreground font-medium text-sm">
                             {acc.firstName?.[0] || ''}{acc.lastName?.[0] || ''}
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm font-mono text-gray-900">{acc.accreditationNumber}</span>
+                      <span className="text-sm font-mono text-foreground">{acc.accreditationNumber}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-foreground">
                         {acc.firstName} {acc.lastName}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-gray-600">{acc.company}</span>
+                      <span className="text-sm text-muted-foreground">{acc.company}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-gray-600">{acc.role}</span>
+                      <span className="text-sm text-muted-foreground">{acc.role}</span>
                     </td>
                     <td className="px-6 py-4">
                       <Badge variant="outline" className="text-xs">
@@ -412,9 +412,9 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
 
         {/* Pagination */}
         {pagination.totalPages > 1 && (
-          <div className="border-t border-gray-200 px-6 py-4">
+          <div className="border-t border-border px-6 py-4">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 Showing {(pagination.page - 1) * pagination.pageSize + 1} to{' '}
                 {Math.min(pagination.page * pagination.pageSize, pagination.total)} of {pagination.total} results
               </div>

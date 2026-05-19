@@ -10,6 +10,8 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { AppBreadcrumb } from '@/components/app-breadcrumb';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CommandSearch } from '@/components/command-search';
+import { EventProvider } from '@/contexts/event-context';
+import { ReadOnlyBanner } from '@/components/read-only-banner';
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
@@ -62,6 +64,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           <Separator orientation="vertical" className="h-4" />
           <AppBreadcrumb />
         </header>
+        <ReadOnlyBanner />
         <main className="flex-1 p-6">
           {children}
         </main>
@@ -73,8 +76,10 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
-      <AdminLayoutContent>{children}</AdminLayoutContent>
-      <CommandSearch />
+      <EventProvider>
+        <AdminLayoutContent>{children}</AdminLayoutContent>
+        <CommandSearch />
+      </EventProvider>
     </SessionProvider>
   );
 }

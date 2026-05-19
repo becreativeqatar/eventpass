@@ -177,7 +177,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      DRAFT: 'bg-gray-100 text-gray-700 border-gray-300',
+      DRAFT: 'bg-muted text-foreground border-border',
       PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-300',
       APPROVED: 'bg-green-100 text-green-700 border-green-300',
       REJECTED: 'bg-red-100 text-red-700 border-red-300',
@@ -255,7 +255,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
             </CardTitle>
           </CardHeader>
           <CardContent className="pb-3 px-4">
-            <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+            <div className="text-2xl font-bold text-foreground">{stats.total}</div>
           </CardContent>
         </Card>
 
@@ -311,7 +311,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
       {/* Filters & Actions */}
       <div className="flex items-center gap-3">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by name, company, or accreditation number..."
             className="pl-10"

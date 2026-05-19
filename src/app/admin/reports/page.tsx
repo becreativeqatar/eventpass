@@ -11,7 +11,7 @@ import {
   Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
 } from '@/components/ui/table';
 import { Label } from '@/components/ui/label';
-import { useActiveProject } from '@/hooks/use-active-project';
+import { useEventContext } from '@/contexts/event-context';
 
 interface SummaryReport {
   accreditations: number;
@@ -37,7 +37,7 @@ interface ScanActivityReport {
 }
 
 export default function ReportsPage() {
-  const { project: activeProject, isLoading: projectLoading } = useActiveProject();
+  const { selectedProject, isLoading } = useEventContext();
   const [reportType, setReportType] = useState<string>('summary');
   const [loading, setLoading] = useState(false);
   const [summaryData, setSummaryData] = useState<SummaryReport | null>(null);
@@ -45,10 +45,10 @@ export default function ReportsPage() {
   const [scanData, setScanData] = useState<ScanActivityReport[]>([]);
 
   const fetchReport = async () => {
-    if (!activeProject) return;
+    if (!selectedProject) return;
     setLoading(true);
     try {
-      const url = `/api/reports?type=${reportType}&projectId=${activeProject.id}`;
+      const url = `/api/reports?type=${reportType}&projectId=${selectedProject.id}`;
       const res = await fetch(url);
       const data = await res.json();
 
@@ -71,19 +71,19 @@ export default function ReportsPage() {
   };
 
   useEffect(() => {
-    if (activeProject) fetchReport();
-  }, [reportType, activeProject]);
+    if (selectedProject) fetchReport();
+  }, [reportType, selectedProject]);
 
   const exportReport = async () => {
-    if (!activeProject) return;
-    window.open(`/api/export?projectId=${activeProject.id}`, '_blank');
+    if (!selectedProject) return;
+    window.open(`/api/export?projectId=${selectedProject.id}`, '_blank');
   };
 
-  if (projectLoading) {
+  if (isLoading) {
     return <div className="py-8 text-center text-muted-foreground">Loading...</div>;
   }
 
-  if (!activeProject) {
+  if (!selectedProject) {
     return (
       <div className="py-12 text-center">
         <h2 className="text-lg font-semibold mb-2">No Active Event</h2>
@@ -98,7 +98,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Reports</h1>
-          <p className="text-muted-foreground">Statistics and analytics for {activeProject.name}</p>
+          <p className="text-muted-foreground">Statistics and analytics for {selectedProject.name}</p>
         </div>
         <Button onClick={exportReport}>Export to Excel</Button>
       </div>
@@ -171,7 +171,7 @@ export default function ReportsPage() {
                         <TableCell className="text-right text-orange-500">{row.PENDING || 0}</TableCell>
                         <TableCell className="text-right text-green-500">{row.APPROVED || 0}</TableCell>
                         <TableCell className="text-right text-red-500">{row.REJECTED || 0}</TableCell>
-                        <TableCell className="text-right text-gray-500">{row.REVOKED || 0}</TableCell>
+                        <TableCell className="text-right text-muted-foreground">{row.REVOKED || 0}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

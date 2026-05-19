@@ -77,13 +77,21 @@ export const PATCH = withErrorHandler(async (
 
   let updateData: Record<string, unknown>;
   if (isStatusUpdate) {
-    updateData = updateStatusSchema.parse(body);
+    const statusResult = updateStatusSchema.safeParse(body);
+    if (!statusResult.success) {
+      return NextResponse.json({ error: statusResult.error.issues[0].message }, { status: 400 });
+    }
+    updateData = statusResult.data;
     // Only admin/manager can change status
     if (!['ADMIN', 'MANAGER'].includes(session.user.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
   } else {
-    const data = updateAccreditationSchema.parse(body);
+    const updateResult = updateAccreditationSchema.safeParse(body);
+    if (!updateResult.success) {
+      return NextResponse.json({ error: updateResult.error.issues[0].message }, { status: 400 });
+    }
+    const data = updateResult.data;
     // Convert phases array to string if present
     if (data.phases) {
       const { phases, ...rest } = data;

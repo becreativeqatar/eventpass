@@ -25,7 +25,7 @@ const ACTION_COLORS: Record<string, string> = {
   REVOKED: 'bg-red-100 text-red-800',
   REINSTATED: 'bg-green-100 text-green-800',
   SUBMITTED: 'bg-yellow-100 text-yellow-800',
-  UPDATED: 'bg-gray-100 text-gray-800',
+  UPDATED: 'bg-muted text-foreground',
 };
 
 export function AccreditationHistory({ accreditationId }: AccreditationHistoryProps) {
@@ -80,7 +80,7 @@ export function AccreditationHistory({ accreditationId }: AccreditationHistoryPr
               >
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
-                    <Badge className={ACTION_COLORS[entry.action] || 'bg-gray-100'}>
+                    <Badge className={ACTION_COLORS[entry.action] || 'bg-muted'}>
                       {entry.action}
                     </Badge>
                     {entry.oldStatus && entry.newStatus && (

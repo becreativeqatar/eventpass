@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { prisma } from '@/lib/prisma';
-import { getActiveProject } from '@/lib/active-project';
+import { getSelectedProject } from '@/lib/active-project';
 import { AccreditationStatus } from '@/lib/validations/accreditation';
 import { DashboardCharts } from '@/components/dashboard/dashboard-charts';
 import {
@@ -119,7 +119,7 @@ function timeAgo(date: Date): string {
 }
 
 export default async function AdminDashboardPage() {
-  const activeProject = await getActiveProject();
+  const activeProject = await getSelectedProject();
 
   if (!activeProject) {
     return (
@@ -131,8 +131,8 @@ export default async function AdminDashboardPage() {
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Active Event</h3>
-            <p className="text-muted-foreground mb-6">Create or activate an event to get started.</p>
+            <h3 className="text-lg font-semibold mb-2">No Events</h3>
+            <p className="text-muted-foreground mb-6">Create an event to get started.</p>
             <Link href="/admin/events">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -144,6 +144,8 @@ export default async function AdminDashboardPage() {
       </div>
     );
   }
+
+  const isReadOnly = activeProject.status !== 'ACTIVE';
 
   const [stats, pending, recent, chartData] = await Promise.all([
     getStats(activeProject.id),
@@ -158,10 +160,12 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-5">
-      {/* Dark Event Header */}
+      {/* Event Header */}
       <div className="bg-gradient-to-r from-[#101820] to-[#1a2530] text-white rounded-xl px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Badge className="bg-success text-white border-0 text-[10px] uppercase tracking-wider">Active</Badge>
+          <Badge className={`border-0 text-[10px] uppercase tracking-wider ${activeProject.status === 'ACTIVE' ? 'bg-success text-white' : 'bg-white/20 text-white/80'}`}>
+            {activeProject.status}
+          </Badge>
           <span className="font-semibold text-sm">{activeProject.name}</span>
         </div>
         <span className="text-xs text-white/60">
@@ -194,7 +198,7 @@ export default async function AdminDashboardPage() {
                 </CardHeader>
               </Card>
             </Link>
-            <Link href="/admin/approvals">
+            <Link href="/admin/records?status=PENDING">
               <Card className="border-t-2 border-t-warning hover:border-t-warning/80 transition-colors">
                 <CardHeader className="p-4 pb-4">
                   <CardTitle className="text-2xl tabular-nums text-warning">{stats.pendingApprovals}</CardTitle>
@@ -221,7 +225,7 @@ export default async function AdminDashboardPage() {
                   <Badge variant="outline" className="border-warning/30 text-warning text-xs">{stats.pendingApprovals}</Badge>
                 )}
               </div>
-              <Link href="/admin/approvals" className="text-xs text-primary font-medium hover:underline">
+              <Link href="/admin/records?status=PENDING" className="text-xs text-primary font-medium hover:underline">
                 View All
               </Link>
             </div>
@@ -256,20 +260,24 @@ export default async function AdminDashboardPage() {
               <h2 className="font-semibold">Quick Actions</h2>
             </div>
             <div className="p-2">
-              <Link href="/admin/records/new" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors">
-                <div className="w-8 h-8 rounded-lg bce-gradient flex items-center justify-center shrink-0">
-                  <Plus className="h-4 w-4 text-white" />
-                </div>
-                <span className="text-sm font-medium flex-1">New Record</span>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-              </Link>
-              <Link href="/admin/import" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                  <Upload className="h-4 w-4 text-secondary-foreground" />
-                </div>
-                <span className="text-sm font-medium flex-1">Bulk Import</span>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-              </Link>
+              {!isReadOnly && (
+                <>
+                  <Link href="/admin/records/new" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors">
+                    <div className="w-8 h-8 rounded-lg bce-gradient flex items-center justify-center shrink-0">
+                      <Plus className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="text-sm font-medium flex-1">New Record</span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </Link>
+                  <Link href="/admin/import" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                      <Upload className="h-4 w-4 text-secondary-foreground" />
+                    </div>
+                    <span className="text-sm font-medium flex-1">Bulk Import</span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </Link>
+                </>
+              )}
               <Link href="/validator" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <QrCode className="h-4 w-4 text-primary" />

@@ -6,7 +6,7 @@ export default async function ProjectRecordsPage({ params }: { params: Promise<{
 
   return (
     <div className="space-y-6">
-      <Suspense fallback={<div className="p-8 text-gray-500">Loading records...</div>}>
+      <Suspense fallback={<div className="p-8 text-muted-foreground">Loading records...</div>}>
         <ProjectRecordsClient projectId={projectId} />
       </Suspense>
     </div>

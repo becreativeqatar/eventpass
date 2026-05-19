@@ -1,4 +1,3 @@
-import { prisma } from './prisma';
 import { sendApprovalNotificationEmail } from './email';
 
 interface AccreditationInfo {
@@ -11,16 +10,10 @@ interface AccreditationInfo {
 
 export async function notifyAdminOfPendingApproval(accreditation: AccreditationInfo): Promise<void> {
   try {
-    const [enabledSetting, emailSetting] = await Promise.all([
-      prisma.systemSettings.findUnique({ where: { key: 'notifications.emailEnabled' } }),
-      prisma.systemSettings.findUnique({ where: { key: 'notifications.adminEmail' } }),
-    ]);
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail) return;
 
-    if (enabledSetting?.value !== 'true' || !emailSetting?.value) {
-      return;
-    }
-
-    await sendApprovalNotificationEmail(accreditation, emailSetting.value);
+    await sendApprovalNotificationEmail(accreditation, adminEmail);
   } catch (err) {
     console.error('[notifications] Failed to notify admin:', err);
   }

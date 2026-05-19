@@ -45,7 +45,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   }
 
   const { searchParams } = new URL(request.url);
-  const query = accreditationQuerySchema.parse({
+  const queryResult = accreditationQuerySchema.safeParse({
     projectId: searchParams.get('projectId') || undefined,
     status: searchParams.get('status') || undefined,
     q: searchParams.get('q') || undefined,
@@ -54,6 +54,10 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
     sort: searchParams.get('sort') || 'createdAt',
     order: searchParams.get('order') || 'desc',
   });
+  if (!queryResult.success) {
+    return NextResponse.json({ error: queryResult.error.issues[0].message }, { status: 400 });
+  }
+  const query = queryResult.data;
 
   const where = {
     ...(query.projectId && { projectId: query.projectId }),
@@ -101,7 +105,11 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
   }
 
   const body = await request.json();
-  const data = createAccreditationSchema.parse(body);
+  const result = createAccreditationSchema.safeParse(body);
+  if (!result.success) {
+    return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+  }
+  const data = result.data;
 
   // Verify project exists
   const project = await prisma.accreditationProject.findUnique({

@@ -220,7 +220,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
           <CardContent className="py-12">
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-gray-600">Loading accreditation data...</p>
+              <p className="text-muted-foreground">Loading accreditation data...</p>
             </div>
           </CardContent>
         </Card>
@@ -245,8 +245,8 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Record
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900 mt-4">Edit Accreditation</h1>
-          <p className="text-gray-600 mt-1">Update event personnel accreditation</p>
+          <h1 className="text-3xl font-bold text-foreground mt-4">Edit Accreditation</h1>
+          <p className="text-muted-foreground mt-1">Update event personnel accreditation</p>
         </div>
 
         <div className="space-y-6">
@@ -330,8 +330,8 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   {photoPreview ? (
                     <NextImage src={photoPreview} alt="Preview" width={100} height={100} className="rounded-lg object-cover" />
                   ) : (
-                    <div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center">
-                      <Upload className="h-8 w-8 text-gray-400" />
+                    <div className="w-24 h-24 rounded-lg bg-muted flex items-center justify-center">
+                      <Upload className="h-8 w-8 text-muted-foreground" />
                     </div>
                   )}
                   <div className="flex-1">
@@ -341,7 +341,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                       accept="image/jpeg,image/png"
                       onChange={handlePhotoChange}
                     />
-                    <p className="text-xs text-gray-500 mt-1">JPG or PNG, max 5MB</p>
+                    <p className="text-xs text-muted-foreground mt-1">JPG or PNG, max 5MB</p>
                   </div>
                 </div>
               </div>

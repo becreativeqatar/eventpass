@@ -22,8 +22,8 @@ export default function AccreditationScansPage() {
         </div>
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Scan Logs</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-foreground">Scan Logs</h1>
+          <p className="text-muted-foreground mt-1">
             View all QR code scans across all accreditations
           </p>
         </div>

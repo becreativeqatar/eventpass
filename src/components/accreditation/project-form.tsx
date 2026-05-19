@@ -95,8 +95,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CreateProjectRequest) => {
     setIsSubmitting(true);
     setError(null);
 

@@ -87,7 +87,7 @@ export default function ProjectScansPage() {
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Loading scan data...</p>
+        <p className="text-muted-foreground">Loading scan data...</p>
       </div>
     );
   }
@@ -97,8 +97,8 @@ export default function ProjectScansPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Scan Logs</h2>
-          <p className="text-gray-600 mt-1">
+          <h2 className="text-xl font-semibold text-foreground">Scan Logs</h2>
+          <p className="text-muted-foreground mt-1">
             View and analyze QR code scan activity
           </p>
         </div>
@@ -110,9 +110,9 @@ export default function ProjectScansPage() {
 
       {/* Stats Cards */}
       <div className="grid md:grid-cols-4 gap-4">
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card className="bg-white shadow-sm border border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Activity className="h-4 w-4" />
               Total Scans
             </CardTitle>
@@ -122,9 +122,9 @@ export default function ProjectScansPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card className="bg-white shadow-sm border border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
               Valid Scans
             </CardTitle>
@@ -134,9 +134,9 @@ export default function ProjectScansPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card className="bg-white shadow-sm border border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <XCircle className="h-4 w-4 text-red-600" />
               Invalid Scans
             </CardTitle>
@@ -146,9 +146,9 @@ export default function ProjectScansPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card className="bg-white shadow-sm border border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Today&apos;s Scans
             </CardTitle>
           </CardHeader>

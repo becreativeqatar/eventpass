@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { getActiveProject } from '@/lib/active-project';
+import { getSelectedProject } from '@/lib/active-project';
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ accreditations: [], users: [] });
   }
 
-  const activeProject = await getActiveProject();
+  const activeProject = await getSelectedProject();
 
   const accreditations = activeProject
     ? await prisma.accreditation.findMany({

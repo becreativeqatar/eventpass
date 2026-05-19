@@ -34,12 +34,16 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   }
 
   const { searchParams } = new URL(request.url);
-  const query = querySchema.parse({
+  const queryResult = querySchema.safeParse({
     q: searchParams.get('q') || undefined,
     role: searchParams.get('role') || undefined,
     p: searchParams.get('p') || 1,
     ps: searchParams.get('ps') || 20,
   });
+  if (!queryResult.success) {
+    return NextResponse.json({ error: queryResult.error.issues[0].message }, { status: 400 });
+  }
+  const query = queryResult.data;
 
   const where = {
     ...(query.role && { role: query.role }),

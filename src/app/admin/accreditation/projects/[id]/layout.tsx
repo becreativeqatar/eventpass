@@ -93,7 +93,7 @@ export default function ProjectLayout({ children, params }: ProjectLayoutProps) 
   const backButton = getBackButton();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted/50">
       {/* Page Header */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
@@ -103,10 +103,10 @@ export default function ProjectLayout({ children, params }: ProjectLayoutProps) 
             <>
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h1 className="text-3xl font-semibold text-gray-900">
+                  <h1 className="text-3xl font-semibold text-foreground">
                     {project?.name || 'Loading...'}
                   </h1>
-                  <p className="text-gray-600 mt-1">
+                  <p className="text-muted-foreground mt-1">
                     Code: {project?.code || 'N/A'} | {formatDate(project?.liveStart || null)} - {formatDate(project?.liveEnd || null)}
                   </p>
                 </div>

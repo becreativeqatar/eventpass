@@ -263,8 +263,8 @@ export default function ProjectApprovalsPage({ params }: ProjectApprovalsPagePro
         <>
           {/* Header */}
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Approval Queue</h2>
-            <p className="text-gray-600 mt-1">
+            <h2 className="text-xl font-semibold text-foreground">Approval Queue</h2>
+            <p className="text-muted-foreground mt-1">
               {filteredAccreditations.length} of {accreditations.length} pending accreditation{accreditations.length !== 1 ? 's' : ''}
             </p>
           </div>
@@ -274,7 +274,7 @@ export default function ProjectApprovalsPage({ params }: ProjectApprovalsPagePro
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search name, company, or number..."
                     value={searchQuery}
@@ -343,8 +343,8 @@ export default function ProjectApprovalsPage({ params }: ProjectApprovalsPagePro
                           className="rounded-lg object-cover"
                         />
                       ) : (
-                        <div className="w-15 h-15 rounded-lg bg-gray-200 flex items-center justify-center">
-                          <span className="text-xl text-gray-500">
+                        <div className="w-15 h-15 rounded-lg bg-muted flex items-center justify-center">
+                          <span className="text-xl text-muted-foreground">
                             {accreditation.firstName[0]}
                             {accreditation.lastName[0]}
                           </span>
@@ -361,41 +361,41 @@ export default function ProjectApprovalsPage({ params }: ProjectApprovalsPagePro
                   <CardContent className="space-y-4">
                     <div className="space-y-2 text-sm">
                       <div>
-                        <p className="text-gray-500">Company</p>
+                        <p className="text-muted-foreground">Company</p>
                         <p className="font-medium">{accreditation.company}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Role</p>
+                        <p className="text-muted-foreground">Role</p>
                         <p className="font-medium">{accreditation.role}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Access Group</p>
+                        <p className="text-muted-foreground">Access Group</p>
                         <Badge variant="outline">{accreditation.accessGroup}</Badge>
                       </div>
                     </div>
 
                     <div className="pt-4 border-t space-y-2">
-                      <p className="text-xs font-semibold text-gray-700">Access Phases:</p>
+                      <p className="text-xs font-semibold text-foreground">Access Phases:</p>
                       {accreditation.hasBumpInAccess && (
-                        <div className="text-xs text-gray-600">
+                        <div className="text-xs text-muted-foreground">
                           <p className="font-medium">✓ Bump-In</p>
-                          <p className="text-gray-500 ml-4">
+                          <p className="text-muted-foreground ml-4">
                             {formatDate(accreditation.bumpInStart)} - {formatDate(accreditation.bumpInEnd)}
                           </p>
                         </div>
                       )}
                       {accreditation.hasLiveAccess && (
-                        <div className="text-xs text-gray-600">
+                        <div className="text-xs text-muted-foreground">
                           <p className="font-medium">✓ Live</p>
-                          <p className="text-gray-500 ml-4">
+                          <p className="text-muted-foreground ml-4">
                             {formatDate(accreditation.liveStart)} - {formatDate(accreditation.liveEnd)}
                           </p>
                         </div>
                       )}
                       {accreditation.hasBumpOutAccess && (
-                        <div className="text-xs text-gray-600">
+                        <div className="text-xs text-muted-foreground">
                           <p className="font-medium">✓ Bump-Out</p>
-                          <p className="text-gray-500 ml-4">
+                          <p className="text-muted-foreground ml-4">
                             {formatDate(accreditation.bumpOutStart)} - {formatDate(accreditation.bumpOutEnd)}
                           </p>
                         </div>

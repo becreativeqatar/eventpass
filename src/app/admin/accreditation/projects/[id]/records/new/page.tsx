@@ -187,12 +187,12 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900 mt-4">New Accreditation</h1>
-          <p className="text-gray-600 mt-1">Create a new event personnel accreditation</p>
+          <h1 className="text-3xl font-bold text-foreground mt-4">New Accreditation</h1>
+          <p className="text-muted-foreground mt-1">Create a new event personnel accreditation</p>
         </div>
 
         {!projectId ? (
-          <p className="text-gray-500">Loading project...</p>
+          <p className="text-muted-foreground">Loading project...</p>
         ) : (
           <div className="space-y-6">
             {/* Personal Information */}
@@ -273,13 +273,13 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
                   <Label>Profile Photo (Optional)</Label>
                   <div className="flex items-start gap-4">
                     <div
-                      className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors overflow-hidden"
+                      className="w-24 h-24 rounded-lg bg-muted flex items-center justify-center cursor-pointer hover:bg-muted-foreground/20 transition-colors overflow-hidden"
                       onClick={() => fileInputRef.current?.click()}
                     >
                       {photoPreview ? (
                         <NextImage src={photoPreview} alt="Preview" width={96} height={96} className="object-cover w-full h-full" />
                       ) : (
-                        <Upload className="h-8 w-8 text-gray-400" />
+                        <Upload className="h-8 w-8 text-muted-foreground" />
                       )}
                     </div>
                     <div className="flex-1">
@@ -298,7 +298,7 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
                         <Upload className="h-4 w-4 mr-2" />
                         Choose Photo
                       </Button>
-                      <p className="text-xs text-gray-500 mt-2">JPG or PNG, max 5MB</p>
+                      <p className="text-xs text-muted-foreground mt-2">JPG or PNG, max 5MB</p>
                     </div>
                   </div>
                 </div>

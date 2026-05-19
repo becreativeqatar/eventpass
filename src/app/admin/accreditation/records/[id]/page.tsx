@@ -223,11 +223,11 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      DRAFT: 'bg-gray-100 text-gray-800 border-gray-300',
+      DRAFT: 'bg-muted text-foreground border-border',
       PENDING: 'bg-yellow-100 text-yellow-800 border-yellow-300',
       APPROVED: 'bg-green-100 text-green-800 border-green-300',
       REJECTED: 'bg-red-100 text-red-800 border-red-300',
-      REVOKED: 'bg-gray-100 text-gray-800 border-gray-300',
+      REVOKED: 'bg-muted text-foreground border-border',
     };
 
     return (
@@ -259,10 +259,10 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-muted/50">
         <div className="container mx-auto py-8 px-4">
           <div className="max-w-5xl mx-auto text-center py-12">
-            <p className="text-gray-500">Loading accreditation...</p>
+            <p className="text-muted-foreground">Loading accreditation...</p>
           </div>
         </div>
       </div>
@@ -271,10 +271,10 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
 
   if (!accreditation) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-muted/50">
         <div className="container mx-auto py-8 px-4">
           <div className="max-w-5xl mx-auto text-center py-12">
-            <p className="text-gray-500">Accreditation not found</p>
+            <p className="text-muted-foreground">Accreditation not found</p>
           </div>
         </div>
       </div>
@@ -282,7 +282,7 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted/50">
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="mb-6">
@@ -303,10 +303,10 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
 
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-foreground">
                 {accreditation.firstName} {accreditation.lastName}
               </h1>
-              <p className="text-gray-600 mt-1">Accreditation #{accreditation.accreditationNumber}</p>
+              <p className="text-muted-foreground mt-1">Accreditation #{accreditation.accreditationNumber}</p>
             </div>
             <div className="flex items-center gap-3">
               {getStatusBadge(accreditation.status)}
@@ -395,7 +395,7 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
             {/* Main Details */}
             <div className="lg:col-span-2 space-y-6">
               {/* Personal Information */}
-              <Card className="bg-white shadow-sm border border-gray-200">
+              <Card className="bg-white shadow-sm border border-border">
                 <CardHeader>
                   <CardTitle>Personal Information</CardTitle>
                 </CardHeader>
@@ -407,11 +407,11 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                         alt={`${accreditation.firstName} ${accreditation.lastName}`}
                         width={150}
                         height={150}
-                        className="rounded-lg object-cover border-2 border-gray-200 shadow-sm"
+                        className="rounded-lg object-cover border-2 border-border shadow-sm"
                       />
                     ) : (
-                      <div className="w-[150px] h-[150px] rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-gray-200 shadow-sm">
-                        <span className="text-4xl font-semibold text-gray-400">
+                      <div className="w-[150px] h-[150px] rounded-lg bg-gradient-to-br from-muted to-muted/80 flex items-center justify-center border-2 border-border shadow-sm">
+                        <span className="text-4xl font-semibold text-muted-foreground">
                           {accreditation.firstName?.[0] || ''}
                           {accreditation.lastName?.[0] || ''}
                         </span>
@@ -419,15 +419,15 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                     )}
                     <div className="flex-1 grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">Company</p>
+                        <p className="text-sm text-muted-foreground">Company</p>
                         <p className="font-medium">{accreditation.company}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Role</p>
+                        <p className="text-sm text-muted-foreground">Role</p>
                         <p className="font-medium">{accreditation.role}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Access Group</p>
+                        <p className="text-sm text-muted-foreground">Access Group</p>
                         <Badge variant="outline">{accreditation.accessGroup}</Badge>
                       </div>
                     </div>
@@ -436,7 +436,7 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
               </Card>
 
               {/* Identification */}
-              <Card className="bg-white shadow-sm border border-gray-200">
+              <Card className="bg-white shadow-sm border border-border">
                 <CardHeader>
                   <CardTitle>Identification</CardTitle>
                 </CardHeader>
@@ -444,11 +444,11 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                   {accreditation.qidNumber ? (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-gray-500">QID Number</p>
+                        <p className="text-sm text-muted-foreground">QID Number</p>
                         <p className="font-medium">{accreditation.qidNumber}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">QID Expiry</p>
+                        <p className="text-sm text-muted-foreground">QID Expiry</p>
                         <p className="font-medium">{formatDate(accreditation.qidExpiry)}</p>
                       </div>
                     </div>
@@ -456,27 +456,27 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                     <>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm text-gray-500">Passport Number</p>
+                          <p className="text-sm text-muted-foreground">Passport Number</p>
                           <p className="font-medium">{accreditation.passportNumber}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500">Passport Country</p>
+                          <p className="text-sm text-muted-foreground">Passport Country</p>
                           <p className="font-medium">{accreditation.passportCountry || 'Not specified'}</p>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm text-gray-500">Passport Expiry</p>
+                          <p className="text-sm text-muted-foreground">Passport Expiry</p>
                           <p className="font-medium">{formatDate(accreditation.passportExpiry)}</p>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm text-gray-500">Hayya Number</p>
+                          <p className="text-sm text-muted-foreground">Hayya Number</p>
                           <p className="font-medium">{accreditation.hayyaNumber}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500">Hayya Expiry</p>
+                          <p className="text-sm text-muted-foreground">Hayya Expiry</p>
                           <p className="font-medium">{formatDate(accreditation.hayyaExpiry)}</p>
                         </div>
                       </div>
@@ -486,31 +486,31 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
               </Card>
 
               {/* Access Validity */}
-              <Card className="bg-white shadow-sm border border-gray-200">
+              <Card className="bg-white shadow-sm border border-border">
                 <CardHeader>
                   <CardTitle>Access Validity</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {accreditation.hasBumpInAccess && (
                     <div>
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Bump-In Phase</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm font-semibold text-foreground mb-1">Bump-In Phase</p>
+                      <p className="text-sm text-muted-foreground">
                         {formatDateTime(accreditation.bumpInStart)} - {formatDateTime(accreditation.bumpInEnd)}
                       </p>
                     </div>
                   )}
                   {accreditation.hasLiveAccess && (
                     <div>
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Live Phase</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm font-semibold text-foreground mb-1">Live Phase</p>
+                      <p className="text-sm text-muted-foreground">
                         {formatDateTime(accreditation.liveStart)} - {formatDateTime(accreditation.liveEnd)}
                       </p>
                     </div>
                   )}
                   {accreditation.hasBumpOutAccess && (
                     <div>
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Bump-Out Phase</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm font-semibold text-foreground mb-1">Bump-Out Phase</p>
+                      <p className="text-sm text-muted-foreground">
                         {formatDateTime(accreditation.bumpOutStart)} - {formatDateTime(accreditation.bumpOutEnd)}
                       </p>
                     </div>
@@ -531,7 +531,7 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
             <div className="space-y-6">
               {/* QR Code */}
               {(accreditation.status === 'APPROVED') && accreditation.verificationToken && (
-                <Card className="bg-white shadow-sm border border-gray-200">
+                <Card className="bg-white shadow-sm border border-border">
                   <CardHeader>
                     <CardTitle>QR Code</CardTitle>
                     <CardDescription>Scan to verify accreditation</CardDescription>
@@ -614,11 +614,11 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
 
               {/* History */}
               {accreditation.history && accreditation.history.length > 0 && (
-                <Card className="bg-white shadow-sm border border-gray-200">
+                <Card className="bg-white shadow-sm border border-border">
                   <CardHeader>
                     <CardTitle>History</CardTitle>
                     {accreditation.history.length > HISTORY_PER_PAGE && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         Showing {Math.min(historyPage * HISTORY_PER_PAGE, accreditation.history.length)} of {accreditation.history.length} records
                       </p>
                     )}
@@ -628,9 +628,9 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                       {accreditation.history.slice(0, historyPage * HISTORY_PER_PAGE).map((entry) => (
                         <div key={entry.id} className="border-l-2 border-blue-500 pl-4 py-2">
                           <p className="text-sm font-medium">{entry.action}</p>
-                          <p className="text-xs text-gray-600">{formatDateTime(entry.createdAt)}</p>
-                          <p className="text-xs text-gray-500">By {entry.performedBy.name}</p>
-                          {entry.notes && <p className="text-sm text-gray-700 mt-1">{entry.notes}</p>}
+                          <p className="text-xs text-muted-foreground">{formatDateTime(entry.createdAt)}</p>
+                          <p className="text-xs text-muted-foreground">By {entry.performedBy.name}</p>
+                          {entry.notes && <p className="text-sm text-foreground mt-1">{entry.notes}</p>}
                         </div>
                       ))}
                     </div>

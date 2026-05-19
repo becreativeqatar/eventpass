@@ -70,7 +70,7 @@ export async function sendApprovalNotificationEmail(
   accreditation: { firstName: string; lastName: string; company: string | null; role: string | null; accreditationNumber: string },
   adminEmail: string,
 ): Promise<void> {
-  const url = `${getBaseUrl()}/admin/approvals`;
+  const url = `${getBaseUrl()}/admin/records?status=PENDING`;
   const html = brandedHtml(
     'New Approval Request',
     `<p style="margin:0 0 16px;color:#101820;font-size:14px;line-height:1.6;">

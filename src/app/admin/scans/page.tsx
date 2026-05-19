@@ -12,7 +12,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { ScanLine, Download } from 'lucide-react';
-import { useActiveProject } from '@/hooks/use-active-project';
+import { useEventContext } from '@/contexts/event-context';
 
 interface Scan {
   id: string;
@@ -39,11 +39,11 @@ interface Pagination {
 }
 
 const RESULT_COLORS: Record<string, string> = {
-  ALLOWED: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  DENIED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-  REVOKED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+  ALLOWED: 'bg-green-100 text-green-800',
+  DENIED: 'bg-red-100 text-red-800',
+  REVOKED: 'bg-red-100 text-red-800',
   EXPIRED: 'bg-muted text-muted-foreground',
-  WRONG_PHASE: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+  WRONG_PHASE: 'bg-orange-100 text-orange-800',
 };
 
 const columns: Column<Scan>[] = [
@@ -68,7 +68,7 @@ const columns: Column<Scan>[] = [
 ];
 
 export default function ScansPage() {
-  const { project: activeProject, isLoading: projectLoading } = useActiveProject();
+  const { selectedProject, isLoading } = useEventContext();
   const [scans, setScans] = useState<Scan[]>([]);
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 50, total: 0, pages: 0 });
   const [loading, setLoading] = useState(true);
@@ -79,13 +79,13 @@ export default function ScansPage() {
   const [toDate, setToDate] = useState<string>('');
 
   const fetchScans = async (page = 1) => {
-    if (!activeProject) return;
+    if (!selectedProject) return;
     setLoading(true);
     try {
       const params = new URLSearchParams();
       params.set('page', page.toString());
       params.set('limit', '50');
-      params.set('projectId', activeProject.id);
+      params.set('projectId', selectedProject.id);
 
       if (selectedPhase !== 'all') params.set('phase', selectedPhase);
       if (selectedResult !== 'all') params.set('result', selectedResult);
@@ -104,22 +104,22 @@ export default function ScansPage() {
   };
 
   useEffect(() => {
-    if (activeProject) fetchScans(1);
-  }, [activeProject, selectedPhase, selectedResult, fromDate, toDate]);
+    if (selectedProject) fetchScans(1);
+  }, [selectedProject, selectedPhase, selectedResult, fromDate, toDate]);
 
   const exportScans = () => {
-    if (!activeProject) return;
-    const params = new URLSearchParams({ projectId: activeProject.id });
+    if (!selectedProject) return;
+    const params = new URLSearchParams({ projectId: selectedProject.id });
     if (fromDate) params.set('from', fromDate);
     if (toDate) params.set('to', toDate);
     window.open(`/api/scans/export?${params}`, '_blank');
   };
 
-  if (projectLoading) {
+  if (isLoading) {
     return <div className="py-8 text-center text-muted-foreground">Loading...</div>;
   }
 
-  if (!activeProject) {
+  if (!selectedProject) {
     return (
       <div className="py-12 text-center">
         <h2 className="text-lg font-semibold mb-2">No Active Event</h2>
