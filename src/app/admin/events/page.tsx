@@ -6,7 +6,18 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ConfirmDialog } from '@/components/confirm-dialog';
-import { Plus, Calendar, MapPin, Users, Play, CheckCircle, Archive } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Plus, Calendar, MapPin, Users, Play, CheckCircle, Archive, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Event {
@@ -33,6 +44,9 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [actionEvent, setActionEvent] = useState<{ event: Event; action: string } | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [editForm, setEditForm] = useState({ name: '', description: '', venue: '', eventDate: '' });
+  const [saving, setSaving] = useState(false);
 
   const fetchEvents = async () => {
     try {
@@ -47,6 +61,45 @@ export default function EventsPage() {
   };
 
   useEffect(() => { fetchEvents(); }, []);
+
+  const openEditDialog = (event: Event) => {
+    setEditingEvent(event);
+    setEditForm({
+      name: event.name,
+      description: event.description || '',
+      venue: event.venue || '',
+      eventDate: event.eventDate ? event.eventDate.split('T')[0] : '',
+    });
+  };
+
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingEvent) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/events/${editingEvent.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: editForm.name,
+          description: editForm.description || null,
+          venue: editForm.venue || null,
+          eventDate: editForm.eventDate || null,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to update event');
+      }
+      toast.success('Event updated');
+      setEditingEvent(null);
+      fetchEvents();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to update');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleAction = async () => {
     if (!actionEvent) return;
@@ -102,6 +155,10 @@ export default function EventsPage() {
                 </CardDescription>
               </div>
               <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => openEditDialog(activeEvent)}>
+                  <Pencil className="h-4 w-4 mr-1" />
+                  Edit
+                </Button>
                 <Button variant="outline" size="sm" onClick={() => setActionEvent({ event: activeEvent, action: 'complete' })}>
                   <CheckCircle className="h-4 w-4 mr-1" />
                   Complete
@@ -146,6 +203,12 @@ export default function EventsPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
+                  {(event.status === 'DRAFT' || event.status === 'ACTIVE') && (
+                    <Button variant="outline" size="sm" onClick={() => openEditDialog(event)}>
+                      <Pencil className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                  )}
                   {event.status === 'DRAFT' && (
                     <Button variant="outline" size="sm" onClick={() => setActionEvent({ event, action: 'activate' })}>
                       <Play className="h-4 w-4 mr-1" />
@@ -191,6 +254,59 @@ export default function EventsPage() {
         onConfirm={handleAction}
         loading={processing}
       />
+
+      {/* Edit Event Dialog */}
+      <Dialog open={!!editingEvent} onOpenChange={(open) => { if (!open) setEditingEvent(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Event</DialogTitle>
+            <DialogDescription>Update event details</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEdit}>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="eventName">Event Name</Label>
+                <Input
+                  id="eventName"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="eventDescription">Description</Label>
+                <Textarea
+                  id="eventDescription"
+                  value={editForm.description}
+                  onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="eventVenue">Venue</Label>
+                <Input
+                  id="eventVenue"
+                  value={editForm.venue}
+                  onChange={(e) => setEditForm({ ...editForm, venue: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="eventDate">Event Date</Label>
+                <Input
+                  id="eventDate"
+                  type="date"
+                  value={editForm.eventDate}
+                  onChange={(e) => setEditForm({ ...editForm, eventDate: e.target.value })}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setEditingEvent(null)}>Cancel</Button>
+              <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
