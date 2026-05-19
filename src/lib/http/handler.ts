@@ -4,7 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { formatError } from './errors';
 
 export type RouteContext = {
-  params?: Promise<Record<string, string>>;
+  params: Promise<Record<string, string>>;
 };
 
 export type APIHandler = (
@@ -25,7 +25,7 @@ export function withErrorHandler(
   handler: APIHandler,
   options: HandlerOptions = {}
 ): APIHandler {
-  return async (request: NextRequest, context: RouteContext = {}) => {
+  return async (request: NextRequest, context: RouteContext) => {
     const requestId = request.headers.get('x-request-id') || generateRequestId();
 
     try {
