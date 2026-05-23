@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Upload, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import NextImage from 'next/image';
@@ -39,7 +40,17 @@ export default function NewRecordPage() {
     company: '',
     role: '',
     accessGroup: '',
+    email: '',
+    phone: '',
+    identificationType: 'qid' as 'qid' | 'passport',
     qidNumber: '',
+    qidExpiry: '',
+    passportNumber: '',
+    passportCountry: '',
+    passportExpiry: '',
+    hayyaNumber: '',
+    hayyaExpiry: '',
+    notes: '',
     hasBumpInAccess: true,
     bumpInStart: '',
     bumpInEnd: '',
@@ -127,7 +138,17 @@ export default function NewRecordPage() {
           company: formData.company,
           role: formData.role,
           accessGroup: formData.accessGroup,
-          qidNumber: formData.qidNumber || null,
+          email: formData.email || null,
+          phone: formData.phone || null,
+          identificationType: formData.identificationType,
+          qidNumber: formData.identificationType === 'qid' ? (formData.qidNumber || null) : null,
+          qidExpiry: formData.identificationType === 'qid' && formData.qidExpiry ? new Date(formData.qidExpiry).toISOString() : null,
+          passportNumber: formData.identificationType === 'passport' ? (formData.passportNumber || null) : null,
+          passportCountry: formData.identificationType === 'passport' ? (formData.passportCountry || null) : null,
+          passportExpiry: formData.identificationType === 'passport' && formData.passportExpiry ? new Date(formData.passportExpiry).toISOString() : null,
+          hayyaNumber: formData.identificationType === 'passport' ? (formData.hayyaNumber || null) : null,
+          hayyaExpiry: formData.identificationType === 'passport' && formData.hayyaExpiry ? new Date(formData.hayyaExpiry).toISOString() : null,
+          notes: formData.notes || null,
           hasBumpInAccess: formData.hasBumpInAccess,
           bumpInStart: formData.hasBumpInAccess && formData.bumpInStart ? new Date(formData.bumpInStart).toISOString() : null,
           bumpInEnd: formData.hasBumpInAccess && formData.bumpInEnd ? new Date(formData.bumpInEnd).toISOString() : null,
@@ -200,6 +221,17 @@ export default function NewRecordPage() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="email@example.com" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input id="phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} placeholder="+974 XXXX XXXX" />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="company">Company/Organization *</Label>
                   <Input id="company" value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })} />
@@ -225,9 +257,57 @@ export default function NewRecordPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="qidNumber">QID Number (Optional)</Label>
-                  <Input id="qidNumber" value={formData.qidNumber} onChange={(e) => setFormData({ ...formData, qidNumber: e.target.value })} placeholder="11 digit QID" maxLength={11} />
+                  <Label htmlFor="identificationType">Identification Type *</Label>
+                  <Select value={formData.identificationType} onValueChange={(value: 'qid' | 'passport') => setFormData({ ...formData, identificationType: value })}>
+                    <SelectTrigger id="identificationType">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="qid">QID</SelectItem>
+                      <SelectItem value="passport">Passport</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+
+                {formData.identificationType === 'qid' ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="qidNumber">QID Number *</Label>
+                      <Input id="qidNumber" value={formData.qidNumber} onChange={(e) => setFormData({ ...formData, qidNumber: e.target.value })} placeholder="11 digit QID" maxLength={11} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="qidExpiry">QID Expiry Date *</Label>
+                      <Input id="qidExpiry" type="date" value={formData.qidExpiry} onChange={(e) => setFormData({ ...formData, qidExpiry: e.target.value })} />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="passportNumber">Passport Number *</Label>
+                        <Input id="passportNumber" value={formData.passportNumber} onChange={(e) => setFormData({ ...formData, passportNumber: e.target.value })} placeholder="e.g. AB1234567" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="passportCountry">Issuing Country *</Label>
+                        <Input id="passportCountry" value={formData.passportCountry} onChange={(e) => setFormData({ ...formData, passportCountry: e.target.value })} />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="passportExpiry">Passport Expiry Date *</Label>
+                      <Input id="passportExpiry" type="date" value={formData.passportExpiry} onChange={(e) => setFormData({ ...formData, passportExpiry: e.target.value })} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="hayyaNumber">Hayya Number *</Label>
+                        <Input id="hayyaNumber" value={formData.hayyaNumber} onChange={(e) => setFormData({ ...formData, hayyaNumber: e.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="hayyaExpiry">Hayya Expiry Date *</Label>
+                        <Input id="hayyaExpiry" type="date" value={formData.hayyaExpiry} onChange={(e) => setFormData({ ...formData, hayyaExpiry: e.target.value })} />
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Profile Photo */}
                 <div className="space-y-2">
@@ -319,6 +399,21 @@ export default function NewRecordPage() {
                     </div>
                   )}
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Notes */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Notes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  placeholder="Optional notes about this accreditation..."
+                  rows={3}
+                />
               </CardContent>
             </Card>
 

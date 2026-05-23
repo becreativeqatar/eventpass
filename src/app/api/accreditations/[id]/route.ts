@@ -38,6 +38,8 @@ export const GET = withErrorHandler(async (
     include: {
       project: true,
       createdBy: { select: { id: true, name: true, email: true } },
+      approvedBy: { select: { id: true, name: true, email: true } },
+      revokedBy: { select: { id: true, name: true, email: true } },
       scans: {
         include: {
           scannedBy: { select: { id: true, name: true, email: true } },
@@ -52,7 +54,7 @@ export const GET = withErrorHandler(async (
     return NextResponse.json({ error: 'Accreditation not found' }, { status: 404 });
   }
 
-  return NextResponse.json({ data: transformAccreditation(accreditation) });
+  return NextResponse.json({ accreditation: transformAccreditation(accreditation) });
 }, { requireAuth: true });
 
 // PATCH /api/accreditations/[id] - Update accreditation
@@ -110,7 +112,7 @@ export const PATCH = withErrorHandler(async (
     },
   });
 
-  return NextResponse.json({ data: transformAccreditation(accreditation) });
+  return NextResponse.json({ accreditation: transformAccreditation(accreditation) });
 }, { requireAuth: true });
 
 // DELETE /api/accreditations/[id] - Delete accreditation

@@ -21,6 +21,8 @@ interface ParsedRecord {
   data: {
     firstName: string;
     lastName: string;
+    email?: string;
+    phone?: string;
     company: string;
     role: string;
     accessGroup: string;
@@ -66,9 +68,9 @@ export default function ImportAccreditationsPage({ params }: ImportAccreditation
 
   const downloadTemplate = () => {
     const template = [
-      'First Name,Last Name,Company,Role,Access Group,QID Number',
-      'John,Doe,ABC Company,Manager,VIP,12345678901',
-      'Jane,Smith,XYZ Corp,Director,General,98765432109',
+      'First Name,Last Name,Email,Phone,Company,Role,Access Group,QID Number',
+      'John,Doe,john@example.com,+974 1234 5678,ABC Company,Manager,VIP,12345678901',
+      'Jane,Smith,jane@example.com,+974 9876 5432,XYZ Corp,Director,General,98765432109',
     ].join('\n');
 
     const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' });
@@ -127,10 +129,12 @@ export default function ImportAccreditationsPage({ params }: ImportAccreditation
 
         const firstName = values[0] || '';
         const lastName = values[1] || '';
-        const company = values[2] || '';
-        const role = values[3] || '';
-        const accessGroup = values[4] || '';
-        const qidNumber = values[5] || '';
+        const email = values[2] || '';
+        const phone = values[3] || '';
+        const company = values[4] || '';
+        const role = values[5] || '';
+        const accessGroup = values[6] || '';
+        const qidNumber = values[7] || '';
 
         // Validate required fields
         if (!firstName) errors.push('First name is required');
@@ -156,6 +160,8 @@ export default function ImportAccreditationsPage({ params }: ImportAccreditation
           data: {
             firstName,
             lastName,
+            email,
+            phone,
             company,
             role,
             accessGroup,
@@ -202,7 +208,14 @@ export default function ImportAccreditationsPage({ params }: ImportAccreditation
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               projectId,
-              ...record.data,
+              firstName: record.data.firstName,
+              lastName: record.data.lastName,
+              email: record.data.email || null,
+              phone: record.data.phone || null,
+              company: record.data.company,
+              role: record.data.role,
+              accessGroup: record.data.accessGroup,
+              qidNumber: record.data.qidNumber || null,
               status: 'DRAFT',
               hasBumpInAccess: true,
               hasLiveAccess: true,

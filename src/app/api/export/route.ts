@@ -32,12 +32,19 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   const worksheet = workbook.addWorksheet('Accreditations');
 
   worksheet.columns = [
+    { header: 'Accreditation #', key: 'accreditationNumber', width: 16 },
     { header: 'First Name', key: 'firstName', width: 15 },
     { header: 'Last Name', key: 'lastName', width: 15 },
     { header: 'Email', key: 'email', width: 25 },
     { header: 'Phone', key: 'phone', width: 15 },
     { header: 'Company', key: 'company', width: 20 },
     { header: 'Role', key: 'role', width: 15 },
+    { header: 'Access Group', key: 'accessGroup', width: 15 },
+    { header: 'ID Type', key: 'idType', width: 10 },
+    { header: 'QID Number', key: 'qidNumber', width: 14 },
+    { header: 'QID Expiry', key: 'qidExpiry', width: 12 },
+    { header: 'Passport Number', key: 'passportNumber', width: 16 },
+    { header: 'Passport Expiry', key: 'passportExpiry', width: 14 },
     { header: 'Status', key: 'status', width: 12 },
     { header: 'Phases', key: 'phases', width: 25 },
     { header: 'Project', key: 'project', width: 20 },
@@ -57,12 +64,19 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
 
   accreditations.forEach((acc) => {
     worksheet.addRow({
+      accreditationNumber: acc.accreditationNumber,
       firstName: acc.firstName,
       lastName: acc.lastName,
       email: acc.email || '',
       phone: acc.phone || '',
       company: acc.company || '',
       role: acc.role || '',
+      accessGroup: acc.accessGroup,
+      idType: acc.identificationType?.toUpperCase() || 'QID',
+      qidNumber: acc.qidNumber || '',
+      qidExpiry: acc.qidExpiry?.toISOString().split('T')[0] || '',
+      passportNumber: acc.passportNumber || '',
+      passportExpiry: acc.passportExpiry?.toISOString().split('T')[0] || '',
       status: acc.status,
       phases: stringToPhases(acc.phases).join(', '),
       project: acc.project.name,

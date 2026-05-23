@@ -20,10 +20,13 @@ interface Accreditation {
   accreditationNumber: string;
   firstName: string;
   lastName: string;
+  email: string | null;
+  phone: string | null;
   company: string;
   role: string;
   accessGroup: string;
   photoUrl: string | null;
+  identificationType: 'qid' | 'passport';
   qidNumber: string | null;
   qidExpiry: string | null;
   passportNumber: string | null;
@@ -31,6 +34,7 @@ interface Accreditation {
   passportExpiry: string | null;
   hayyaNumber: string | null;
   hayyaExpiry: string | null;
+  notes: string | null;
   hasBumpInAccess: boolean;
   bumpInStart: string | null;
   bumpInEnd: string | null;
@@ -47,6 +51,15 @@ interface Accreditation {
     name: string;
     email: string;
   } | null;
+  revokedBy: {
+    name: string;
+    email: string;
+  } | null;
+  createdBy: {
+    name: string;
+    email: string;
+  };
+  createdAt: string;
   project: {
     id: string;
     name: string;
@@ -126,7 +139,7 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
     setIsSubmitting(true);
     try {
       const response = await fetch(`/api/accreditations/${accreditation.id}/approve`, {
-        method: 'POST',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes: approvalNotes }),
       });
@@ -154,7 +167,7 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
     setIsSubmitting(true);
     try {
       const response = await fetch(`/api/accreditations/${accreditation.id}/reject`, {
-        method: 'POST',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes: rejectionNotes }),
       });
@@ -430,6 +443,18 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                         <p className="text-sm text-muted-foreground">Access Group</p>
                         <Badge variant="outline">{accreditation.accessGroup}</Badge>
                       </div>
+                      {accreditation.email && (
+                        <div>
+                          <p className="text-sm text-muted-foreground">Email</p>
+                          <p className="font-medium">{accreditation.email}</p>
+                        </div>
+                      )}
+                      {accreditation.phone && (
+                        <div>
+                          <p className="text-sm text-muted-foreground">Phone</p>
+                          <p className="font-medium">{accreditation.phone}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -441,7 +466,7 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                   <CardTitle>Identification</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {accreditation.qidNumber ? (
+                  {accreditation.identificationType === 'qid' ? (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-muted-foreground">QID Number</p>
@@ -515,6 +540,27 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                       </p>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+
+              {/* Notes */}
+              {accreditation.notes && (
+                <Card className="bg-white shadow-sm border border-border">
+                  <CardHeader>
+                    <CardTitle>Notes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-foreground whitespace-pre-wrap">{accreditation.notes}</p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Created By */}
+              <Card className="bg-white shadow-sm border border-border">
+                <CardContent className="pt-4">
+                  <p className="text-xs text-muted-foreground">
+                    Created by {accreditation.createdBy?.name || accreditation.createdBy?.email} on {formatDateTime(accreditation.createdAt)}
+                  </p>
                 </CardContent>
               </Card>
 
