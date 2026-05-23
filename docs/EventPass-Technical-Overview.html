@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventPass - Technical Overview</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 22mm 24mm 22mm;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --brand: #101820;
+    --accent: #e0251c;
+    --accent-light: #fdf2f2;
+    --purple: #8232a7;
+    --text: #1e293b;
+    --text-muted: #999999;
+    --border: #d7d1ca;
+    --bg-subtle: #f5f5f5;
+    --success: #00c758;
+    --danger: #e0251c;
+    --warning: #edb200;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    font-size: 10pt;
+    line-height: 1.6;
+    background: white;
+  }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent), var(--purple), var(--accent));
+  }
+
+  .cover-logo {
+    width: 80px;
+    height: 80px;
+    background: var(--accent);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 32px rgba(224, 37, 28, 0.25);
+  }
+
+  .cover-logo svg {
+    width: 44px;
+    height: 44px;
+    fill: white;
+  }
+
+  .cover h1 {
+    font-size: 42pt;
+    font-weight: 800;
+    color: var(--brand);
+    letter-spacing: -1.5px;
+    margin-bottom: 8px;
+  }
+
+  .cover .subtitle {
+    font-size: 14pt;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-bottom: 48px;
+  }
+
+  .cover .meta-line {
+    font-size: 10pt;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .cover .company {
+    font-size: 12pt;
+    font-weight: 600;
+    color: var(--brand);
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 2px solid var(--border);
+    display: inline-block;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .cover .badge {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 6px 20px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 20px;
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    page-break-after: always;
+    padding-top: 16px;
+  }
+
+  .toc h2 {
+    font-size: 18pt;
+    color: var(--brand);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--accent);
+    display: inline-block;
+  }
+
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+  }
+
+  .toc-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .toc-list li a {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 11pt;
+  }
+
+  .toc-list li .toc-num {
+    color: var(--accent);
+    font-weight: 700;
+    margin-right: 12px;
+    min-width: 24px;
+    display: inline-block;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    page-break-inside: avoid;
+    margin-bottom: 28px;
+  }
+
+  .section-break {
+    page-break-before: always;
+  }
+
+  h2 {
+    font-size: 16pt;
+    font-weight: 700;
+    color: var(--brand);
+    margin-bottom: 6px;
+    margin-top: 28px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  h2 .sec-num {
+    color: var(--accent);
+    margin-right: 8px;
+  }
+
+  h3 {
+    font-size: 11.5pt;
+    font-weight: 700;
+    color: var(--brand);
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+
+  h3 .sec-num {
+    color: var(--accent);
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  p {
+    margin-bottom: 10px;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  /* ── TABLES ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 16px 0;
+    font-size: 9.5pt;
+  }
+
+  thead th {
+    background: var(--brand);
+    color: white;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 9pt;
+    letter-spacing: 0.3px;
+  }
+
+  thead th:first-child {
+    border-radius: 6px 0 0 0;
+  }
+
+  thead th:last-child {
+    border-radius: 0 6px 0 0;
+  }
+
+  tbody td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) {
+    background: var(--bg-subtle);
+  }
+
+  tbody tr:last-child td:first-child {
+    border-radius: 0 0 0 6px;
+  }
+
+  tbody tr:last-child td:last-child {
+    border-radius: 0 0 6px 0;
+  }
+
+  /* Permission matrix */
+  .perm-table td:not(:first-child),
+  .perm-table th:not(:first-child) {
+    text-align: center;
+    width: 70px;
+  }
+
+  .check {
+    color: var(--success);
+    font-weight: 700;
+    font-size: 12pt;
+  }
+
+  .cross {
+    color: #cbd5e1;
+    font-size: 10pt;
+  }
+
+  /* ── LISTS ── */
+  ul, ol {
+    margin: 8px 0 12px 20px;
+  }
+
+  li {
+    margin-bottom: 5px;
+  }
+
+  li strong {
+    color: var(--brand);
+  }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .callout p {
+    margin: 0;
+    color: var(--brand);
+    font-weight: 500;
+  }
+
+  /* ── WORKFLOW DIAGRAM ── */
+  .workflow-diagram {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 14px 0;
+    text-align: center;
+  }
+
+  .workflow-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .wf-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  .wf-draft { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+  .wf-pending { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+  .wf-approved { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .wf-rejected { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  .wf-revoked { background: #fce7f3; color: #9d174d; border: 1px solid #f9a8d4; }
+  .wf-reinstated { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+
+  .wf-arrow {
+    font-size: 14pt;
+    color: var(--text-muted);
+    margin: 0 2px;
+  }
+
+  .wf-down {
+    font-size: 12pt;
+    color: var(--text-muted);
+  }
+
+  /* ── ARCHITECTURE DIAGRAM ── */
+  .arch-diagram {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 14px 0;
+    text-align: center;
+  }
+
+  .arch-layer {
+    display: inline-block;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 12px 28px;
+    margin: 6px auto;
+    background: white;
+    min-width: 280px;
+  }
+
+  .arch-layer-title {
+    font-weight: 700;
+    font-size: 10pt;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .arch-layer-items {
+    font-size: 8.5pt;
+    color: var(--text-muted);
+  }
+
+  .arch-arrow {
+    font-size: 16pt;
+    color: var(--text-muted);
+    display: block;
+    margin: 2px 0;
+  }
+
+  .arch-services {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .arch-service {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 20px;
+    background: white;
+    min-width: 120px;
+  }
+
+  .arch-service-title {
+    font-weight: 700;
+    font-size: 9pt;
+    color: var(--brand);
+  }
+
+  .arch-service-desc {
+    font-size: 8pt;
+    color: var(--text-muted);
+  }
+
+
+  /* ── SCAN RESULTS ── */
+  .scan-result {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 8.5pt;
+    letter-spacing: 0.3px;
+  }
+
+  .scan-allowed { background: #dcfce7; color: #166534; }
+  .scan-denied { background: #fee2e2; color: #991b1b; }
+  .scan-expired { background: #fef3c7; color: #92400e; }
+  .scan-revoked { background: #fce7f3; color: #9d174d; }
+  .scan-wrong { background: #fff7ed; color: #9a3412; }
+
+
+  /* ── PRINT HELPERS ── */
+  .no-break { page-break-inside: avoid; }
+  .break-before { page-break-before: always; }
+
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- COVER PAGE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+  </div>
+  <h1>EventPass</h1>
+  <div class="subtitle">Event Accreditation & Access Control Platform</div>
+  <div class="badge">TECHNICAL OVERVIEW</div>
+  <div class="company">Be Creative Events</div>
+  <div class="meta-line" style="margin-top: 48px;">Document Version 1.0</div>
+  <div class="meta-line">May 2025</div>
+  <div class="meta-line" style="color: #94a3b8; margin-top: 8px;">CONFIDENTIAL</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="toc">
+  <h2>Contents</h2>
+  <ol class="toc-list">
+    <li><a href="#s1"><span class="toc-num">1</span> Executive Summary</a></li>
+    <li><a href="#s2"><span class="toc-num">2</span> Core Capabilities</a></li>
+    <li><a href="#s3"><span class="toc-num">3</span> Role-Based Access Control</a></li>
+    <li><a href="#s4"><span class="toc-num">4</span> Security & Compliance</a></li>
+    <li><a href="#s5"><span class="toc-num">5</span> Technical Architecture & Deployment</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 1. EXECUTIVE SUMMARY -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="section" id="s1">
+  <h2><span class="sec-num">1.</span> Executive Summary</h2>
+  <p>
+    EventPass is a purpose-built, web-based event accreditation and access control platform developed by
+    Be Creative Events. It provides end-to-end management of event credentials &mdash; from data entry
+    to approval through badge generation and real-time QR-based verification at entry points.
+  </p>
+  <p>
+    Designed for the operational demands of large-scale events in Qatar, EventPass handles multi-phase
+    access control (Bump-In, Live, Bump-Out), supports both Qatar ID (QID) and passport/Hayya
+    identification, and provides a complete audit trail for compliance and security reporting.
+  </p>
+  <div class="callout">
+    <p>The platform is currently deployed in production and has been used to manage accreditation for live events.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 2. CORE CAPABILITIES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="s2">
+  <h2><span class="sec-num">2.</span> Core Capabilities</h2>
+
+  <!-- 2.1 -->
+  <h3><span class="sec-num">2.1</span> Accreditation Management</h3>
+
+  <table>
+    <thead>
+      <tr><th style="width:180px">Capability</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Record Creation</strong></td><td>Create individual accreditation records with personal details, identification documents, company/role, and access group assignment.</td></tr>
+      <tr><td><strong>Bulk Import</strong></td><td>Import hundreds of records at once via Excel/CSV upload with automatic validation and error reporting per row.</td></tr>
+      <tr><td><strong>Auto-Numbering</strong></td><td>Sequential accreditation numbers (ACC-0001, ACC-0002, ...) generated automatically for tracking and reference.</td></tr>
+      <tr><td><strong>Photo Management</strong></td><td>Upload or capture photos for each accredited individual, stored securely in cloud storage for badge and verification use.</td></tr>
+      <tr><td><strong>Flexible Identification</strong></td><td>Supports Qatar ID (QID, 11-digit format) and Passport with Hayya visa tracking, including document expiry monitoring.</td></tr>
+      <tr><td><strong>Access Groups</strong></td><td>Categorise accredited individuals into groups (VIP, Media, Staff, General, or custom groups defined per event) for differentiated access.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 2.2 -->
+  <h3><span class="sec-num">2.2</span> Approval Workflow</h3>
+  <p>EventPass implements a structured approval workflow to ensure only verified individuals receive event access:</p>
+
+  <div class="workflow-diagram">
+    <div class="workflow-flow">
+      <span class="wf-box wf-draft">DRAFT</span>
+      <span class="wf-arrow">&rarr;</span>
+      <span class="wf-box wf-pending">PENDING</span>
+      <span class="wf-arrow">&rarr;</span>
+      <span class="wf-box wf-approved">APPROVED</span>
+      <span class="wf-arrow">&rarr;</span>
+      <span class="wf-box wf-revoked">REVOKED</span>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 100px; margin-top: 6px;">
+      <div>
+        <span class="wf-down">&darr;</span><br>
+        <span class="wf-box wf-rejected">REJECTED</span><br>
+        <span class="wf-down">&darr;</span><br>
+        <span class="wf-box wf-draft" style="font-size: 7.5pt;">RETURN TO DRAFT</span>
+      </div>
+      <div>
+        <span class="wf-down">&darr;</span><br>
+        <span class="wf-box wf-reinstated">REINSTATED</span>
+      </div>
+    </div>
+  </div>
+
+  <ul>
+    <li><strong>Draft</strong> &mdash; Records can be saved in progress and edited before submission.</li>
+    <li><strong>Pending</strong> &mdash; Submitted for review; administrators and managers receive email notifications.</li>
+    <li><strong>Approved</strong> &mdash; Verified and cleared for event access; QR code becomes active.</li>
+    <li><strong>Rejected</strong> &mdash; Denied with a mandatory reason; can be returned to draft for correction.</li>
+    <li><strong>Revoked</strong> &mdash; Emergency cancellation; QR code is immediately invalidated.</li>
+    <li><strong>Reinstated</strong> &mdash; A revoked or rejected accreditation restored by authorised personnel.</li>
+  </ul>
+  <p>Every status transition is recorded in a tamper-evident audit trail with the acting user, timestamp, and notes.</p>
+
+  <!-- 2.3 -->
+  <div class="section-break"></div>
+  <h3><span class="sec-num">2.3</span> Multi-Phase Access Control</h3>
+  <p>Events are divided into up to three operational phases, each with independently configurable date/time windows:</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:120px">Phase</th><th>Typical Use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Bump-In</strong></td><td>Venue setup and preparation period. Grants access to crew, contractors, and technical staff before the event opens.</td></tr>
+      <tr><td><strong>Live</strong></td><td>The main event period. Controls access for attendees, VIPs, media, and staff during the live event.</td></tr>
+      <tr><td><strong>Bump-Out</strong></td><td>Post-event teardown. Manages access for dismantling crews and equipment removal.</td></tr>
+    </tbody>
+  </table>
+
+  <ul>
+    <li>Each accredited individual can be assigned access to one or more phases.</li>
+    <li>Per-individual date overrides allow fine-grained control (e.g., a contractor with Bump-In access only on specific setup days).</li>
+    <li>The system enforces phase boundaries during QR scanning &mdash; an individual with only Live access will be denied during Bump-In.</li>
+  </ul>
+
+  <!-- 2.4 -->
+  <h3><span class="sec-num">2.4</span> QR Code Verification & Scanning</h3>
+
+  <table>
+    <thead>
+      <tr><th style="width:180px">Feature</th><th>Detail</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>QR Generation</strong></td><td>Unique QR codes generated per approved accreditation, linking to a secure verification token.</td></tr>
+      <tr><td><strong>Batch Generation</strong></td><td>Generate and export QR codes for an entire event or specific records as a downloadable ZIP.</td></tr>
+      <tr><td><strong>Real-Time Scanning</strong></td><td>Mobile-optimised scanner interface using the device camera; results displayed instantly with visual pass/fail indicators.</td></tr>
+      <tr><td><strong>Multi-Factor Verification</strong></td><td>Each scan performs a 5-step check: accreditation status, ID document expiry, phase access rights, phase date/time validity, and overall accreditation validity.</td></tr>
+      <tr><td><strong>Scan Logging</strong></td><td>Every scan attempt is logged with timestamp, scanner identity, device info, IP address, and scan result.</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top: 12px; margin-bottom: 6px; font-weight: 600;">Scan Result Types:</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:140px">Result</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="scan-result scan-allowed">ALLOWED</span></td><td>All checks passed &mdash; grant entry.</td></tr>
+      <tr><td><span class="scan-result scan-denied">DENIED</span></td><td>Accreditation not in approved status.</td></tr>
+      <tr><td><span class="scan-result scan-expired">EXPIRED</span></td><td>Accreditation or ID document has expired.</td></tr>
+      <tr><td><span class="scan-result scan-revoked">REVOKED</span></td><td>Accreditation has been manually revoked.</td></tr>
+      <tr><td><span class="scan-result scan-wrong">WRONG PHASE</span></td><td>Individual does not have access for the current phase or outside the valid date window.</td></tr>
+      <tr><td><span class="scan-result scan-expired">ID EXPIRED</span></td><td>QID, passport, or Hayya visa has expired.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 2.5 -->
+  <h3><span class="sec-num">2.5</span> Event (Project) Management</h3>
+  <ul>
+    <li><strong>Multi-Event Support</strong> &mdash; Manage multiple events with one active at a time; each event maintains its own accreditation records, access groups, and phase configuration. Completed events remain accessible for reporting.</li>
+    <li><strong>Event Lifecycle</strong> &mdash; Events progress through Draft, Active, Completed, and Archived states.</li>
+    <li><strong>Event Switching</strong> &mdash; Operators can switch between events via a sidebar selector; the interface automatically adjusts to show relevant records and enforce read-only mode for completed events.</li>
+    <li><strong>Read-Only Protection</strong> &mdash; Completed and archived events are protected from accidental modification while remaining fully accessible for reporting and audit.</li>
+  </ul>
+
+  <!-- 2.6 -->
+  <h3><span class="sec-num">2.6</span> Reporting & Analytics</h3>
+  <ul>
+    <li><strong>Dashboard</strong> &mdash; Real-time statistics for the active event: total accreditations, status breakdown, recent scan activity.</li>
+    <li><strong>Scan History</strong> &mdash; Searchable, filterable log of all scan events across all entry points.</li>
+    <li><strong>Reports</strong> &mdash; Generate summary, by-project, by-company, and scan-activity reports.</li>
+    <li><strong>Excel Export</strong> &mdash; Export accreditation records and scan history to Excel for offline analysis or submission to event stakeholders.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 3. ROLE-BASED ACCESS CONTROL -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="break-before" id="s3">
+  <h2><span class="sec-num">3.</span> Role-Based Access Control</h2>
+  <p>EventPass implements four distinct user roles with granular permissions:</p>
+
+  <table class="perm-table">
+    <thead>
+      <tr>
+        <th>Permission</th>
+        <th>Admin</th>
+        <th>Manager</th>
+        <th>Staff</th>
+        <th>Validator</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Create/edit accreditations</td><td><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td></tr>
+      <tr><td>Submit for approval</td><td><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td></tr>
+      <tr><td>Approve/reject accreditations</td><td><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td></tr>
+      <tr><td>Revoke/reinstate accreditations</td><td><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td></tr>
+      <tr><td>Create/manage events</td><td><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td></tr>
+      <tr><td>Bulk import/export</td><td><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td></tr>
+      <tr><td>Scan QR codes</td><td><span class="check">&#10003;</span></td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td><td><span class="check">&#10003;</span></td></tr>
+      <tr><td>Manage users</td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td></tr>
+      <tr><td>Archive events</td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td></tr>
+      <tr><td>System settings</td><td><span class="check">&#10003;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td><td><span class="cross">&mdash;</span></td></tr>
+    </tbody>
+  </table>
+
+  <ul>
+    <li><strong>Admin</strong> &mdash; Full system access including user management and system configuration.</li>
+    <li><strong>Manager</strong> &mdash; Operational control over events and accreditations; cannot manage other users.</li>
+    <li><strong>Staff</strong> &mdash; Data entry role for creating and editing accreditation records.</li>
+    <li><strong>Validator</strong> &mdash; Scan-only access for gate/checkpoint personnel; purpose-built mobile scanning interface.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 4. SECURITY & COMPLIANCE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="break-before" id="s4">
+  <h2><span class="sec-num">4.</span> Security & Compliance</h2>
+
+  <h3><span class="sec-num">4.1</span> Authentication & Authorisation</h3>
+  <ul>
+    <li><strong>JWT-Based Authentication</strong> &mdash; Secure session management using industry-standard JSON Web Tokens.</li>
+    <li><strong>Password Security</strong> &mdash; All passwords hashed using bcrypt with a cost factor of 12; no plaintext storage.</li>
+    <li><strong>Invite-Only Registration</strong> &mdash; Users are created by administrators and receive a secure, time-limited email invitation to set their password.</li>
+    <li><strong>Password Reset</strong> &mdash; Secure token-based password reset flow with automatic token expiration and single-use enforcement.</li>
+    <li><strong>Route Protection</strong> &mdash; Server-side middleware enforces authentication on all protected routes; unauthenticated requests are redirected.</li>
+  </ul>
+
+  <h3><span class="sec-num">4.2</span> Data Security</h3>
+  <ul>
+    <li><strong>Server-Side Rendering</strong> &mdash; All sensitive operations execute server-side; client-side code never handles credentials or raw database access.</li>
+    <li><strong>Input Validation</strong> &mdash; Every API endpoint validates input using schema-based validation (Zod) with strict type checking. No unvalidated data reaches the database.</li>
+    <li><strong>Role Enforcement</strong> &mdash; Permission checks are enforced at the API layer, not just the UI; even direct API calls are subject to role verification.</li>
+    <li><strong>Unique Verification Tokens</strong> &mdash; Each accreditation receives a cryptographically unique token for QR verification; tokens cannot be guessed or enumerated.</li>
+  </ul>
+
+  <h3><span class="sec-num">4.3</span> Audit Trail</h3>
+  <ul>
+    <li><strong>Immutable Records</strong> &mdash; All status transitions and scan attempts are permanently logged and cannot be modified or deleted.</li>
+    <li><strong>Full Attribution</strong> &mdash; Every entry records the acting user, timestamp, and reason for compliance and post-event reporting.</li>
+  </ul>
+
+  <h3><span class="sec-num">4.4</span> ID Document Compliance</h3>
+  <ul>
+    <li><strong>Qatar ID (QID) Validation</strong> &mdash; Enforces the 11-digit QID format with expiry date tracking.</li>
+    <li><strong>Passport + Hayya Tracking</strong> &mdash; For non-QID holders, tracks passport details alongside Hayya visa number and expiry, ensuring compliance with Qatar entry requirements.</li>
+    <li><strong>Expiry Enforcement</strong> &mdash; The system prevents QR verification if identification documents have expired, with advance warnings for approaching expiry dates.</li>
+    <li><strong>Expiry Coverage Check</strong> &mdash; At the point of accreditation creation, the system validates that ID documents remain valid through the end of all assigned event phases.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- 5. TECHNICAL ARCHITECTURE & DEPLOYMENT -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="break-before" id="s5">
+  <h2><span class="sec-num">5.</span> Technical Architecture & Deployment</h2>
+
+  <h3><span class="sec-num">5.1</span> Technology Stack</h3>
+
+  <table>
+    <thead>
+      <tr><th style="width:160px">Layer</th><th>Technology</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Application</strong></td><td>Next.js 16 (React 19), TypeScript 5 strict mode</td></tr>
+      <tr><td><strong>Database</strong></td><td>PostgreSQL with Prisma 5 ORM</td></tr>
+      <tr><td><strong>Authentication</strong></td><td>NextAuth.js (JWT strategy)</td></tr>
+      <tr><td><strong>File Storage</strong></td><td>Supabase Storage (cloud-hosted)</td></tr>
+      <tr><td><strong>Email</strong></td><td>Resend (transactional notifications)</td></tr>
+      <tr><td><strong>Hosting</strong></td><td>Vercel (serverless, auto-scaling, HTTPS enforced)</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="sec-num">5.2</span> Architecture Overview</h3>
+
+  <div class="arch-diagram">
+    <div class="arch-layer" style="border-color: var(--accent); background: var(--accent-light);">
+      <div class="arch-layer-title">Client (Browser)</div>
+      <div class="arch-layer-items">React 19 / Next.js SSR &nbsp;&bull;&nbsp; Mobile QR Scanner</div>
+    </div>
+    <div class="arch-arrow">&darr; &nbsp;HTTPS&nbsp; &darr;</div>
+    <div class="arch-layer">
+      <div class="arch-layer-title">Next.js App Router</div>
+      <div class="arch-layer-items">Server Components &nbsp;&bull;&nbsp; REST API Routes &nbsp;&bull;&nbsp; Auth Middleware</div>
+    </div>
+    <div class="arch-arrow">&darr;</div>
+    <div class="arch-services">
+      <div class="arch-service">
+        <div class="arch-service-title">PostgreSQL</div>
+        <div class="arch-service-desc">Records, Users, Scans, Audit Log</div>
+      </div>
+      <div class="arch-service">
+        <div class="arch-service-title">Supabase Storage</div>
+        <div class="arch-service-desc">Photos & Attachments</div>
+      </div>
+      <div class="arch-service">
+        <div class="arch-service-title">Resend</div>
+        <div class="arch-service-desc">Transactional Email</div>
+      </div>
+    </div>
+  </div>
+
+  <h3><span class="sec-num">5.3</span> Deployment</h3>
+  <p>The platform is deployed on Vercel with automated CI/CD pipelines, managed PostgreSQL with automated backups, and structured logging with request ID correlation for monitoring. The serverless architecture scales automatically with no manual server management.</p>
+</div>
+
+<div style="margin-top: 40px;">
+  <p style="text-align: center; font-size: 8.5pt; color: var(--text-muted); font-style: italic;">
+    This document describes the EventPass platform as currently deployed in production.<br>
+    Feature availability and specifications are subject to ongoing development and enhancement.
+  </p>
+</div>
+
+</body>
+</html>
