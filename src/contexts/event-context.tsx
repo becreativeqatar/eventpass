@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export interface EventSummary {
   id: string;
@@ -39,6 +40,7 @@ function getCookie(): string | null {
 
 export function EventProvider({ children }: { children: ReactNode }) {
   const { status } = useSession();
+  const router = useRouter();
   const [events, setEvents] = useState<EventSummary[]>([]);
   const [selectedProject, setSelectedProject] = useState<EventSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,8 +84,9 @@ export function EventProvider({ children }: { children: ReactNode }) {
       setSelectedProject(event);
       setCookie(id);
       localStorage.setItem(LS_KEY, id);
+      router.refresh();
     },
-    [events]
+    [events, router]
   );
 
   const isReadOnly = selectedProject?.status !== 'ACTIVE';
