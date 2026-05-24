@@ -46,7 +46,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
   });
 
   const [filters, setFilters] = useState({
-    status: 'APPROVED',
+    status: searchParams.get('status') || 'all',
     accessGroup: 'all',
     q: '',
   });
