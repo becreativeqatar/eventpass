@@ -212,8 +212,9 @@ export const createAccreditationSchema = z.object({
   message: 'At least one access phase must be selected',
   path: ['hasBumpInAccess'],
 })
-// Validate Bump-In dates if access is enabled
+// Validate Bump-In dates if access is enabled (skip for DRAFT)
 .refine((data) => {
+  if (data.status === 'DRAFT') return true;
   if (data.hasBumpInAccess) {
     if (!data.bumpInStart || !data.bumpInEnd) {
       return false;
@@ -227,8 +228,9 @@ export const createAccreditationSchema = z.object({
   message: 'Valid Bump-In start and end dates are required when Bump-In access is enabled',
   path: ['bumpInStart'],
 })
-// Validate Live dates if access is enabled
+// Validate Live dates if access is enabled (skip for DRAFT)
 .refine((data) => {
+  if (data.status === 'DRAFT') return true;
   if (data.hasLiveAccess) {
     if (!data.liveStart || !data.liveEnd) {
       return false;
@@ -242,8 +244,9 @@ export const createAccreditationSchema = z.object({
   message: 'Valid Live start and end dates are required when Live access is enabled',
   path: ['liveStart'],
 })
-// Validate Bump-Out dates if access is enabled
+// Validate Bump-Out dates if access is enabled (skip for DRAFT)
 .refine((data) => {
+  if (data.status === 'DRAFT') return true;
   if (data.hasBumpOutAccess) {
     if (!data.bumpOutStart || !data.bumpOutEnd) {
       return false;
