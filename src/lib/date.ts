@@ -52,11 +52,19 @@ export function parseEventDate(dateStr: string | null | undefined): Date | null 
 /**
  * Convert an ISO date string (from DB) to YYYY-MM-DD in Qatar timezone for display.
  * Use this instead of .slice(0, 10) or .toISOString().split('T')[0].
+ *
+ * When given a Date object (e.g., from calendar picker), extracts the local date
+ * components directly — the user picked that date visually.
+ * When given a string (from DB/API), interprets it in Qatar timezone.
  */
 export function toQatarDateString(iso: string | Date | null | undefined): string {
   if (!iso) return '';
-  const d = typeof iso === 'string' ? new Date(iso) : iso;
-  // Format in Qatar timezone (UTC+3)
+  if (iso instanceof Date) {
+    // Date from calendar picker — use local date components (what user clicked)
+    return `${iso.getFullYear()}-${String(iso.getMonth() + 1).padStart(2, '0')}-${String(iso.getDate()).padStart(2, '0')}`;
+  }
+  // String from DB — convert UTC to Qatar timezone
+  const d = new Date(iso);
   const qatarTime = new Date(d.getTime() + QATAR_OFFSET_HOURS * 60 * 60 * 1000);
   return `${qatarTime.getUTCFullYear()}-${String(qatarTime.getUTCMonth() + 1).padStart(2, '0')}-${String(qatarTime.getUTCDate()).padStart(2, '0')}`;
 }

@@ -27,6 +27,11 @@ interface DatePickerProps {
 function toDate(value: Date | string | null | undefined): Date | undefined {
   if (!value) return undefined
   if (value instanceof Date) return value
+  // Parse YYYY-MM-DD as local date (not UTC) to avoid off-by-one timezone issues
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (match) {
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+  }
   const parsed = new Date(value)
   return isNaN(parsed.getTime()) ? undefined : parsed
 }
