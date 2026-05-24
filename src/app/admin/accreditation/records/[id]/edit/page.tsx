@@ -39,7 +39,29 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+  const [fieldWarnings, setFieldWarnings] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const validateEmail = (email: string) => {
+    if (!email) { setFieldWarnings(prev => ({ ...prev, email: '' })); return; }
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setFieldWarnings(prev => ({ ...prev, email: valid ? '' : 'Invalid email format' }));
+  };
+
+  const validateExpiryDate = (field: string, dateStr: string) => {
+    if (!dateStr) { setFieldWarnings(prev => ({ ...prev, [field]: '' })); return; }
+    const phaseEnds: string[] = [];
+    if (formData.hasBumpInAccess && formData.bumpInEnd) phaseEnds.push(formData.bumpInEnd);
+    if (formData.hasLiveAccess && formData.liveEnd) phaseEnds.push(formData.liveEnd);
+    if (formData.hasBumpOutAccess && formData.bumpOutEnd) phaseEnds.push(formData.bumpOutEnd);
+    const latestEnd = phaseEnds.sort().pop();
+    if (latestEnd && dateStr < latestEnd) {
+      setFieldWarnings(prev => ({ ...prev, [field]: 'ID expires before access period ends' }));
+    } else {
+      setFieldWarnings(prev => ({ ...prev, [field]: '' }));
+    }
+  };
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -175,10 +197,20 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
   const handleSubmit = async (submitForApproval: boolean = false) => {
     if (!accreditationId) return;
 
-    if (!formData.firstName || !formData.lastName || !formData.company || !formData.role || !formData.accessGroup) {
-      toast.error('Please fill in all required fields');
+    const errors: Record<string, boolean> = {};
+    if (!formData.firstName) errors.firstName = true;
+    if (!formData.lastName) errors.lastName = true;
+    if (!formData.company) errors.company = true;
+    if (!formData.role) errors.role = true;
+    if (!formData.accessGroup) errors.accessGroup = true;
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      const fields = Object.keys(errors).map(k => k.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()));
+      toast.error(`Required: ${fields.join(', ')}`);
       return;
     }
+    setFieldErrors({});
 
     setIsSubmitting(true);
 
@@ -196,22 +228,22 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
           accessGroup: formData.accessGroup,
           identificationType: formData.identificationType,
           qidNumber: formData.identificationType === 'qid' ? (formData.qidNumber || null) : null,
-          qidExpiry: formData.identificationType === 'qid' && formData.qidExpiry ? new Date(formData.qidExpiry).toISOString() : null,
+          qidExpiry: formData.identificationType === 'qid' && formData.qidExpiry ? formData.qidExpiry : null,
           passportNumber: formData.identificationType === 'passport' ? (formData.passportNumber || null) : null,
           passportCountry: formData.identificationType === 'passport' ? (formData.passportCountry || null) : null,
-          passportExpiry: formData.identificationType === 'passport' && formData.passportExpiry ? new Date(formData.passportExpiry).toISOString() : null,
+          passportExpiry: formData.identificationType === 'passport' && formData.passportExpiry ? formData.passportExpiry : null,
           hayyaNumber: formData.identificationType === 'passport' ? (formData.hayyaNumber || null) : null,
-          hayyaExpiry: formData.identificationType === 'passport' && formData.hayyaExpiry ? new Date(formData.hayyaExpiry).toISOString() : null,
+          hayyaExpiry: formData.identificationType === 'passport' && formData.hayyaExpiry ? formData.hayyaExpiry : null,
           notes: formData.notes || null,
           hasBumpInAccess: formData.hasBumpInAccess,
-          bumpInStart: formData.hasBumpInAccess && formData.bumpInStart ? new Date(formData.bumpInStart).toISOString() : null,
-          bumpInEnd: formData.hasBumpInAccess && formData.bumpInEnd ? new Date(formData.bumpInEnd).toISOString() : null,
+          bumpInStart: formData.hasBumpInAccess && formData.bumpInStart ? formData.bumpInStart : null,
+          bumpInEnd: formData.hasBumpInAccess && formData.bumpInEnd ? formData.bumpInEnd : null,
           hasLiveAccess: formData.hasLiveAccess,
-          liveStart: formData.hasLiveAccess && formData.liveStart ? new Date(formData.liveStart).toISOString() : null,
-          liveEnd: formData.hasLiveAccess && formData.liveEnd ? new Date(formData.liveEnd).toISOString() : null,
+          liveStart: formData.hasLiveAccess && formData.liveStart ? formData.liveStart : null,
+          liveEnd: formData.hasLiveAccess && formData.liveEnd ? formData.liveEnd : null,
           hasBumpOutAccess: formData.hasBumpOutAccess,
-          bumpOutStart: formData.hasBumpOutAccess && formData.bumpOutStart ? new Date(formData.bumpOutStart).toISOString() : null,
-          bumpOutEnd: formData.hasBumpOutAccess && formData.bumpOutEnd ? new Date(formData.bumpOutEnd).toISOString() : null,
+          bumpOutStart: formData.hasBumpOutAccess && formData.bumpOutStart ? formData.bumpOutStart : null,
+          bumpOutEnd: formData.hasBumpOutAccess && formData.bumpOutEnd ? formData.bumpOutEnd : null,
         }),
       });
 
@@ -297,7 +329,8 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   <Input
                     id="firstName"
                     value={formData.firstName}
-                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }); setFieldErrors(prev => ({ ...prev, firstName: false })); }}
+                    className={fieldErrors.firstName ? 'border-destructive' : ''}
                   />
                 </div>
                 <div className="space-y-2">
@@ -305,7 +338,8 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   <Input
                     id="lastName"
                     value={formData.lastName}
-                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    onChange={(e) => { setFormData({ ...formData, lastName: e.target.value }); setFieldErrors(prev => ({ ...prev, lastName: false })); }}
+                    className={fieldErrors.lastName ? 'border-destructive' : ''}
                   />
                 </div>
               </div>
@@ -313,7 +347,8 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="email@example.com" />
+                  <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} onBlur={(e) => validateEmail(e.target.value)} placeholder="email@example.com" className={fieldWarnings.email ? 'border-warning' : ''} />
+                  {fieldWarnings.email && <p className="text-xs text-warning">{fieldWarnings.email}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
@@ -326,7 +361,8 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                 <Input
                   id="company"
                   value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                  onChange={(e) => { setFormData({ ...formData, company: e.target.value }); setFieldErrors(prev => ({ ...prev, company: false })); }}
+                  className={fieldErrors.company ? 'border-destructive' : ''}
                 />
               </div>
 
@@ -335,7 +371,8 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                 <Input
                   id="role"
                   value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  onChange={(e) => { setFormData({ ...formData, role: e.target.value }); setFieldErrors(prev => ({ ...prev, role: false })); }}
+                  className={fieldErrors.role ? 'border-destructive' : ''}
                 />
               </div>
 
@@ -379,7 +416,12 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="qidExpiry">QID Expiry Date *</Label>
-                    <DatePicker value={formData.qidExpiry} onChange={(date) => setFormData(prev => ({ ...prev, qidExpiry: date ? toQatarDateString(date) : '' }))} />
+                    <DatePicker value={formData.qidExpiry} onChange={(date) => {
+                      const val = date ? toQatarDateString(date) : '';
+                      setFormData(prev => ({ ...prev, qidExpiry: val }));
+                      validateExpiryDate('qidExpiry', val);
+                    }} />
+                    {fieldWarnings.qidExpiry && <p className="text-xs text-warning">{fieldWarnings.qidExpiry}</p>}
                   </div>
                 </div>
               ) : (
@@ -396,7 +438,12 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="passportExpiry">Passport Expiry Date *</Label>
-                    <DatePicker value={formData.passportExpiry} onChange={(date) => setFormData(prev => ({ ...prev, passportExpiry: date ? toQatarDateString(date) : '' }))} />
+                    <DatePicker value={formData.passportExpiry} onChange={(date) => {
+                      const val = date ? toQatarDateString(date) : '';
+                      setFormData(prev => ({ ...prev, passportExpiry: val }));
+                      validateExpiryDate('passportExpiry', val);
+                    }} />
+                    {fieldWarnings.passportExpiry && <p className="text-xs text-warning">{fieldWarnings.passportExpiry}</p>}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -405,7 +452,12 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="hayyaExpiry">Hayya / Visit Visa Expiry *</Label>
-                      <DatePicker value={formData.hayyaExpiry} onChange={(date) => setFormData(prev => ({ ...prev, hayyaExpiry: date ? toQatarDateString(date) : '' }))} />
+                      <DatePicker value={formData.hayyaExpiry} onChange={(date) => {
+                        const val = date ? toQatarDateString(date) : '';
+                        setFormData(prev => ({ ...prev, hayyaExpiry: val }));
+                        validateExpiryDate('hayyaExpiry', val);
+                      }} />
+                      {fieldWarnings.hayyaExpiry && <p className="text-xs text-warning">{fieldWarnings.hayyaExpiry}</p>}
                     </div>
                   </div>
                 </>
