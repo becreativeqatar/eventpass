@@ -22,10 +22,10 @@ export async function GET(request: NextRequest) {
         where: {
           projectId: activeProject.id,
           OR: [
-            { firstName: { contains: q } },
-            { lastName: { contains: q } },
-            { company: { contains: q } },
-            { accreditationNumber: { contains: q } },
+            { firstName: { contains: q, mode: 'insensitive' as const } },
+            { lastName: { contains: q, mode: 'insensitive' as const } },
+            { company: { contains: q, mode: 'insensitive' as const } },
+            { accreditationNumber: { contains: q, mode: 'insensitive' as const } },
           ],
         },
         select: {
@@ -47,8 +47,8 @@ export async function GET(request: NextRequest) {
       ? await prisma.user.findMany({
           where: {
             OR: [
-              { name: { contains: q } },
-              { email: { contains: q } },
+              { name: { contains: q, mode: 'insensitive' as const } },
+              { email: { contains: q, mode: 'insensitive' as const } },
             ],
           },
           select: {

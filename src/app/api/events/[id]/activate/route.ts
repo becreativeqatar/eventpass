@@ -20,6 +20,14 @@ export async function PATCH(
 
     const { id } = await params;
 
+    const existing = await prisma.accreditationProject.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
+    if (!['DRAFT', 'COMPLETED'].includes(existing.status)) {
+      return NextResponse.json({ error: `Cannot activate an event with status ${existing.status}` }, { status: 400 });
+    }
+
     const event = await prisma.accreditationProject.update({
       where: { id },
       data: { status: 'ACTIVE' },

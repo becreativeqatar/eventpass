@@ -173,6 +173,7 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
 
       toast.success(status === 'DRAFT' ? 'Draft saved successfully' : 'Submitted for approval');
       router.push(`/admin/accreditation/projects/${projectId}/records`);
+      router.refresh();
     } catch (error) {
       console.error('Error creating accreditation:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to create accreditation');
@@ -330,14 +331,14 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
                         <Label htmlFor="bumpInStart">Start Date</Label>
                         <DatePicker
                           value={formData.bumpInStart}
-                          onChange={(date) => setFormData({ ...formData, bumpInStart: date?.toISOString().split('T')[0] ?? '' })}
+                          onChange={(date) => setFormData({ ...formData, bumpInStart: date ? toQatarDateString(date) : '' })}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpInEnd">End Date</Label>
                         <DatePicker
                           value={formData.bumpInEnd}
-                          onChange={(date) => setFormData({ ...formData, bumpInEnd: date?.toISOString().split('T')[0] ?? '' })}
+                          onChange={(date) => setFormData({ ...formData, bumpInEnd: date ? toQatarDateString(date) : '' })}
                         />
                       </div>
                     </div>
@@ -360,14 +361,14 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
                         <Label htmlFor="liveStart">Start Date</Label>
                         <DatePicker
                           value={formData.liveStart}
-                          onChange={(date) => setFormData({ ...formData, liveStart: date?.toISOString().split('T')[0] ?? '' })}
+                          onChange={(date) => setFormData({ ...formData, liveStart: date ? toQatarDateString(date) : '' })}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="liveEnd">End Date</Label>
                         <DatePicker
                           value={formData.liveEnd}
-                          onChange={(date) => setFormData({ ...formData, liveEnd: date?.toISOString().split('T')[0] ?? '' })}
+                          onChange={(date) => setFormData({ ...formData, liveEnd: date ? toQatarDateString(date) : '' })}
                         />
                       </div>
                     </div>
@@ -390,14 +391,14 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
                         <Label htmlFor="bumpOutStart">Start Date</Label>
                         <DatePicker
                           value={formData.bumpOutStart}
-                          onChange={(date) => setFormData({ ...formData, bumpOutStart: date?.toISOString().split('T')[0] ?? '' })}
+                          onChange={(date) => setFormData({ ...formData, bumpOutStart: date ? toQatarDateString(date) : '' })}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutEnd">End Date</Label>
                         <DatePicker
                           value={formData.bumpOutEnd}
-                          onChange={(date) => setFormData({ ...formData, bumpOutEnd: date?.toISOString().split('T')[0] ?? '' })}
+                          onChange={(date) => setFormData({ ...formData, bumpOutEnd: date ? toQatarDateString(date) : '' })}
                         />
                       </div>
                     </div>

@@ -49,8 +49,8 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
     ...(query.role && { role: query.role }),
     ...(query.q && {
       OR: [
-        { name: { contains: query.q } },
-        { email: { contains: query.q } },
+        { name: { contains: query.q, mode: 'insensitive' as const } },
+        { email: { contains: query.q, mode: 'insensitive' as const } },
       ],
     }),
   };

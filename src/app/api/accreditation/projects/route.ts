@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { parsePhaseStart, parsePhaseEnd } from '@/lib/date';
 
 // GET - List all accreditation projects
 export async function GET() {
@@ -65,12 +66,12 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         code,
-        bumpInStart: new Date(bumpInStart),
-        bumpInEnd: new Date(bumpInEnd),
-        liveStart: new Date(liveStart),
-        liveEnd: new Date(liveEnd),
-        bumpOutStart: new Date(bumpOutStart),
-        bumpOutEnd: new Date(bumpOutEnd),
+        bumpInStart: parsePhaseStart(bumpInStart),
+        bumpInEnd: parsePhaseEnd(bumpInEnd),
+        liveStart: parsePhaseStart(liveStart),
+        liveEnd: parsePhaseEnd(liveEnd),
+        bumpOutStart: parsePhaseStart(bumpOutStart),
+        bumpOutEnd: parsePhaseEnd(bumpOutEnd),
         accessGroups: accessGroupsStr,
         createdById: session.user.id,
       },

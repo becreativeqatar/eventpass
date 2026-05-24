@@ -25,6 +25,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { toQatarDateString } from '@/lib/date';
 import {
   createAccreditationSchema,
   AccreditationStatus,
@@ -80,9 +81,7 @@ interface AccreditationFormProps {
 }
 
 function formatDateForInput(date: string | Date | null | undefined): string {
-  if (!date) return '';
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toISOString().split('T')[0];
+  return toQatarDateString(date);
 }
 
 const STEPS = [
@@ -367,7 +366,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                   <DatePicker
                     id="qidExpiry"
                     value={watchedValues.qidExpiry}
-                    onChange={(date) => setValue('qidExpiry', date?.toISOString().split('T')[0] ?? '')}
+                    onChange={(date) => setValue('qidExpiry', date ? toQatarDateString(date) : '')}
                   />
                   {errors.qidExpiry && <p className="text-sm text-destructive">{String(errors.qidExpiry.message)}</p>}
                 </div>
@@ -390,7 +389,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                     <DatePicker
                       id="passportExpiry"
                       value={watchedValues.passportExpiry}
-                      onChange={(date) => setValue('passportExpiry', date?.toISOString().split('T')[0] ?? '')}
+                      onChange={(date) => setValue('passportExpiry', date ? toQatarDateString(date) : '')}
                     />
                     {errors.passportExpiry && <p className="text-sm text-destructive">{String(errors.passportExpiry.message)}</p>}
                   </div>
@@ -406,7 +405,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                     <DatePicker
                       id="hayyaExpiry"
                       value={watchedValues.hayyaExpiry}
-                      onChange={(date) => setValue('hayyaExpiry', date?.toISOString().split('T')[0] ?? '')}
+                      onChange={(date) => setValue('hayyaExpiry', date ? toQatarDateString(date) : '')}
                     />
                     {errors.hayyaExpiry && <p className="text-sm text-destructive">{String(errors.hayyaExpiry.message)}</p>}
                   </div>
@@ -463,7 +462,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                     <DatePicker
                       id="bumpInStart"
                       value={watchedValues.bumpInStart}
-                      onChange={(date) => setValue('bumpInStart', date?.toISOString().split('T')[0] ?? '')}
+                      onChange={(date) => setValue('bumpInStart', date ? toQatarDateString(date) : '')}
                     />
                     {errors.bumpInStart && <p className="text-sm text-destructive">{String(errors.bumpInStart.message)}</p>}
                   </div>
@@ -472,7 +471,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                     <DatePicker
                       id="bumpInEnd"
                       value={watchedValues.bumpInEnd}
-                      onChange={(date) => setValue('bumpInEnd', date?.toISOString().split('T')[0] ?? '')}
+                      onChange={(date) => setValue('bumpInEnd', date ? toQatarDateString(date) : '')}
                     />
                     {errors.bumpInEnd && <p className="text-sm text-destructive">{String(errors.bumpInEnd.message)}</p>}
                   </div>
@@ -493,7 +492,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                     <DatePicker
                       id="liveStart"
                       value={watchedValues.liveStart}
-                      onChange={(date) => setValue('liveStart', date?.toISOString().split('T')[0] ?? '')}
+                      onChange={(date) => setValue('liveStart', date ? toQatarDateString(date) : '')}
                     />
                     {errors.liveStart && <p className="text-sm text-destructive">{String(errors.liveStart.message)}</p>}
                   </div>
@@ -502,7 +501,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                     <DatePicker
                       id="liveEnd"
                       value={watchedValues.liveEnd}
-                      onChange={(date) => setValue('liveEnd', date?.toISOString().split('T')[0] ?? '')}
+                      onChange={(date) => setValue('liveEnd', date ? toQatarDateString(date) : '')}
                     />
                     {errors.liveEnd && <p className="text-sm text-destructive">{String(errors.liveEnd.message)}</p>}
                   </div>
@@ -523,7 +522,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                     <DatePicker
                       id="bumpOutStart"
                       value={watchedValues.bumpOutStart}
-                      onChange={(date) => setValue('bumpOutStart', date?.toISOString().split('T')[0] ?? '')}
+                      onChange={(date) => setValue('bumpOutStart', date ? toQatarDateString(date) : '')}
                     />
                     {errors.bumpOutStart && <p className="text-sm text-destructive">{String(errors.bumpOutStart.message)}</p>}
                   </div>
@@ -532,7 +531,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                     <DatePicker
                       id="bumpOutEnd"
                       value={watchedValues.bumpOutEnd}
-                      onChange={(date) => setValue('bumpOutEnd', date?.toISOString().split('T')[0] ?? '')}
+                      onChange={(date) => setValue('bumpOutEnd', date ? toQatarDateString(date) : '')}
                     />
                     {errors.bumpOutEnd && <p className="text-sm text-destructive">{String(errors.bumpOutEnd.message)}</p>}
                   </div>

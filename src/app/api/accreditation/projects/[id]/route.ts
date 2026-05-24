@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { parsePhaseStart, parsePhaseEnd, parseEventDate } from '@/lib/date';
 
 // GET - Get a single accreditation project
 export async function GET(
@@ -68,13 +69,13 @@ export async function PUT(
         ...(status !== undefined && { status }),
         ...(description !== undefined && { description: description || null }),
         ...(venue !== undefined && { venue: venue || null }),
-        ...(eventDate !== undefined && { eventDate: eventDate ? new Date(eventDate) : null }),
-        ...(bumpInStart !== undefined && { bumpInStart: bumpInStart ? new Date(bumpInStart) : null }),
-        ...(bumpInEnd !== undefined && { bumpInEnd: bumpInEnd ? new Date(bumpInEnd) : null }),
-        ...(liveStart !== undefined && { liveStart: liveStart ? new Date(liveStart) : null }),
-        ...(liveEnd !== undefined && { liveEnd: liveEnd ? new Date(liveEnd) : null }),
-        ...(bumpOutStart !== undefined && { bumpOutStart: bumpOutStart ? new Date(bumpOutStart) : null }),
-        ...(bumpOutEnd !== undefined && { bumpOutEnd: bumpOutEnd ? new Date(bumpOutEnd) : null }),
+        ...(eventDate !== undefined && { eventDate: parseEventDate(eventDate) }),
+        ...(bumpInStart !== undefined && { bumpInStart: parsePhaseStart(bumpInStart) }),
+        ...(bumpInEnd !== undefined && { bumpInEnd: parsePhaseEnd(bumpInEnd) }),
+        ...(liveStart !== undefined && { liveStart: parsePhaseStart(liveStart) }),
+        ...(liveEnd !== undefined && { liveEnd: parsePhaseEnd(liveEnd) }),
+        ...(bumpOutStart !== undefined && { bumpOutStart: parsePhaseStart(bumpOutStart) }),
+        ...(bumpOutEnd !== undefined && { bumpOutEnd: parsePhaseEnd(bumpOutEnd) }),
         ...(accessGroupsStr !== undefined && { accessGroups: accessGroupsStr }),
       },
     });

@@ -367,14 +367,14 @@ export default function AccreditationProjectsPage() {
                     <Label htmlFor="bumpInStart">Bump-In Start *</Label>
                     <DatePicker
                       value={formData.bumpInStart}
-                      onChange={(date) => setFormData({ ...formData, bumpInStart: date?.toISOString().split('T')[0] ?? '' })}
+                      onChange={(date) => setFormData({ ...formData, bumpInStart: date ? toQatarDateString(date) : '' })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bumpInEnd">Bump-In End *</Label>
                     <DatePicker
                       value={formData.bumpInEnd}
-                      onChange={(date) => setFormData({ ...formData, bumpInEnd: date?.toISOString().split('T')[0] ?? '' })}
+                      onChange={(date) => setFormData({ ...formData, bumpInEnd: date ? toQatarDateString(date) : '' })}
                     />
                   </div>
                 </div>
@@ -384,14 +384,14 @@ export default function AccreditationProjectsPage() {
                     <Label htmlFor="liveStart">Live Start *</Label>
                     <DatePicker
                       value={formData.liveStart}
-                      onChange={(date) => setFormData({ ...formData, liveStart: date?.toISOString().split('T')[0] ?? '' })}
+                      onChange={(date) => setFormData({ ...formData, liveStart: date ? toQatarDateString(date) : '' })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="liveEnd">Live End *</Label>
                     <DatePicker
                       value={formData.liveEnd}
-                      onChange={(date) => setFormData({ ...formData, liveEnd: date?.toISOString().split('T')[0] ?? '' })}
+                      onChange={(date) => setFormData({ ...formData, liveEnd: date ? toQatarDateString(date) : '' })}
                     />
                   </div>
                 </div>
@@ -401,14 +401,14 @@ export default function AccreditationProjectsPage() {
                     <Label htmlFor="bumpOutStart">Bump-Out Start *</Label>
                     <DatePicker
                       value={formData.bumpOutStart}
-                      onChange={(date) => setFormData({ ...formData, bumpOutStart: date?.toISOString().split('T')[0] ?? '' })}
+                      onChange={(date) => setFormData({ ...formData, bumpOutStart: date ? toQatarDateString(date) : '' })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bumpOutEnd">Bump-Out End *</Label>
                     <DatePicker
                       value={formData.bumpOutEnd}
-                      onChange={(date) => setFormData({ ...formData, bumpOutEnd: date?.toISOString().split('T')[0] ?? '' })}
+                      onChange={(date) => setFormData({ ...formData, bumpOutEnd: date ? toQatarDateString(date) : '' })}
                     />
                   </div>
                 </div>

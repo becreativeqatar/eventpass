@@ -236,6 +236,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
 
       if (projectId) {
         router.push('/admin/records');
+        router.refresh();
       } else {
         router.back();
       }
@@ -377,7 +378,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="qidExpiry">QID Expiry Date *</Label>
-                    <DatePicker value={formData.qidExpiry} onChange={(date) => setFormData(prev => ({ ...prev, qidExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
+                    <DatePicker value={formData.qidExpiry} onChange={(date) => setFormData(prev => ({ ...prev, qidExpiry: date ? toQatarDateString(date) : '' }))} />
                   </div>
                 </div>
               ) : (
@@ -389,12 +390,12 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="passportCountry">Issuing Country *</Label>
-                      <Input id="passportCountry" value={formData.passportCountry} onChange={(e) => setFormData({ ...formData, passportCountry: e.target.value })} />
+                      <Input id="passportCountry" list="countries" value={formData.passportCountry} onChange={(e) => setFormData({ ...formData, passportCountry: e.target.value })} />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="passportExpiry">Passport Expiry Date *</Label>
-                    <DatePicker value={formData.passportExpiry} onChange={(date) => setFormData(prev => ({ ...prev, passportExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
+                    <DatePicker value={formData.passportExpiry} onChange={(date) => setFormData(prev => ({ ...prev, passportExpiry: date ? toQatarDateString(date) : '' }))} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -403,7 +404,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="hayyaExpiry">Hayya / Visit Visa Expiry *</Label>
-                      <DatePicker value={formData.hayyaExpiry} onChange={(date) => setFormData(prev => ({ ...prev, hayyaExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
+                      <DatePicker value={formData.hayyaExpiry} onChange={(date) => setFormData(prev => ({ ...prev, hayyaExpiry: date ? toQatarDateString(date) : '' }))} />
                     </div>
                   </div>
                 </>
@@ -455,11 +456,11 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   <div className="ml-6 grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="bumpInStart">Start Date</Label>
-                      <DatePicker value={formData.bumpInStart} onChange={(date) => setFormData(prev => ({ ...prev, bumpInStart: date?.toISOString().split('T')[0] ?? '' }))} />
+                      <DatePicker value={formData.bumpInStart} onChange={(date) => setFormData(prev => ({ ...prev, bumpInStart: date ? toQatarDateString(date) : '' }))} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="bumpInEnd">End Date</Label>
-                      <DatePicker value={formData.bumpInEnd} onChange={(date) => setFormData(prev => ({ ...prev, bumpInEnd: date?.toISOString().split('T')[0] ?? '' }))} />
+                      <DatePicker value={formData.bumpInEnd} onChange={(date) => setFormData(prev => ({ ...prev, bumpInEnd: date ? toQatarDateString(date) : '' }))} />
                     </div>
                   </div>
                 )}
@@ -479,11 +480,11 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   <div className="ml-6 grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="liveStart">Start Date</Label>
-                      <DatePicker value={formData.liveStart} onChange={(date) => setFormData(prev => ({ ...prev, liveStart: date?.toISOString().split('T')[0] ?? '' }))} />
+                      <DatePicker value={formData.liveStart} onChange={(date) => setFormData(prev => ({ ...prev, liveStart: date ? toQatarDateString(date) : '' }))} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="liveEnd">End Date</Label>
-                      <DatePicker value={formData.liveEnd} onChange={(date) => setFormData(prev => ({ ...prev, liveEnd: date?.toISOString().split('T')[0] ?? '' }))} />
+                      <DatePicker value={formData.liveEnd} onChange={(date) => setFormData(prev => ({ ...prev, liveEnd: date ? toQatarDateString(date) : '' }))} />
                     </div>
                   </div>
                 )}
@@ -503,11 +504,11 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   <div className="ml-6 grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="bumpOutStart">Start Date</Label>
-                      <DatePicker value={formData.bumpOutStart} onChange={(date) => setFormData(prev => ({ ...prev, bumpOutStart: date?.toISOString().split('T')[0] ?? '' }))} />
+                      <DatePicker value={formData.bumpOutStart} onChange={(date) => setFormData(prev => ({ ...prev, bumpOutStart: date ? toQatarDateString(date) : '' }))} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="bumpOutEnd">End Date</Label>
-                      <DatePicker value={formData.bumpOutEnd} onChange={(date) => setFormData(prev => ({ ...prev, bumpOutEnd: date?.toISOString().split('T')[0] ?? '' }))} />
+                      <DatePicker value={formData.bumpOutEnd} onChange={(date) => setFormData(prev => ({ ...prev, bumpOutEnd: date ? toQatarDateString(date) : '' }))} />
                     </div>
                   </div>
                 )}
@@ -548,6 +549,22 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
           </div>
         </div>
       </div>
+      <datalist id="countries">
+        <option value="Afghanistan"/><option value="Albania"/><option value="Algeria"/><option value="Argentina"/><option value="Australia"/>
+        <option value="Austria"/><option value="Bahrain"/><option value="Bangladesh"/><option value="Belgium"/><option value="Brazil"/>
+        <option value="Canada"/><option value="China"/><option value="Colombia"/><option value="Czech Republic"/><option value="Denmark"/>
+        <option value="Egypt"/><option value="Ethiopia"/><option value="Finland"/><option value="France"/><option value="Germany"/>
+        <option value="Ghana"/><option value="Greece"/><option value="India"/><option value="Indonesia"/><option value="Iran"/>
+        <option value="Iraq"/><option value="Ireland"/><option value="Italy"/><option value="Japan"/><option value="Jordan"/>
+        <option value="Kenya"/><option value="Kuwait"/><option value="Lebanon"/><option value="Malaysia"/><option value="Mexico"/>
+        <option value="Morocco"/><option value="Nepal"/><option value="Netherlands"/><option value="New Zealand"/><option value="Nigeria"/>
+        <option value="Norway"/><option value="Oman"/><option value="Pakistan"/><option value="Palestine"/><option value="Philippines"/>
+        <option value="Poland"/><option value="Portugal"/><option value="Qatar"/><option value="Romania"/><option value="Russia"/>
+        <option value="Saudi Arabia"/><option value="Singapore"/><option value="South Africa"/><option value="South Korea"/><option value="Spain"/>
+        <option value="Sri Lanka"/><option value="Sudan"/><option value="Sweden"/><option value="Switzerland"/><option value="Syria"/>
+        <option value="Thailand"/><option value="Tunisia"/><option value="Turkey"/><option value="UAE"/><option value="Uganda"/>
+        <option value="Ukraine"/><option value="United Kingdom"/><option value="United States"/><option value="Vietnam"/><option value="Yemen"/>
+      </datalist>
     </div>
   );
 }

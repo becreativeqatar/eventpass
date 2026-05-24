@@ -19,6 +19,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
     role: {
       not: null,
       contains: query,
+      mode: 'insensitive',
     },
   };
 
