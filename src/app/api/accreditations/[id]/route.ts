@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { withErrorHandler } from '@/lib/http/handler';
+import { parsePhaseStart, parsePhaseEnd } from '@/lib/date';
 import {
   updateAccreditationSchema,
   updateStatusSchema,
@@ -101,6 +102,20 @@ export const PATCH = withErrorHandler(async (
     } else {
       updateData = data;
     }
+
+    // Convert date strings to Qatar timezone (start=00:00, end=23:59:59 Qatar)
+    const dateFields = {
+      ...(updateData.bumpInStart !== undefined && { bumpInStart: parsePhaseStart(updateData.bumpInStart as string | null) }),
+      ...(updateData.bumpInEnd !== undefined && { bumpInEnd: parsePhaseEnd(updateData.bumpInEnd as string | null) }),
+      ...(updateData.liveStart !== undefined && { liveStart: parsePhaseStart(updateData.liveStart as string | null) }),
+      ...(updateData.liveEnd !== undefined && { liveEnd: parsePhaseEnd(updateData.liveEnd as string | null) }),
+      ...(updateData.bumpOutStart !== undefined && { bumpOutStart: parsePhaseStart(updateData.bumpOutStart as string | null) }),
+      ...(updateData.bumpOutEnd !== undefined && { bumpOutEnd: parsePhaseEnd(updateData.bumpOutEnd as string | null) }),
+      ...(updateData.qidExpiry !== undefined && { qidExpiry: parsePhaseEnd(updateData.qidExpiry as string | null) }),
+      ...(updateData.passportExpiry !== undefined && { passportExpiry: parsePhaseEnd(updateData.passportExpiry as string | null) }),
+      ...(updateData.hayyaExpiry !== undefined && { hayyaExpiry: parsePhaseEnd(updateData.hayyaExpiry as string | null) }),
+    };
+    updateData = { ...updateData, ...dateFields };
   }
 
   const accreditation = await prisma.accreditation.update({
