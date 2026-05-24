@@ -69,7 +69,7 @@ const ID_TYPES = ['qid', 'passport'] as const;
 
 export const createProjectSchema = z.object({
   name: z.string().min(1, 'Project name is required'),
-  code: z.string().min(1, 'Project code is required').max(20, 'Project code must be at most 20 characters').optional().nullable(),
+  code: z.string().max(20, 'Project code must be at most 20 characters').optional().nullable().transform(v => v === '' ? undefined : v),
   description: z.string().optional().nullable(),
   eventDate: dateSchema,
   venue: z.string().optional().nullable(),

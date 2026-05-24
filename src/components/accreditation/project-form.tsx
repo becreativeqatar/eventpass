@@ -175,7 +175,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
 
             <div className="space-y-2">
               <Label htmlFor="code">Project Code</Label>
-              <Input id="code" {...register('code')} placeholder="e.g., EVT-2024-001" maxLength={20} />
+              <Input id="code" {...register('code')} placeholder="Auto-generated if left empty" maxLength={20} />
               {errors.code && <p className="text-sm text-destructive">{errors.code.message}</p>}
             </div>
           </div>
