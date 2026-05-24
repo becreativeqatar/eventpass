@@ -55,7 +55,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { bumpInStart, bumpInEnd, liveStart, liveEnd, bumpOutStart, bumpOutEnd, accessGroups } = body;
+    const { name, code, status, description, venue, eventDate, bumpInStart, bumpInEnd, liveStart, liveEnd, bumpOutStart, bumpOutEnd, accessGroups } = body;
 
     // Convert accessGroups array to comma-separated string
     const accessGroupsStr = Array.isArray(accessGroups) ? accessGroups.join(',') : undefined;
@@ -63,13 +63,19 @@ export async function PUT(
     const project = await prisma.accreditationProject.update({
       where: { id },
       data: {
-        ...(bumpInStart && { bumpInStart: new Date(bumpInStart) }),
-        ...(bumpInEnd && { bumpInEnd: new Date(bumpInEnd) }),
-        ...(liveStart && { liveStart: new Date(liveStart) }),
-        ...(liveEnd && { liveEnd: new Date(liveEnd) }),
-        ...(bumpOutStart && { bumpOutStart: new Date(bumpOutStart) }),
-        ...(bumpOutEnd && { bumpOutEnd: new Date(bumpOutEnd) }),
-        ...(accessGroupsStr && { accessGroups: accessGroupsStr }),
+        ...(name !== undefined && { name }),
+        ...(code !== undefined && { code: code || null }),
+        ...(status !== undefined && { status }),
+        ...(description !== undefined && { description: description || null }),
+        ...(venue !== undefined && { venue: venue || null }),
+        ...(eventDate !== undefined && { eventDate: eventDate ? new Date(eventDate) : null }),
+        ...(bumpInStart !== undefined && { bumpInStart: bumpInStart ? new Date(bumpInStart) : null }),
+        ...(bumpInEnd !== undefined && { bumpInEnd: bumpInEnd ? new Date(bumpInEnd) : null }),
+        ...(liveStart !== undefined && { liveStart: liveStart ? new Date(liveStart) : null }),
+        ...(liveEnd !== undefined && { liveEnd: liveEnd ? new Date(liveEnd) : null }),
+        ...(bumpOutStart !== undefined && { bumpOutStart: bumpOutStart ? new Date(bumpOutStart) : null }),
+        ...(bumpOutEnd !== undefined && { bumpOutEnd: bumpOutEnd ? new Date(bumpOutEnd) : null }),
+        ...(accessGroupsStr !== undefined && { accessGroups: accessGroupsStr }),
       },
     });
 

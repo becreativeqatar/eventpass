@@ -68,7 +68,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { name, status, description, venue, eventDate, bumpInStart, bumpInEnd, liveStart, liveEnd, bumpOutStart, bumpOutEnd, accessGroups } = body;
+    const { name, code, status, description, venue, eventDate, bumpInStart, bumpInEnd, liveStart, liveEnd, bumpOutStart, bumpOutEnd, accessGroups } = body;
 
     const accessGroupsStr = Array.isArray(accessGroups) ? accessGroups.join(',') : undefined;
 
@@ -80,10 +80,21 @@ export async function PATCH(
       });
     }
 
+    // Check for duplicate code if changing it
+    if (code && code !== existing.code) {
+      const codeExists = await prisma.accreditationProject.findFirst({
+        where: { code, id: { not: existing.id } },
+      });
+      if (codeExists) {
+        return NextResponse.json({ error: 'Event code already exists' }, { status: 400 });
+      }
+    }
+
     const event = await prisma.accreditationProject.update({
       where: { id: existing.id },
       data: {
         ...(name !== undefined && { name }),
+        ...(code !== undefined && { code: code || null }),
         ...(status !== undefined && { status }),
         ...(description !== undefined && { description: description || null }),
         ...(venue !== undefined && { venue: venue || null }),
