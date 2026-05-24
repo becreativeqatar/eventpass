@@ -158,6 +158,12 @@ export default function NewRecordPage() {
     if (!formData.role) errors.role = true;
     if (!formData.accessGroup) errors.accessGroup = true;
 
+    // At least one phase required
+    if (!formData.hasBumpInAccess && !formData.hasLiveAccess && !formData.hasBumpOutAccess) {
+      toast.error('At least one access phase must be selected');
+      return;
+    }
+
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       const fields = Object.keys(errors).map(k => k.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()));
