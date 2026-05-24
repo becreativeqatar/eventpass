@@ -398,11 +398,11 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="hayyaNumber">Hayya Number *</Label>
+                      <Label htmlFor="hayyaNumber">Hayya / Visit Visa Number *</Label>
                       <Input id="hayyaNumber" value={formData.hayyaNumber} onChange={(e) => setFormData({ ...formData, hayyaNumber: e.target.value.replace(/\D/g, '') })} inputMode="numeric" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="hayyaExpiry">Hayya Expiry Date *</Label>
+                      <Label htmlFor="hayyaExpiry">Hayya / Visit Visa Expiry *</Label>
                       <DatePicker value={formData.hayyaExpiry} onChange={(date) => setFormData(prev => ({ ...prev, hayyaExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
                     </div>
                   </div>

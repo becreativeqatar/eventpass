@@ -338,7 +338,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
         <Card>
           <CardHeader>
             <CardTitle>Identification</CardTitle>
-            <CardDescription>Provide either Qatar ID (QID) or Passport with Hayya visa details</CardDescription>
+            <CardDescription>Provide either Qatar ID (QID) or Passport with Hayya / Visit Visa details</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -349,7 +349,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="qid">Qatar ID (QID)</SelectItem>
-                  <SelectItem value="passport">Passport + Hayya</SelectItem>
+                  <SelectItem value="passport">Passport + Hayya / Visit Visa</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -397,12 +397,12 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="hayyaNumber">Hayya Visa Number *</Label>
-                    <Input id="hayyaNumber" {...register('hayyaNumber')} placeholder="Hayya visa number" inputMode="numeric" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'].includes(e.key)) e.preventDefault(); }} />
+                    <Label htmlFor="hayyaNumber">Hayya / Visit Visa Number *</Label>
+                    <Input id="hayyaNumber" {...register('hayyaNumber')} placeholder="Hayya / Visit Visa number" inputMode="numeric" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'].includes(e.key)) e.preventDefault(); }} />
                     {errors.hayyaNumber && <p className="text-sm text-destructive">{String(errors.hayyaNumber.message)}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="hayyaExpiry">Hayya Expiry Date *</Label>
+                    <Label htmlFor="hayyaExpiry">Hayya / Visit Visa Expiry *</Label>
                     <DatePicker
                       id="hayyaExpiry"
                       value={watchedValues.hayyaExpiry}
@@ -603,7 +603,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 <dl className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">ID Type</dt>
-                    <dd className="font-medium">{idType === 'qid' ? 'Qatar ID' : 'Passport + Hayya'}</dd>
+                    <dd className="font-medium">{idType === 'qid' ? 'Qatar ID' : 'Passport + Hayya / Visit Visa'}</dd>
                   </div>
                   {idType === 'qid' ? (
                     <>
