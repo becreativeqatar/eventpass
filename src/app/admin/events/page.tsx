@@ -116,7 +116,7 @@ export default function EventsPage() {
 
       {/* Active Event Banner */}
       {activeEvent && (filter === 'All' || filter === 'Active') && (
-        <Link href={`/admin/events/${activeEvent.code || activeEvent.id}`} className="block">
+        <Link href={`/admin/events/${(activeEvent.code || activeEvent.id).toLowerCase()}`} className="block">
           <Card className="border-success/30 bg-success/5 transition-colors hover:border-success/50">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -133,7 +133,7 @@ export default function EventsPage() {
                 </div>
                 {isAdmin && (
                   <div className="flex gap-2" onClick={(e) => e.preventDefault()}>
-                    <Button variant="outline" size="sm" onClick={() => router.push(`/admin/events/${activeEvent.code || activeEvent.id}/edit`)}>
+                    <Button variant="outline" size="sm" onClick={() => router.push(`/admin/events/${(activeEvent.code || activeEvent.id).toLowerCase()}/edit`)}>
                       <Pencil className="h-4 w-4 mr-1" />
                       Edit
                     </Button>
@@ -172,7 +172,7 @@ export default function EventsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredEvents.map((event) => (
-            <Link key={event.id} href={`/admin/events/${event.code || event.id}`}>
+            <Link key={event.id} href={`/admin/events/${(event.code || event.id).toLowerCase()}`}>
               <Card className="transition-colors hover:border-primary/30 h-full">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
@@ -183,7 +183,7 @@ export default function EventsPage() {
                     {isAdmin && (
                       <div className="flex gap-1" onClick={(e) => e.preventDefault()}>
                         {(event.status === 'DRAFT' || event.status === 'COMPLETED') && (
-                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => router.push(`/admin/events/${event.code || event.id}/edit`)} title="Edit">
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => router.push(`/admin/events/${(event.code || event.id).toLowerCase()}/edit`)} title="Edit">
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
                         )}

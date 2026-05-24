@@ -159,7 +159,7 @@ export default function EventDetailPage() {
             </>
           )}
           {event.status !== 'ARCHIVED' && (
-            <Link href={`/admin/events/${event.code || event.id}/edit`}>
+            <Link href={`/admin/events/${(event.code || event.id).toLowerCase()}/edit`}>
               <Button size="sm">
                 <Pencil className="h-4 w-4 mr-1" /> Edit
               </Button>
@@ -170,7 +170,7 @@ export default function EventDetailPage() {
 
       {/* Quick Links */}
       <div className="grid gap-3 sm:grid-cols-3">
-        <Link href={`/admin/events/${event.code || event.id}/records`}>
+        <Link href={`/admin/events/${(event.code || event.id).toLowerCase()}/records`}>
           <Card className="transition-colors hover:border-primary/30 cursor-pointer">
             <CardContent className="flex items-center gap-3 p-4">
               <ClipboardList className="h-5 w-5 text-primary" />
@@ -181,7 +181,7 @@ export default function EventDetailPage() {
             </CardContent>
           </Card>
         </Link>
-        <Link href={`/admin/events/${event.code || event.id}/scans`}>
+        <Link href={`/admin/events/${(event.code || event.id).toLowerCase()}/scans`}>
           <Card className="transition-colors hover:border-primary/30 cursor-pointer">
             <CardContent className="flex items-center gap-3 p-4">
               <ScanLine className="h-5 w-5 text-primary" />
@@ -192,7 +192,7 @@ export default function EventDetailPage() {
             </CardContent>
           </Card>
         </Link>
-        <Link href={`/admin/events/${event.code || event.id}/reports`}>
+        <Link href={`/admin/events/${(event.code || event.id).toLowerCase()}/reports`}>
           <Card className="transition-colors hover:border-primary/30 cursor-pointer">
             <CardContent className="flex items-center gap-3 p-4">
               <BarChart3 className="h-5 w-5 text-primary" />

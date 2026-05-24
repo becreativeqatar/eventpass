@@ -3,13 +3,13 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-// Lookup event by id or code
+// Lookup event by id or code (case-insensitive for code)
 async function findEvent(idOrCode: string) {
   const event = await prisma.accreditationProject.findFirst({
     where: {
       OR: [
         { id: idOrCode },
-        { code: idOrCode },
+        { code: { equals: idOrCode, mode: 'insensitive' } },
       ],
     },
     include: {

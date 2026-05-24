@@ -25,7 +25,7 @@ export async function getSelectedProject() {
       where: {
         OR: [
           { id: selectedId },
-          { code: selectedId },
+          { code: { equals: selectedId, mode: 'insensitive' } },
         ],
       },
     });
