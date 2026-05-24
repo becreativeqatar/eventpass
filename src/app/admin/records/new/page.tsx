@@ -358,22 +358,14 @@ export default function NewRecordPage() {
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="bumpInStart">Start Date</Label>
-                        <DatePicker value={formData.bumpInStart} onChange={(date) => {
-                          if (!date) { setFormData(prev => ({ ...prev, bumpInStart: '' })); return; }
-                          const val = toQatarDateString(date.toISOString());
-                          const limit = project?.bumpInStart ? toQatarDateString(project.bumpInStart) : '';
-                          if (limit && val < limit) { toast.error('Start date cannot be before event bump-in start'); return; }
-                          setFormData(prev => ({ ...prev, bumpInStart: val }));
+                        <DatePicker value={formData.bumpInStart} minDate={project?.bumpInStart} maxDate={project?.bumpInEnd} onChange={(date) => {
+                          setFormData(prev => ({ ...prev, bumpInStart: date ? toQatarDateString(date) : '' }));
                         }} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpInEnd">End Date</Label>
-                        <DatePicker value={formData.bumpInEnd} onChange={(date) => {
-                          if (!date) { setFormData(prev => ({ ...prev, bumpInEnd: '' })); return; }
-                          const val = toQatarDateString(date.toISOString());
-                          const limit = project?.bumpInEnd ? toQatarDateString(project.bumpInEnd) : '';
-                          if (limit && val > limit) { toast.error('End date cannot be after event bump-in end'); return; }
-                          setFormData(prev => ({ ...prev, bumpInEnd: val }));
+                        <DatePicker value={formData.bumpInEnd} minDate={project?.bumpInStart} maxDate={project?.bumpInEnd} onChange={(date) => {
+                          setFormData(prev => ({ ...prev, bumpInEnd: date ? toQatarDateString(date) : '' }));
                         }} />
                       </div>
                     </div>
@@ -395,22 +387,14 @@ export default function NewRecordPage() {
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="liveStart">Start Date</Label>
-                        <DatePicker value={formData.liveStart} onChange={(date) => {
-                          if (!date) { setFormData(prev => ({ ...prev, liveStart: '' })); return; }
-                          const val = toQatarDateString(date.toISOString());
-                          const limit = project?.liveStart ? toQatarDateString(project.liveStart) : '';
-                          if (limit && val < limit) { toast.error('Start date cannot be before event live start'); return; }
-                          setFormData(prev => ({ ...prev, liveStart: val }));
+                        <DatePicker value={formData.liveStart} minDate={project?.liveStart} maxDate={project?.liveEnd} onChange={(date) => {
+                          setFormData(prev => ({ ...prev, liveStart: date ? toQatarDateString(date) : '' }));
                         }} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="liveEnd">End Date</Label>
-                        <DatePicker value={formData.liveEnd} onChange={(date) => {
-                          if (!date) { setFormData(prev => ({ ...prev, liveEnd: '' })); return; }
-                          const val = toQatarDateString(date.toISOString());
-                          const limit = project?.liveEnd ? toQatarDateString(project.liveEnd) : '';
-                          if (limit && val > limit) { toast.error('End date cannot be after event live end'); return; }
-                          setFormData(prev => ({ ...prev, liveEnd: val }));
+                        <DatePicker value={formData.liveEnd} minDate={project?.liveStart} maxDate={project?.liveEnd} onChange={(date) => {
+                          setFormData(prev => ({ ...prev, liveEnd: date ? toQatarDateString(date) : '' }));
                         }} />
                       </div>
                     </div>
@@ -432,22 +416,14 @@ export default function NewRecordPage() {
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutStart">Start Date</Label>
-                        <DatePicker value={formData.bumpOutStart} onChange={(date) => {
-                          if (!date) { setFormData(prev => ({ ...prev, bumpOutStart: '' })); return; }
-                          const val = toQatarDateString(date.toISOString());
-                          const limit = project?.bumpOutStart ? toQatarDateString(project.bumpOutStart) : '';
-                          if (limit && val < limit) { toast.error('Start date cannot be before event bump-out start'); return; }
-                          setFormData(prev => ({ ...prev, bumpOutStart: val }));
+                        <DatePicker value={formData.bumpOutStart} minDate={project?.bumpOutStart} maxDate={project?.bumpOutEnd} onChange={(date) => {
+                          setFormData(prev => ({ ...prev, bumpOutStart: date ? toQatarDateString(date) : '' }));
                         }} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutEnd">End Date</Label>
-                        <DatePicker value={formData.bumpOutEnd} onChange={(date) => {
-                          if (!date) { setFormData(prev => ({ ...prev, bumpOutEnd: '' })); return; }
-                          const val = toQatarDateString(date.toISOString());
-                          const limit = project?.bumpOutEnd ? toQatarDateString(project.bumpOutEnd) : '';
-                          if (limit && val > limit) { toast.error('End date cannot be after event bump-out end'); return; }
-                          setFormData(prev => ({ ...prev, bumpOutEnd: val }));
+                        <DatePicker value={formData.bumpOutEnd} minDate={project?.bumpOutStart} maxDate={project?.bumpOutEnd} onChange={(date) => {
+                          setFormData(prev => ({ ...prev, bumpOutEnd: date ? toQatarDateString(date) : '' }));
                         }} />
                       </div>
                     </div>

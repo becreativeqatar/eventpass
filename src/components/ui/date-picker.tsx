@@ -20,6 +20,8 @@ interface DatePickerProps {
   disabled?: boolean
   id?: string
   className?: string
+  minDate?: Date | string | null
+  maxDate?: Date | string | null
 }
 
 function toDate(value: Date | string | null | undefined): Date | undefined {
@@ -36,9 +38,13 @@ export function DatePicker({
   disabled = false,
   id,
   className,
+  minDate,
+  maxDate,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false)
   const selected = toDate(value)
+  const fromDate = toDate(minDate)
+  const untilDate = toDate(maxDate)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -65,6 +71,12 @@ export function DatePicker({
             onChange(date)
             setOpen(false)
           }}
+          disabled={(date) => {
+            if (fromDate && date < fromDate) return true
+            if (untilDate && date > untilDate) return true
+            return false
+          }}
+          defaultMonth={selected || fromDate}
           autoFocus
         />
       </PopoverContent>
