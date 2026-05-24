@@ -338,7 +338,7 @@ export default function NewRecordPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Access Validity</CardTitle>
-                <CardDescription>Select the phases and customize access dates</CardDescription>
+                <CardDescription>Select phases and optionally narrow the dates within the event's schedule</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Bump-In */}
@@ -346,16 +346,35 @@ export default function NewRecordPage() {
                   <div className="flex items-center gap-2">
                     <Checkbox id="bumpIn" checked={formData.hasBumpInAccess} onCheckedChange={(checked) => setFormData({ ...formData, hasBumpInAccess: checked === true })} />
                     <Label htmlFor="bumpIn" className="font-semibold">Bump-In Access</Label>
+                    {project?.bumpInStart && (
+                      <span className="text-xs text-muted-foreground ml-2">
+                        (Event: {new Date(project.bumpInStart).toLocaleDateString()} – {new Date(project.bumpInEnd).toLocaleDateString()})
+                      </span>
+                    )}
                   </div>
                   {formData.hasBumpInAccess && (
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="bumpInStart">Start Date</Label>
-                        <DatePicker value={formData.bumpInStart} onChange={(date) => setFormData(prev => ({ ...prev, bumpInStart: date?.toISOString().split('T')[0] ?? '' }))} />
+                        <DatePicker value={formData.bumpInStart} onChange={(date) => {
+                          const val = date?.toISOString().split('T')[0] ?? '';
+                          if (project?.bumpInStart && val && val < project.bumpInStart.slice(0, 10)) {
+                            toast.error('Start date cannot be before event bump-in start');
+                            return;
+                          }
+                          setFormData(prev => ({ ...prev, bumpInStart: val }));
+                        }} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpInEnd">End Date</Label>
-                        <DatePicker value={formData.bumpInEnd} onChange={(date) => setFormData(prev => ({ ...prev, bumpInEnd: date?.toISOString().split('T')[0] ?? '' }))} />
+                        <DatePicker value={formData.bumpInEnd} onChange={(date) => {
+                          const val = date?.toISOString().split('T')[0] ?? '';
+                          if (project?.bumpInEnd && val && val > project.bumpInEnd.slice(0, 10)) {
+                            toast.error('End date cannot be after event bump-in end');
+                            return;
+                          }
+                          setFormData(prev => ({ ...prev, bumpInEnd: val }));
+                        }} />
                       </div>
                     </div>
                   )}
@@ -366,16 +385,35 @@ export default function NewRecordPage() {
                   <div className="flex items-center gap-2">
                     <Checkbox id="live" checked={formData.hasLiveAccess} onCheckedChange={(checked) => setFormData({ ...formData, hasLiveAccess: checked === true })} />
                     <Label htmlFor="live" className="font-semibold">Live Access</Label>
+                    {project?.liveStart && (
+                      <span className="text-xs text-muted-foreground ml-2">
+                        (Event: {new Date(project.liveStart).toLocaleDateString()} – {new Date(project.liveEnd).toLocaleDateString()})
+                      </span>
+                    )}
                   </div>
                   {formData.hasLiveAccess && (
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="liveStart">Start Date</Label>
-                        <DatePicker value={formData.liveStart} onChange={(date) => setFormData(prev => ({ ...prev, liveStart: date?.toISOString().split('T')[0] ?? '' }))} />
+                        <DatePicker value={formData.liveStart} onChange={(date) => {
+                          const val = date?.toISOString().split('T')[0] ?? '';
+                          if (project?.liveStart && val && val < project.liveStart.slice(0, 10)) {
+                            toast.error('Start date cannot be before event live start');
+                            return;
+                          }
+                          setFormData(prev => ({ ...prev, liveStart: val }));
+                        }} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="liveEnd">End Date</Label>
-                        <DatePicker value={formData.liveEnd} onChange={(date) => setFormData(prev => ({ ...prev, liveEnd: date?.toISOString().split('T')[0] ?? '' }))} />
+                        <DatePicker value={formData.liveEnd} onChange={(date) => {
+                          const val = date?.toISOString().split('T')[0] ?? '';
+                          if (project?.liveEnd && val && val > project.liveEnd.slice(0, 10)) {
+                            toast.error('End date cannot be after event live end');
+                            return;
+                          }
+                          setFormData(prev => ({ ...prev, liveEnd: val }));
+                        }} />
                       </div>
                     </div>
                   )}
@@ -386,16 +424,35 @@ export default function NewRecordPage() {
                   <div className="flex items-center gap-2">
                     <Checkbox id="bumpOut" checked={formData.hasBumpOutAccess} onCheckedChange={(checked) => setFormData({ ...formData, hasBumpOutAccess: checked === true })} />
                     <Label htmlFor="bumpOut" className="font-semibold">Bump-Out Access</Label>
+                    {project?.bumpOutStart && (
+                      <span className="text-xs text-muted-foreground ml-2">
+                        (Event: {new Date(project.bumpOutStart).toLocaleDateString()} – {new Date(project.bumpOutEnd).toLocaleDateString()})
+                      </span>
+                    )}
                   </div>
                   {formData.hasBumpOutAccess && (
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutStart">Start Date</Label>
-                        <DatePicker value={formData.bumpOutStart} onChange={(date) => setFormData(prev => ({ ...prev, bumpOutStart: date?.toISOString().split('T')[0] ?? '' }))} />
+                        <DatePicker value={formData.bumpOutStart} onChange={(date) => {
+                          const val = date?.toISOString().split('T')[0] ?? '';
+                          if (project?.bumpOutStart && val && val < project.bumpOutStart.slice(0, 10)) {
+                            toast.error('Start date cannot be before event bump-out start');
+                            return;
+                          }
+                          setFormData(prev => ({ ...prev, bumpOutStart: val }));
+                        }} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutEnd">End Date</Label>
-                        <DatePicker value={formData.bumpOutEnd} onChange={(date) => setFormData(prev => ({ ...prev, bumpOutEnd: date?.toISOString().split('T')[0] ?? '' }))} />
+                        <DatePicker value={formData.bumpOutEnd} onChange={(date) => {
+                          const val = date?.toISOString().split('T')[0] ?? '';
+                          if (project?.bumpOutEnd && val && val > project.bumpOutEnd.slice(0, 10)) {
+                            toast.error('End date cannot be after event bump-out end');
+                            return;
+                          }
+                          setFormData(prev => ({ ...prev, bumpOutEnd: val }));
+                        }} />
                       </div>
                     </div>
                   )}
