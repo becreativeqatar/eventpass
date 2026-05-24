@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -112,11 +112,10 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || 'Failed to save project');
+        throw new Error(err.error || 'Failed to save event');
       }
 
-      const result = await res.json();
-      toast.success(mode === 'create' ? 'Project created' : 'Project updated');
+      toast.success(mode === 'create' ? 'Event created' : 'Event updated');
       router.push('/admin/events');
       router.refresh();
     } catch (err) {
@@ -126,6 +125,12 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const onInvalid = (fieldErrors: FieldErrors) => {
+    const firstError = Object.values(fieldErrors).find((e) => e?.message);
+    const message = (firstError?.message as string) || 'Please fill in all required fields';
+    toast.error(message);
   };
 
   // Watch all date fields for display and validation
@@ -149,7 +154,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
   const bumpOutDateError = checkRange(bumpOutStart, bumpOutEnd);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
@@ -158,18 +163,18 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Project Details</CardTitle>
+          <CardTitle>Event Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Project Name *</Label>
-              <Input id="name" {...register('name')} placeholder="Enter project name" />
+              <Label htmlFor="name">Event Name *</Label>
+              <Input id="name" {...register('name')} placeholder="Enter event name" />
               {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="code">Project Code</Label>
+              <Label htmlFor="code">Event Code</Label>
               <Input id="code" {...register('code')} placeholder="Auto-generated if left empty" maxLength={20} />
               {errors.code && <p className="text-sm text-destructive">{errors.code.message}</p>}
             </div>
@@ -206,7 +211,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Textarea id="description" {...register('description')} placeholder="Project description" rows={3} />
+            <Textarea id="description" {...register('description')} placeholder="Event description" rows={3} />
           </div>
 
           <div className="space-y-2">
@@ -354,7 +359,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
               Saving...
             </>
           ) : (
-            mode === 'create' ? 'Create Project' : 'Save Changes'
+            mode === 'create' ? 'Create Event' : 'Save Changes'
           )}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>

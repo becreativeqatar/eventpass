@@ -68,15 +68,15 @@ const ID_TYPES = ['qid', 'passport'] as const;
 // =============================================================================
 
 export const createProjectSchema = z.object({
-  name: z.string().min(1, 'Project name is required'),
+  name: z.string().min(1, 'Event name is required'),
   code: z.string().max(20, 'Project code must be at most 20 characters').optional().nullable().transform(v => v === '' ? undefined : v),
-  description: z.string().optional().nullable(),
+  description: z.string().optional().nullable().transform(v => v === '' ? undefined : v),
   eventDate: dateSchema,
-  venue: z.string().optional().nullable(),
+  venue: z.string().optional().nullable().transform(v => v === '' ? undefined : v),
   status: z.enum(PROJECT_STATUSES).default('ACTIVE'),
   accessGroups: z.array(z.string()).min(1, 'At least one access group is required').default(['General']),
 
-  // Phase dates - all required for non-draft projects
+  // Phase dates - optional, but must be sequential if provided
   bumpInStart: dateSchema,
   bumpInEnd: dateSchema,
   liveStart: dateSchema,
@@ -84,10 +84,10 @@ export const createProjectSchema = z.object({
   bumpOutStart: dateSchema,
   bumpOutEnd: dateSchema,
 }).refine((data) => {
-  // Skip validation for draft projects
+  // Skip date validation for draft projects
   if (data.status === 'DRAFT') return true;
 
-  // For active projects, validate that dates are sequential
+  // For active projects, check if dates are provided
   const dates = [
     data.bumpInStart,
     data.bumpInEnd,
@@ -97,8 +97,11 @@ export const createProjectSchema = z.object({
     data.bumpOutEnd,
   ].filter(Boolean) as Date[];
 
-  // All dates must be provided for active projects
-  if (dates.length !== 6 && data.status === 'ACTIVE') {
+  // If no dates at all, allow it (they can be added later)
+  if (dates.length === 0) return true;
+
+  // If some dates provided, all 6 must be provided
+  if (dates.length !== 6) {
     return false;
   }
 
@@ -111,7 +114,7 @@ export const createProjectSchema = z.object({
 
   return true;
 }, {
-  message: 'Phase dates must be sequential: Bump-In Start → Bump-In End → Live Start → Live End → Bump-Out Start → Bump-Out End',
+  message: 'All phase dates are required and must be sequential: Bump-In Start → End → Live Start → End → Bump-Out Start → End',
   path: ['bumpInStart'],
 });
 
