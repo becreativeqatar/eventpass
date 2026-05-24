@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Calendar, MapPin, Users } from 'lucide-react';
@@ -53,9 +53,8 @@ export default function EventsPage() {
     fetchEvents();
   }, []);
 
-  const activeEvent = events.find((e) => e.status === 'ACTIVE');
   const filteredEvents = events.filter((e) => {
-    if (filter === 'All') return e.status !== 'ACTIVE';
+    if (filter === 'All') return true;
     return e.status === filter.toUpperCase();
   });
 
@@ -89,29 +88,6 @@ export default function EventsPage() {
           </Button>
         ))}
       </div>
-
-      {/* Active Event Banner */}
-      {activeEvent && (filter === 'All' || filter === 'Active') && (
-        <Link href={`/admin/events/${(activeEvent.code || activeEvent.id).toLowerCase()}`} className="block">
-          <Card className="border-success/30 bg-success/5 transition-colors hover:border-success/50">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Badge className="bg-success/20 text-success">ACTIVE</Badge>
-                    <CardTitle className="text-lg">{activeEvent.name}</CardTitle>
-                  </div>
-                  <CardDescription className="mt-1">
-                    {activeEvent.venue && <span className="inline-flex items-center gap-1 mr-4"><MapPin className="h-3 w-3" />{activeEvent.venue}</span>}
-                    {activeEvent.eventDate && <span className="inline-flex items-center gap-1 mr-4"><Calendar className="h-3 w-3" />{new Date(activeEvent.eventDate).toLocaleDateString()}</span>}
-                    <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" />{activeEvent._count.accreditations} records</span>
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-          </Card>
-        </Link>
-      )}
 
       {/* Events Grid */}
       {loading ? (

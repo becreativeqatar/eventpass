@@ -72,14 +72,6 @@ export async function PATCH(
 
     const accessGroupsStr = Array.isArray(accessGroups) ? accessGroups.join(',') : undefined;
 
-    // If activating, deactivate current active project
-    if (status === 'ACTIVE' && existing.status !== 'ACTIVE') {
-      await prisma.accreditationProject.updateMany({
-        where: { status: 'ACTIVE', id: { not: existing.id } },
-        data: { status: 'COMPLETED' },
-      });
-    }
-
     // Check for duplicate code if changing it
     if (code && code !== existing.code) {
       const codeExists = await prisma.accreditationProject.findFirst({

@@ -310,7 +310,7 @@ export default function EventDetailPage() {
           actionEvent?.action === 'delete'
             ? `Permanently delete "${event.name}"? This cannot be undone.`
             : actionEvent?.action === 'activate'
-            ? `Activate "${event.name}"? The current active event will be marked as completed.`
+            ? `Activate "${event.name}"? This will make the event live for scanning and accreditation.`
             : actionEvent?.action === 'complete'
             ? `Mark "${event.name}" as completed?`
             : `Archive "${event.name}"? Archived events are read-only.`

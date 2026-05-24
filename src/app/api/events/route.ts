@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { autoCompleteExpiredEvents } from '@/lib/active-project';
 
 // GET /api/events - List all events
 export async function GET() {
@@ -10,6 +11,9 @@ export async function GET() {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Auto-complete events past their bump-out end date
+    await autoCompleteExpiredEvents();
 
     const events = await prisma.accreditationProject.findMany({
       orderBy: { createdAt: 'desc' },
@@ -58,38 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     const accessGroupsStr = Array.isArray(accessGroups) ? accessGroups.join(',') : 'General';
-    const targetStatus = status || 'DRAFT';
-
-    // If activating, deactivate current active project in a transaction
-    if (targetStatus === 'ACTIVE') {
-      const event = await prisma.$transaction(async (tx) => {
-        await tx.accreditationProject.updateMany({
-          where: { status: 'ACTIVE' },
-          data: { status: 'COMPLETED' },
-        });
-
-        return tx.accreditationProject.create({
-          data: {
-            name,
-            code: code || name.toUpperCase().replace(/\s+/g, '-').slice(0, 20),
-            description: description || null,
-            venue: venue || null,
-            eventDate: eventDate ? new Date(eventDate) : null,
-            bumpInStart: bumpInStart ? new Date(bumpInStart) : null,
-            bumpInEnd: bumpInEnd ? new Date(bumpInEnd) : null,
-            liveStart: liveStart ? new Date(liveStart) : null,
-            liveEnd: liveEnd ? new Date(liveEnd) : null,
-            bumpOutStart: bumpOutStart ? new Date(bumpOutStart) : null,
-            bumpOutEnd: bumpOutEnd ? new Date(bumpOutEnd) : null,
-            accessGroups: accessGroupsStr,
-            status: 'ACTIVE',
-            createdById: session.user.id,
-          },
-        });
-      });
-
-      return NextResponse.json({ data: event }, { status: 201 });
-    }
+    const targetStatus = status || 'ACTIVE';
 
     const event = await prisma.accreditationProject.create({
       data: {

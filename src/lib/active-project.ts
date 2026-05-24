@@ -1,7 +1,23 @@
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 
+/**
+ * Auto-complete active events whose bump-out phase has ended.
+ * Called lazily when events are fetched.
+ */
+export async function autoCompleteExpiredEvents() {
+  const now = new Date();
+  await prisma.accreditationProject.updateMany({
+    where: {
+      status: 'ACTIVE',
+      bumpOutEnd: { not: null, lt: now },
+    },
+    data: { status: 'COMPLETED' },
+  });
+}
+
 export async function getActiveProject() {
+  await autoCompleteExpiredEvents();
   const project = await prisma.accreditationProject.findFirst({
     where: { status: 'ACTIVE' },
   });
