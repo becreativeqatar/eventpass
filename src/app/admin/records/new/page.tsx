@@ -34,6 +34,7 @@ export default function NewRecordPage() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
@@ -122,10 +123,20 @@ export default function NewRecordPage() {
       return;
     }
 
-    if (!formData.firstName || !formData.lastName || !formData.company || !formData.role || !formData.accessGroup) {
-      toast.error('Please fill in all required fields');
+    const errors: Record<string, boolean> = {};
+    if (!formData.firstName) errors.firstName = true;
+    if (!formData.lastName) errors.lastName = true;
+    if (!formData.company) errors.company = true;
+    if (!formData.role) errors.role = true;
+    if (!formData.accessGroup) errors.accessGroup = true;
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      const fields = Object.keys(errors).map(k => k.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()));
+      toast.error(`Required: ${fields.join(', ')}`);
       return;
     }
+    setFieldErrors({});
 
     setIsSubmitting(true);
 
@@ -216,11 +227,11 @@ export default function NewRecordPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name *</Label>
-                    <Input id="firstName" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} />
+                    <Input id="firstName" value={formData.firstName} onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }); setFieldErrors(prev => ({ ...prev, firstName: false })); }} className={fieldErrors.firstName ? 'border-destructive' : ''} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Last Name *</Label>
-                    <Input id="lastName" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} />
+                    <Input id="lastName" value={formData.lastName} onChange={(e) => { setFormData({ ...formData, lastName: e.target.value }); setFieldErrors(prev => ({ ...prev, lastName: false })); }} className={fieldErrors.lastName ? 'border-destructive' : ''} />
                   </div>
                 </div>
 
@@ -237,18 +248,18 @@ export default function NewRecordPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="company">Company/Organization *</Label>
-                  <Input id="company" value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })} />
+                  <Input id="company" value={formData.company} onChange={(e) => { setFormData({ ...formData, company: e.target.value }); setFieldErrors(prev => ({ ...prev, company: false })); }} className={fieldErrors.company ? 'border-destructive' : ''} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="role">Role/Job Title *</Label>
-                  <Input id="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} />
+                  <Input id="role" value={formData.role} onChange={(e) => { setFormData({ ...formData, role: e.target.value }); setFieldErrors(prev => ({ ...prev, role: false })); }} className={fieldErrors.role ? 'border-destructive' : ''} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="accessGroup">Access Group *</Label>
-                  <Select value={formData.accessGroup} onValueChange={(value) => setFormData({ ...formData, accessGroup: value })}>
-                    <SelectTrigger id="accessGroup">
+                  <Select value={formData.accessGroup} onValueChange={(value) => { setFormData({ ...formData, accessGroup: value }); setFieldErrors(prev => ({ ...prev, accessGroup: false })); }}>
+                    <SelectTrigger id="accessGroup" className={fieldErrors.accessGroup ? 'border-destructive' : ''}>
                       <SelectValue placeholder="Select access group" />
                     </SelectTrigger>
                     <SelectContent>
