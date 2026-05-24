@@ -64,10 +64,11 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
     ...(query.status && { status: query.status }),
     ...(query.q && {
       OR: [
-        { firstName: { contains: query.q } },
-        { lastName: { contains: query.q } },
-        { email: { contains: query.q } },
-        { company: { contains: query.q } },
+        { firstName: { contains: query.q, mode: 'insensitive' as const } },
+        { lastName: { contains: query.q, mode: 'insensitive' as const } },
+        { email: { contains: query.q, mode: 'insensitive' as const } },
+        { company: { contains: query.q, mode: 'insensitive' as const } },
+        { accreditationNumber: { contains: query.q, mode: 'insensitive' as const } },
       ],
     }),
   };
