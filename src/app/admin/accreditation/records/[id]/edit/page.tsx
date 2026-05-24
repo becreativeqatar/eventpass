@@ -315,7 +315,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} placeholder="+974 XXXX XXXX" />
+                  <Input id="phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9+\s]/g, '') })} placeholder="+974 XXXX XXXX" inputMode="tel" />
                 </div>
               </div>
 
@@ -373,7 +373,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="qidNumber">QID Number *</Label>
-                    <Input id="qidNumber" value={formData.qidNumber} onChange={(e) => setFormData({ ...formData, qidNumber: e.target.value })} placeholder="11 digit QID" maxLength={11} />
+                    <Input id="qidNumber" value={formData.qidNumber} onChange={(e) => setFormData({ ...formData, qidNumber: e.target.value.replace(/\D/g, '') })} placeholder="11 digit QID" maxLength={11} inputMode="numeric" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="qidExpiry">QID Expiry Date *</Label>
@@ -399,7 +399,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="hayyaNumber">Hayya Number *</Label>
-                      <Input id="hayyaNumber" value={formData.hayyaNumber} onChange={(e) => setFormData({ ...formData, hayyaNumber: e.target.value })} />
+                      <Input id="hayyaNumber" value={formData.hayyaNumber} onChange={(e) => setFormData({ ...formData, hayyaNumber: e.target.value.replace(/\D/g, '') })} inputMode="numeric" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="hayyaExpiry">Hayya Expiry Date *</Label>

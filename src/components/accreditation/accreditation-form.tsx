@@ -294,7 +294,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" {...register('phone')} placeholder="+974 XXXX XXXX" />
+                <Input id="phone" {...register('phone')} placeholder="+974 XXXX XXXX" inputMode="tel" onKeyDown={(e) => { if (!/[0-9+\s]/.test(e.key) && !['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'].includes(e.key)) e.preventDefault(); }} />
               </div>
             </div>
 
@@ -358,7 +358,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="qidNumber">QID Number *</Label>
-                  <Input id="qidNumber" {...register('qidNumber')} placeholder="11-digit QID number" maxLength={11} />
+                  <Input id="qidNumber" {...register('qidNumber')} placeholder="11-digit QID number" maxLength={11} inputMode="numeric" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'].includes(e.key)) e.preventDefault(); }} />
                   <p className="text-xs text-muted-foreground">Must be exactly 11 digits</p>
                   {errors.qidNumber && <p className="text-sm text-destructive">{String(errors.qidNumber.message)}</p>}
                 </div>
@@ -398,7 +398,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="hayyaNumber">Hayya Visa Number *</Label>
-                    <Input id="hayyaNumber" {...register('hayyaNumber')} placeholder="Hayya visa number" />
+                    <Input id="hayyaNumber" {...register('hayyaNumber')} placeholder="Hayya visa number" inputMode="numeric" onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'].includes(e.key)) e.preventDefault(); }} />
                     {errors.hayyaNumber && <p className="text-sm text-destructive">{String(errors.hayyaNumber.message)}</p>}
                   </div>
                   <div className="space-y-2">
