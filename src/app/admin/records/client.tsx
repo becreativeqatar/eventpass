@@ -14,7 +14,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { BulkActionBar } from '@/components/bulk-action-bar';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { toast } from 'sonner';
-import Image from 'next/image';
 import Link from 'next/link';
 
 interface Accreditation {
@@ -386,7 +385,6 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
                     aria-label="Select all"
                   />
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Photo</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Number</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Name</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Company</th>
@@ -400,7 +398,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
               {isLoading ? (
                 [...Array(5)].map((_, i) => (
                   <tr key={i}>
-                    <td className="px-4 py-4"><Skeleton className="h-10 w-10 rounded-full" /></td>
+                    <td className="px-4 py-4"><Skeleton className="h-4 w-4" /></td>
                     <td className="px-4 py-4"><Skeleton className="h-4 w-24" /></td>
                     <td className="px-4 py-4"><Skeleton className="h-4 w-32" /></td>
                     <td className="px-4 py-4"><Skeleton className="h-4 w-40" /></td>
@@ -412,7 +410,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
                 ))
               ) : accreditations.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-12">
+                  <td colSpan={8} className="px-6 py-12">
                     <EmptyState
                       icon={FileText}
                       title={filters.status !== 'all' ? `No ${filters.status.toLowerCase()} records found` : "No records found"}
@@ -437,23 +435,6 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
                         onCheckedChange={() => toggleSelect(acc.id)}
                         aria-label={`Select ${acc.firstName} ${acc.lastName}`}
                       />
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="h-10 w-10 bg-muted rounded-full overflow-hidden flex items-center justify-center">
-                        {acc.photoUrl ? (
-                          <Image
-                            src={acc.photoUrl}
-                            alt={`${acc.firstName} ${acc.lastName}`}
-                            width={40}
-                            height={40}
-                            className="object-cover"
-                          />
-                        ) : (
-                          <span className="text-muted-foreground font-medium text-sm">
-                            {acc.firstName?.[0] || ''}{acc.lastName?.[0] || ''}
-                          </span>
-                        )}
-                      </div>
                     </td>
                     <td className="px-4 py-4">
                       <span className="text-sm font-mono text-foreground">{acc.accreditationNumber}</span>
