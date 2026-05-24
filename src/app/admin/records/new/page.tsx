@@ -292,7 +292,7 @@ export default function NewRecordPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="passportCountry">Issuing Country *</Label>
-                        <Input id="passportCountry" value={formData.passportCountry} onChange={(e) => setFormData({ ...formData, passportCountry: e.target.value })} />
+                        <Input id="passportCountry" list="countries" value={formData.passportCountry} onChange={(e) => setFormData({ ...formData, passportCountry: e.target.value })} />
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -462,6 +462,22 @@ export default function NewRecordPage() {
           </div>
         )}
       </div>
+      <datalist id="countries">
+        <option value="Afghanistan"/><option value="Albania"/><option value="Algeria"/><option value="Argentina"/><option value="Australia"/>
+        <option value="Austria"/><option value="Bahrain"/><option value="Bangladesh"/><option value="Belgium"/><option value="Brazil"/>
+        <option value="Canada"/><option value="China"/><option value="Colombia"/><option value="Czech Republic"/><option value="Denmark"/>
+        <option value="Egypt"/><option value="Ethiopia"/><option value="Finland"/><option value="France"/><option value="Germany"/>
+        <option value="Ghana"/><option value="Greece"/><option value="India"/><option value="Indonesia"/><option value="Iran"/>
+        <option value="Iraq"/><option value="Ireland"/><option value="Italy"/><option value="Japan"/><option value="Jordan"/>
+        <option value="Kenya"/><option value="Kuwait"/><option value="Lebanon"/><option value="Malaysia"/><option value="Mexico"/>
+        <option value="Morocco"/><option value="Nepal"/><option value="Netherlands"/><option value="New Zealand"/><option value="Nigeria"/>
+        <option value="Norway"/><option value="Oman"/><option value="Pakistan"/><option value="Palestine"/><option value="Philippines"/>
+        <option value="Poland"/><option value="Portugal"/><option value="Qatar"/><option value="Romania"/><option value="Russia"/>
+        <option value="Saudi Arabia"/><option value="Singapore"/><option value="South Africa"/><option value="South Korea"/><option value="Spain"/>
+        <option value="Sri Lanka"/><option value="Sudan"/><option value="Sweden"/><option value="Switzerland"/><option value="Syria"/>
+        <option value="Thailand"/><option value="Tunisia"/><option value="Turkey"/><option value="UAE"/><option value="Uganda"/>
+        <option value="Ukraine"/><option value="United Kingdom"/><option value="United States"/><option value="Vietnam"/><option value="Yemen"/>
+      </datalist>
     </div>
   );
 }
