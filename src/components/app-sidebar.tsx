@@ -10,6 +10,7 @@ import {
   ScanLine,
   BarChart3,
   QrCode,
+  ChevronsLeft,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -21,6 +22,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { UserNav } from '@/components/user-nav';
@@ -55,6 +57,7 @@ const NAV_GROUPS = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { toggleSidebar, open } = useSidebar();
   const userRole = (session?.user?.role as string) || 'STAFF';
 
   const isActive = (href: string, exact?: boolean) => {
@@ -107,6 +110,12 @@ export function AppSidebar() {
       <SidebarFooter>
         <UserNav />
       </SidebarFooter>
+      <button
+        onClick={toggleSidebar}
+        className="absolute -right-3 top-4 z-20 hidden h-6 w-6 items-center justify-center rounded-full border bg-background shadow-sm hover:bg-accent md:flex"
+      >
+        <ChevronsLeft className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${open ? '' : 'rotate-180'}`} />
+      </button>
     </Sidebar>
   );
 }

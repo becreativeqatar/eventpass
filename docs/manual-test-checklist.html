@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventPass - Manual Test Checklist</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --text: #212529;
+  --text-muted: #6c757d;
+  --border: #dee2e6;
+  --primary: #4f46e5;
+  --primary-light: #eef2ff;
+  --success: #16a34a;
+  --success-light: #dcfce7;
+  --warning: #ca8a04;
+  --warning-light: #fef9c3;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a2e;
+    --bg-secondary: #16213e;
+    --bg-tertiary: #0f3460;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border: #334155;
+    --primary: #818cf8;
+    --primary-light: #1e1b4b;
+    --success: #4ade80;
+    --success-light: #052e16;
+    --warning: #facc15;
+    --warning-light: #422006;
+    --danger: #f87171;
+    --danger-light: #450a0a;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+h1 { font-size: 1.75rem; margin-bottom: 4px; }
+h2 { font-size: 1.25rem; margin: 0; }
+h3 { font-size: 1rem; margin: 0 0 8px 0; color: var(--text-muted); font-weight: 500; }
+
+.header {
+  text-align: center;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.header p { color: var(--text-muted); margin-top: 4px; }
+
+/* Overall Progress */
+.overall-progress {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 10px;
+  background: var(--bg-tertiary);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+.search-input:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+
+.btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.btn:hover { background: var(--bg-secondary); }
+.btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+.btn-primary:hover { opacity: 0.9; }
+.btn-danger { color: var(--danger); border-color: var(--danger); }
+.btn-danger:hover { background: var(--danger-light); }
+
+/* Filter pills */
+.filter-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  transition: all 0.15s;
+}
+
+.pill.active { background: var(--primary); color: white; border-color: var(--primary); }
+.pill:hover:not(.active) { background: var(--bg-secondary); }
+
+/* Journey Sections */
+.journey {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.journey-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  user-select: none;
+  gap: 12px;
+}
+
+.journey-header:hover { background: var(--bg-tertiary); }
+
+.journey-toggle {
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+  color: var(--text-muted);
+}
+
+.journey-toggle.collapsed { transform: rotate(-90deg); }
+
+.journey-title { flex: 1; }
+.journey-title span { font-size: 0.8rem; color: var(--text-muted); font-weight: 400; margin-left: 8px; }
+
+.journey-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.journey-progress .progress-bar { width: 100px; height: 6px; }
+
+.journey-progress-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  min-width: 40px;
+  text-align: right;
+}
+
+.journey-body {
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+
+.journey-body.collapsed { display: none; }
+
+/* Subsections */
+.subsection {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.subsection:last-child { border-bottom: none; }
+
+.subsection h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+/* Test items */
+.test-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 6px 4px;
+  border-radius: 4px;
+  gap: 10px;
+}
+
+.test-item:hover { background: var(--bg-secondary); }
+
+.test-item input[type="checkbox"] {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.test-item label {
+  flex: 1;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.test-item.checked label {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.test-item .tag {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 500;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tag-critical { background: var(--danger-light); color: var(--danger); }
+.tag-high { background: var(--warning-light); color: var(--warning); }
+.tag-medium { background: var(--primary-light); color: var(--primary); }
+.tag-low { background: var(--bg-tertiary); color: var(--text-muted); }
+.tag-mobile { background: #f0fdf4; color: #166534; }
+
+/* Stats */
+.stats-bar {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.stat { text-align: center; }
+.stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+.stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+
+/* Print */
+@media print {
+  .overall-progress, .controls, .filter-pills, .btn { display: none !important; }
+  .journey-body.collapsed { display: block !important; }
+  .journey { break-inside: avoid; }
+  body { padding: 0; }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 12px; }
+  .controls { flex-direction: column; }
+  .search-input { min-width: unset; }
+  .journey-progress .progress-bar { width: 60px; }
+  .stats-bar { gap: 8px; }
+}
+
+.hidden { display: none !important; }
+
+/* Notes */
+.test-notes {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-left: 26px;
+  margin-top: 2px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>EventPass - Pre-Production Test Checklist</h1>
+  <p>Manual testing checklist covering all modules, roles, and user journeys</p>
+</div>
+
+<div class="overall-progress">
+  <div class="progress-bar-container">
+    <span style="font-size:0.8rem;font-weight:600;">Overall:</span>
+    <div class="progress-bar">
+      <div class="progress-bar-fill" id="overallFill" style="width:0%"></div>
+    </div>
+    <span class="progress-text" id="overallText">0 / 0</span>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Total Tests</div></div>
+  <div class="stat"><div class="stat-value" id="statCompleted">0</div><div class="stat-label">Completed</div></div>
+  <div class="stat"><div class="stat-value" id="statRemaining">0</div><div class="stat-label">Remaining</div></div>
+  <div class="stat"><div class="stat-value" id="statPercent">0%</div><div class="stat-label">Progress</div></div>
+</div>
+
+<div class="controls">
+  <input type="text" class="search-input" id="searchInput" placeholder="Search test cases...">
+  <button class="btn" onclick="expandAll()">Expand All</button>
+  <button class="btn" onclick="collapseAll()">Collapse All</button>
+  <button class="btn" onclick="exportProgress()">Export JSON</button>
+  <button class="btn btn-danger" onclick="resetAll()">Reset All</button>
+</div>
+
+<div class="filter-pills">
+  <span class="pill active" data-filter="all">All</span>
+  <span class="pill" data-filter="pending">Unchecked</span>
+  <span class="pill" data-filter="done">Completed</span>
+  <span class="pill" data-filter="critical">Critical</span>
+  <span class="pill" data-filter="mobile">Mobile</span>
+</div>
+
+<div id="journeys">
+
+<!-- JOURNEY 1: Authentication & Access Control -->
+<div class="journey" data-journey="1">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 1: Authentication & Access Control <span>Login, passwords, sessions</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Login Flow</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t1_1"><label for="t1_1">Login with valid admin credentials — redirects to /admin dashboard</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t1_2"><label for="t1_2">Login with valid manager credentials — redirects to /admin</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t1_3"><label for="t1_3">Login with valid staff credentials — redirects to /admin</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t1_4"><label for="t1_4">Login with valid validator credentials — redirects to /validator</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t1_5"><label for="t1_5">Login with invalid email — shows error message</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t1_6"><label for="t1_6">Login with wrong password — shows error message</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_7"><label for="t1_7">Login with empty fields — shows validation errors</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_8"><label for="t1_8">Login page renders correctly on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Password Management</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t1_9"><label for="t1_9">Set password page works for new user invite link</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t1_10"><label for="t1_10">Set password with mismatched confirmation — shows error</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t1_11"><label for="t1_11">Change password from user menu — requires current password</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t1_12"><label for="t1_12">Change password with wrong current password — shows error</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_13"><label for="t1_13">Forgot password sends reset email (if implemented)</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_14"><label for="t1_14">Expired/invalid set-password token shows error</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Session & Security</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t1_15"><label for="t1_15">Accessing /admin without login redirects to /login</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t1_16"><label for="t1_16">After login, callback URL redirects to original page</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t1_17"><label for="t1_17">Logout clears session and redirects to login</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_18"><label for="t1_18">Session persists on page refresh (stays logged in)</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_19"><label for="t1_19">API routes return 401 without valid session token</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 2: Event Lifecycle -->
+<div class="journey" data-journey="2">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 2: Event Lifecycle <span>Create, activate, manage events</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Create Event</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_1"><label for="t2_1">Create event with all required fields (name, venue, dates) — saves successfully</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_2"><label for="t2_2">Event code auto-generates from name</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_3"><label for="t2_3">Submit without required fields — shows validation errors</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_4"><label for="t2_4">Phase dates must be sequential (Bump-In &lt; Live &lt; Bump-Out) — shows error if not</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_5"><label for="t2_5">Access groups field accepts comma-separated values</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_6"><label for="t2_6">Default access group is "General" when left empty</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_7"><label for="t2_7">Event creation form renders correctly on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Event Activation & Status</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_8"><label for="t2_8">Activate draft event — status changes to ACTIVE</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_9"><label for="t2_9">Activating new event auto-completes previous ACTIVE event</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_10"><label for="t2_10">Only one ACTIVE event exists at any time (verify in DB/UI)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_11"><label for="t2_11">Complete an active event — status changes to COMPLETED</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_12"><label for="t2_12">Archive a completed event — status changes to ARCHIVED</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_13"><label for="t2_13">Draft event does not require complete date validation</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Edit Event</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_14"><label for="t2_14">Edit event name, venue, dates — saves correctly</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_15"><label for="t2_15">Edit form pre-populates with existing event data</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_16"><label for="t2_16">Cannot edit archived event (read-only or hidden edit option)</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Event Switcher</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_17"><label for="t2_17">Event switcher in sidebar shows all events grouped by status</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_18"><label for="t2_18">Switching event updates all dashboard data and records</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_19"><label for="t2_19">Non-active event shows read-only banner</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_20"><label for="t2_20">Read-only mode disables create/edit/approve actions</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_21"><label for="t2_21">Event switcher works correctly on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 3: Accreditation Data Entry -->
+<div class="journey" data-journey="3">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 3: Accreditation Data Entry <span>Create, edit, validate records</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Create Record — QID Identification</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t3_1"><label for="t3_1">Create record with QID (11 digits) — saves successfully with DRAFT status</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_2"><label for="t3_2">QID less than 11 digits — shows validation error</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_3"><label for="t3_3">QID more than 11 digits — shows validation error</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_4"><label for="t3_4">QID with non-numeric characters — shows validation error</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_5"><label for="t3_5">QID expiry date is required and must be future date</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_6"><label for="t3_6">QID expiry must cover all assigned phase end dates</label><span class="tag tag-high">High</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Create Record — Passport Identification</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t3_7"><label for="t3_7">Create record with Passport + Hayya — saves successfully</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_8"><label for="t3_8">Passport number format (5-20 alphanumeric) — validates correctly</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_9"><label for="t3_9">Passport too short (&lt;5 chars) — shows error</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_10"><label for="t3_10">Country field is required for passport type</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_11"><label for="t3_11">Passport expiry date required</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_12"><label for="t3_12">Hayya number field appears for passport type</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_13"><label for="t3_13">Hayya expiry date required when Hayya number provided</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Common Field Validation</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t3_14"><label for="t3_14">First name and last name are required</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_15"><label for="t3_15">Email format validation (valid email or empty)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_16"><label for="t3_16">Phone number format (+974 followed by 8 digits)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_17"><label for="t3_17">Company field works with autocomplete suggestions</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_18"><label for="t3_18">Role field works with autocomplete suggestions</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_19"><label for="t3_19">At least one phase must be selected — shows error if none</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_20"><label for="t3_20">Access group dropdown shows project's configured groups</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_21"><label for="t3_21">Accreditation number auto-generated (ACC-0001 format)</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Phase & Date Configuration</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_22"><label for="t3_22">Select BUMP_IN phase — checkbox toggles correctly</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_23"><label for="t3_23">Select LIVE phase — checkbox toggles correctly</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_24"><label for="t3_24">Select BUMP_OUT phase — checkbox toggles correctly</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_25"><label for="t3_25">Per-accreditation phase date override — custom dates save correctly</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_26"><label for="t3_26">Phase date override validates sequential order</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Photo Upload</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_27"><label for="t3_27">Upload photo via file browse — shows preview</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_28"><label for="t3_28">Upload photo via drag and drop — shows preview</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_29"><label for="t3_29">Reject file &gt;5MB — shows size error</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_30"><label for="t3_30">Reject non-image file (PDF, TXT) — shows format error</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_31"><label for="t3_31">Accept JPEG, PNG, WebP formats</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_32"><label for="t3_32">Remove uploaded photo — preview clears</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_33"><label for="t3_33">Change photo replaces existing one</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Edit & Delete Records</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t3_34"><label for="t3_34">Edit existing record — form pre-populates with current data</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_35"><label for="t3_35">Save edited record — changes persist</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_36"><label for="t3_36">Delete draft record — confirms then removes from list</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_37"><label for="t3_37">Cannot delete approved/pending record (no delete option shown)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_38"><label for="t3_38">Record form responsive on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 4: Bulk Operations -->
+<div class="journey" data-journey="4">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 4: Bulk Operations <span>Import, export, batch actions</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>CSV/Excel Import</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t4_1"><label for="t4_1">Import valid Excel file — all records created as DRAFT</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_2"><label for="t4_2">Import with some invalid rows — shows row-specific errors, valid rows imported</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_3"><label for="t4_3">Import with all invalid rows — shows all errors, no records created</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_4"><label for="t4_4">Download template file — contains correct headers and example data</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_5"><label for="t4_5">Import disabled when project not ACTIVE (read-only message shown)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t4_6"><label for="t4_6">Import result shows count of imported records</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t4_7"><label for="t4_7">Imported records have sequential accreditation numbers</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Export</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_8"><label for="t4_8">Export accreditations to Excel — downloads file with all columns</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_9"><label for="t4_9">Exported file has formatted headers (bold, gray bg)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t4_10"><label for="t4_10">Export respects current project filter</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t4_11"><label for="t4_11">Export filename contains date (accreditations-YYYY-MM-DD.csv)</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Bulk Actions</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t4_12"><label for="t4_12">Select multiple records via checkboxes — bulk action bar appears</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t4_13"><label for="t4_13">Bulk approve selected PENDING records — all change to APPROVED</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_14"><label for="t4_14">Bulk reject selected PENDING records — all change to REJECTED</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_15"><label for="t4_15">Bulk delete selected DRAFT records — removed from list</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_16"><label for="t4_16">Bulk bar shows correct selected count</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t4_17"><label for="t4_17">Clear selection button works</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t4_18"><label for="t4_18">Toast shows success count after bulk action</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>QR Code Batch Export</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t4_19"><label for="t4_19">Batch export QR codes — downloads ZIP file</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t4_20"><label for="t4_20">Loading toast shown during generation</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t4_21"><label for="t4_21">ZIP contains one QR code per approved accreditation</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 5: Approval Workflow -->
+<div class="journey" data-journey="5">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 5: Approval Workflow <span>Submit, approve, reject, revoke</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Status Transitions</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t5_1"><label for="t5_1">Submit DRAFT record — status changes to PENDING</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t5_2"><label for="t5_2">Approve PENDING record — status changes to APPROVED</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t5_3"><label for="t5_3">Reject PENDING record (with reason) — status changes to REJECTED</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t5_4"><label for="t5_4">Revoke APPROVED record (with reason) — status changes to REVOKED</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t5_5"><label for="t5_5">Reinstate REVOKED record — status changes to APPROVED</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_6"><label for="t5_6">Return to draft from PENDING — status changes to DRAFT</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_7"><label for="t5_7">Reject requires reason — cannot submit without reason</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_8"><label for="t5_8">Revoke requires reason — cannot submit without reason</label><span class="tag tag-high">High</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Approval UI</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_9"><label for="t5_9">Revoke dialog opens with reason textarea</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_10"><label for="t5_10">Reinstate dialog opens with optional notes textarea</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_11"><label for="t5_11">Inline approve/reject buttons on records list (quick actions)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t5_12"><label for="t5_12">Status badge colors correct: DRAFT(gray), PENDING(yellow), APPROVED(green), REJECTED(red), REVOKED(red)</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>History & Audit Trail</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t5_13"><label for="t5_13">Record detail page shows full status history</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_14"><label for="t5_14">History shows: action type, user who performed it, timestamp, notes</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_15"><label for="t5_15">Rejection reason visible in history</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_16"><label for="t5_16">Revocation reason visible in history</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t5_17"><label for="t5_17">History entries ordered chronologically (newest first)</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Pending Approvals Widget</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_18"><label for="t5_18">Dashboard shows pending approvals card with latest 5 items</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t5_19"><label for="t5_19">Quick approve from dashboard widget works</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t5_20"><label for="t5_20">Widget updates after approve/reject action</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Notifications</h3>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t5_21"><label for="t5_21">Email notification sent when accreditation submitted for approval</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="low"><input type="checkbox" id="t5_22"><label for="t5_22">Notification email contains accreditation details and link</label><span class="tag tag-low">Low</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 6: QR Scanning & Verification -->
+<div class="journey" data-journey="6">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 6: QR Scanning & Verification <span>Scan, validate, access control</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>QR Scanner Interface</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t6_1"><label for="t6_1">QR scanner page loads and requests camera permission</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t6_2"><label for="t6_2">Camera feed displays in scanner viewport</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t6_3"><label for="t6_3">Phase selector available (BUMP_IN / LIVE / BUMP_OUT)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t6_4"><label for="t6_4">Scanner on mobile device with rear camera</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Scan Results — Valid Cases</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t6_5"><label for="t6_5">Scan APPROVED accreditation in correct phase → ALLOWED (green)</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t6_6"><label for="t6_6">ALLOWED result shows person's name, company, photo, access group</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t6_7"><label for="t6_7">Multiple scans of same badge all record correctly</label><span class="tag tag-high">High</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Scan Results — Denial Cases</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t6_8"><label for="t6_8">Scan REVOKED accreditation → REVOKED result (red)</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t6_9"><label for="t6_9">Scan EXPIRED accreditation → EXPIRED result</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t6_10"><label for="t6_10">Scan in wrong phase (no access) → WRONG_PHASE result</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t6_11"><label for="t6_11">Scan with expired ID document → ID_EXPIRED result</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t6_12"><label for="t6_12">Scan non-existent/invalid QR code → DENIED result</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t6_13"><label for="t6_13">Scan DRAFT/PENDING accreditation → DENIED result</label><span class="tag tag-high">High</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Scan Logging</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t6_14"><label for="t6_14">Each scan creates a record in scan history</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t6_15"><label for="t6_15">Scan record includes: phase, result, timestamp, scanned-by user</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t6_16"><label for="t6_16">Scan record includes device/IP information</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t6_17"><label for="t6_17">Recent scans list visible on scanner page</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Public Verification Page</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t6_18"><label for="t6_18">Public /verify/[token] page shows accreditation details (no login required)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t6_19"><label for="t6_19">Invalid token shows appropriate error on verification page</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t6_20"><label for="t6_20">Verification page shows status, name, company, phases</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t6_21"><label for="t6_21">Verification page mobile responsive</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 7: Dashboard & Reporting -->
+<div class="journey" data-journey="7">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 7: Dashboard & Reporting <span>Stats, charts, reports</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Dashboard Stats</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t7_1"><label for="t7_1">Dashboard loads with correct total accreditations count</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t7_2"><label for="t7_2">Approved count matches actual approved records</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t7_3"><label for="t7_3">Pending count matches actual pending records</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t7_4"><label for="t7_4">Total scans count matches actual scan records</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t7_5"><label for="t7_5">Stat cards are clickable and navigate to filtered views</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t7_6"><label for="t7_6">Stats update after creating/approving records (page refresh)</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Dashboard Widgets</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t7_7"><label for="t7_7">Recent activity shows last 5 accreditations with status dots</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t7_8"><label for="t7_8">Quick actions: New Record, Bulk Import, QR Scanner, Reports — all navigate correctly</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t7_9"><label for="t7_9">Empty state shows when no active event (Create event CTA)</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t7_10"><label for="t7_10">Event header shows name, date, venue, status badge</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Charts</h3>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t7_11"><label for="t7_11">Scan activity bar chart renders (7-day view)</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t7_12"><label for="t7_12">Status funnel/pie chart renders with correct proportions</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="low"><input type="checkbox" id="t7_13"><label for="t7_13">Charts responsive on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Reports Page</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t7_14"><label for="t7_14">Summary report loads with aggregate stats</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t7_15"><label for="t7_15">By-company report shows breakdown per company</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t7_16"><label for="t7_16">Scan activity report shows timeline data</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t7_17"><label for="t7_17">Reports page mobile responsive</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 8: User Management -->
+<div class="journey" data-journey="8">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 8: User Management <span>Admin-only user CRUD</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Create User</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t8_1"><label for="t8_1">Create user with ADMIN role — saves successfully</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t8_2"><label for="t8_2">Create user with MANAGER role — saves successfully</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t8_3"><label for="t8_3">Create user with STAFF role — saves successfully</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t8_4"><label for="t8_4">Create user with VALIDATOR role — saves successfully</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t8_5"><label for="t8_5">Invite email sent with set-password link</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t8_6"><label for="t8_6">Duplicate email — shows error (already exists)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t8_7"><label for="t8_7">Required fields validation (name, email, role)</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>User List & Management</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t8_8"><label for="t8_8">User list shows all users with role and stats</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t8_9"><label for="t8_9">Search users by name or email</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t8_10"><label for="t8_10">Filter users by role</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t8_11"><label for="t8_11">Reset user password (admin action) — sends new invite email</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t8_12"><label for="t8_12">User stats: projects created, accreditations created, scans performed</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Access Control</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t8_13"><label for="t8_13">Non-admin users cannot access /admin/users page (redirect or 403)</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t8_14"><label for="t8_14">Non-admin API calls to /api/users return 403</label><span class="tag tag-high">High</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 9: Search & Navigation -->
+<div class="journey" data-journey="9">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 9: Search & Navigation <span>Global search, sidebar, breadcrumbs</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Global Command Search</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t9_1"><label for="t9_1">Ctrl+K opens command palette</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t9_2"><label for="t9_2">Search by accreditation name — shows matching results</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t9_3"><label for="t9_3">Search by accreditation number — shows matching result</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t9_4"><label for="t9_4">Search by company — shows matching results</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t9_5"><label for="t9_5">Minimum 2 characters to trigger search</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t9_6"><label for="t9_6">Clicking result navigates to record detail page</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t9_7"><label for="t9_7">Results show status dots for quick identification</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Sidebar Navigation</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t9_8"><label for="t9_8">Dashboard link navigates to /admin</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t9_9"><label for="t9_9">Records link navigates to records list</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t9_10"><label for="t9_10">Scan History link navigates to scans page</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t9_11"><label for="t9_11">Reports link navigates to reports page</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t9_12"><label for="t9_12">Active page highlighted in sidebar</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t9_13"><label for="t9_13">Sidebar collapses to icon-only mode (desktop)</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t9_14"><label for="t9_14">Sidebar hidden on mobile, toggle opens it</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Breadcrumb & Pagination</h3>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t9_15"><label for="t9_15">Breadcrumb shows current path (e.g., Records > ACC-0001 > Edit)</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t9_16"><label for="t9_16">Breadcrumb links are clickable and navigate correctly</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t9_17"><label for="t9_17">Records table pagination — next/previous works</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t9_18"><label for="t9_18">Scans table pagination — next/previous works</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t9_19"><label for="t9_19">Pagination shows correct page info</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 10: Role-Based Access Restrictions -->
+<div class="journey" data-journey="10">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 10: Role-Based Access <span>Permission enforcement per role</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Admin Role (Full Access)</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t10_1"><label for="t10_1">Admin can access all pages (dashboard, records, scans, reports, users)</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_2"><label for="t10_2">Admin can create/edit/delete events</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_3"><label for="t10_3">Admin can approve/reject/revoke accreditations</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_4"><label for="t10_4">Admin can manage users</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_5"><label for="t10_5">Admin can import/export data</label><span class="tag tag-high">High</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Manager Role</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t10_6"><label for="t10_6">Manager can access dashboard, records, scans, reports</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t10_7"><label for="t10_7">Manager can approve/reject/revoke accreditations</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t10_8"><label for="t10_8">Manager CANNOT access user management (/admin/users)</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_9"><label for="t10_9">Manager can create/edit events</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_10"><label for="t10_10">Manager can import/export data</label><span class="tag tag-high">High</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Staff Role</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t10_11"><label for="t10_11">Staff can access dashboard and records</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t10_12"><label for="t10_12">Staff can create and edit accreditation records</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t10_13"><label for="t10_13">Staff CANNOT approve/reject/revoke accreditations</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_14"><label for="t10_14">Staff CANNOT access user management</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_15"><label for="t10_15">Approve/reject buttons not shown to staff users</label><span class="tag tag-high">High</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Validator Role</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t10_16"><label for="t10_16">Validator redirects to /validator (scanner page)</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t10_17"><label for="t10_17">Validator CANNOT access /admin pages</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_18"><label for="t10_18">Validator can only scan QR codes</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t10_19"><label for="t10_19">Validator API calls to admin endpoints return 403</label><span class="tag tag-high">High</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 11: Responsive & Mobile -->
+<div class="journey" data-journey="11">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 11: Responsive & Mobile <span>Chrome DevTools mobile viewport</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Layout & Navigation</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t11_1"><label for="t11_1">Sidebar hidden by default on mobile (&lt;768px)</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t11_2"><label for="t11_2">Hamburger menu toggles sidebar overlay</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t11_3"><label for="t11_3">Main content takes full width on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t11_4"><label for="t11_4">No horizontal scrolling on any page</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Tables on Mobile</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t11_5"><label for="t11_5">Records table switches to card view on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t11_6"><label for="t11_6">Scans table switches to card view on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t11_7"><label for="t11_7">Card views show essential info (name, status, company)</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t11_8"><label for="t11_8">Action buttons full-width and touch-friendly on mobile cards</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Forms on Mobile</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t11_9"><label for="t11_9">Accreditation form fields stack vertically on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t11_10"><label for="t11_10">Date pickers usable on mobile (no overflow)</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t11_11"><label for="t11_11">Form submit button always visible (not hidden below fold)</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t11_12"><label for="t11_12">Photo upload drag zone works with touch</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Dialogs & Modals on Mobile</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t11_13"><label for="t11_13">Revoke/reinstate dialogs fit within mobile viewport</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t11_14"><label for="t11_14">Command search palette usable on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t11_15"><label for="t11_15">Confirmation dialogs buttons don't overflow</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Dashboard on Mobile</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t11_16"><label for="t11_16">Stat cards stack in 2x2 or 1-column grid on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t11_17"><label for="t11_17">Charts resize properly on mobile</label><span class="tag tag-mobile">Mobile</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t11_18"><label for="t11_18">Quick actions grid responsive</label><span class="tag tag-mobile">Mobile</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY 12: Edge Cases & Error Handling -->
+<div class="journey" data-journey="12">
+  <div class="journey-header" onclick="toggleJourney(this)">
+    <span class="journey-toggle">&#9660;</span>
+    <h2 class="journey-title">Journey 12: Edge Cases & Error Handling <span>Errors, empty states, boundaries</span></h2>
+    <div class="journey-progress">
+      <div class="progress-bar"><div class="progress-bar-fill j-fill"></div></div>
+      <span class="journey-progress-text j-text">0%</span>
+    </div>
+  </div>
+  <div class="journey-body">
+    <div class="subsection">
+      <h3>Empty States</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t12_1"><label for="t12_1">Dashboard with no active event — shows "Create event" CTA</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t12_2"><label for="t12_2">Records page with no records — shows empty state with icon and action</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_3"><label for="t12_3">Scans page with no scans — shows empty state</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_4"><label for="t12_4">Search with no results — shows "No results found"</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_5"><label for="t12_5">Events list with no events — shows empty state</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Error Handling</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t12_6"><label for="t12_6">API error (500) shows toast error notification</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t12_7"><label for="t12_7">Network offline — shows appropriate error (not blank page)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t12_8"><label for="t12_8">404 for non-existent record ID — shows not found message</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_9"><label for="t12_9">Form submission with server validation error — shows inline errors</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_10"><label for="t12_10">Bulk action partial failure — shows count of successes/failures</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Data Boundaries</h3>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_11"><label for="t12_11">Very long name (100+ chars) — doesn't break layout</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_12"><label for="t12_12">Special characters in name fields (Arabic, accents) — saves correctly</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_13"><label for="t12_13">Very long company name — truncates with ellipsis in table</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="low"><input type="checkbox" id="t12_14"><label for="t12_14">XSS attempt in text fields — input sanitized, no script execution</label><span class="tag tag-low">Low</span></div>
+      <div class="test-item" data-priority="low"><input type="checkbox" id="t12_15"><label for="t12_15">SQL injection attempt in search — no error, properly escaped</label><span class="tag tag-low">Low</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Concurrency & State</h3>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_16"><label for="t12_16">Two users approve same record simultaneously — no duplicate history entries</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_17"><label for="t12_17">Edit a record that was just approved by another user — handles gracefully</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="low"><input type="checkbox" id="t12_18"><label for="t12_18">Browser back button after form submission — doesn't resubmit</label><span class="tag tag-low">Low</span></div>
+      <div class="test-item" data-priority="low"><input type="checkbox" id="t12_19"><label for="t12_19">Double-click submit button — only one request sent</label><span class="tag tag-low">Low</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Date & Timezone</h3>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t12_20"><label for="t12_20">All dates display in Asia/Qatar timezone (UTC+3)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_21"><label for="t12_21">Date pickers default to correct timezone</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_22"><label for="t12_22">Past dates in phase start — validation handles correctly</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="low"><input type="checkbox" id="t12_23"><label for="t12_23">Timestamps in scan history show correct local time</label><span class="tag tag-low">Low</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /journeys -->
+
+<div style="text-align:center; padding:24px 0; color:var(--text-muted); font-size:0.8rem;">
+  EventPass Pre-Production Test Checklist &bull; Generated 2026-05-24 &bull; localStorage auto-save enabled
+</div>
+
+<script>
+(function() {
+  const STORAGE_KEY = 'eventpass-test-checklist';
+
+  // Load state
+  function loadState() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    } catch { return {}; }
+  }
+
+  // Save state
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  // Initialize
+  const state = loadState();
+  const checkboxes = document.querySelectorAll('.test-item input[type="checkbox"]');
+
+  checkboxes.forEach(cb => {
+    if (state[cb.id]) {
+      cb.checked = true;
+      cb.closest('.test-item').classList.add('checked');
+    }
+    cb.addEventListener('change', function() {
+      const s = loadState();
+      if (this.checked) {
+        s[this.id] = true;
+        this.closest('.test-item').classList.add('checked');
+      } else {
+        delete s[this.id];
+        this.closest('.test-item').classList.remove('checked');
+      }
+      saveState(s);
+      updateProgress();
+    });
+  });
+
+  // Progress
+  function updateProgress() {
+    const total = checkboxes.length;
+    const checked = document.querySelectorAll('.test-item input:checked').length;
+    const pct = total ? Math.round((checked / total) * 100) : 0;
+
+    document.getElementById('overallFill').style.width = pct + '%';
+    document.getElementById('overallText').textContent = checked + ' / ' + total;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statCompleted').textContent = checked;
+    document.getElementById('statRemaining').textContent = total - checked;
+    document.getElementById('statPercent').textContent = pct + '%';
+
+    // Per-journey progress
+    document.querySelectorAll('.journey').forEach(j => {
+      const jChecks = j.querySelectorAll('.test-item input[type="checkbox"]');
+      const jChecked = j.querySelectorAll('.test-item input:checked');
+      const jPct = jChecks.length ? Math.round((jChecked.length / jChecks.length) * 100) : 0;
+      j.querySelector('.j-fill').style.width = jPct + '%';
+      j.querySelector('.j-text').textContent = jPct + '%';
+    });
+  }
+
+  updateProgress();
+
+  // Toggle journey
+  window.toggleJourney = function(header) {
+    const body = header.nextElementSibling;
+    const toggle = header.querySelector('.journey-toggle');
+    body.classList.toggle('collapsed');
+    toggle.classList.toggle('collapsed');
+  };
+
+  // Expand/Collapse all
+  window.expandAll = function() {
+    document.querySelectorAll('.journey-body').forEach(b => b.classList.remove('collapsed'));
+    document.querySelectorAll('.journey-toggle').forEach(t => t.classList.remove('collapsed'));
+  };
+
+  window.collapseAll = function() {
+    document.querySelectorAll('.journey-body').forEach(b => b.classList.add('collapsed'));
+    document.querySelectorAll('.journey-toggle').forEach(t => t.classList.add('collapsed'));
+  };
+
+  // Search
+  document.getElementById('searchInput').addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.test-item').forEach(item => {
+      const text = item.querySelector('label').textContent.toLowerCase();
+      item.classList.toggle('hidden', q && !text.includes(q));
+    });
+    // Show/hide subsections that have no visible items
+    document.querySelectorAll('.subsection').forEach(sub => {
+      const visible = sub.querySelectorAll('.test-item:not(.hidden)');
+      sub.classList.toggle('hidden', visible.length === 0);
+    });
+  });
+
+  // Filter pills
+  document.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', function() {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      const filter = this.dataset.filter;
+
+      document.querySelectorAll('.test-item').forEach(item => {
+        const checked = item.querySelector('input').checked;
+        const priority = item.dataset.priority;
+        let show = true;
+        if (filter === 'pending') show = !checked;
+        else if (filter === 'done') show = checked;
+        else if (filter === 'critical') show = priority === 'critical';
+        else if (filter === 'mobile') show = item.querySelector('.tag-mobile') !== null;
+        item.classList.toggle('hidden', !show);
+      });
+
+      document.querySelectorAll('.subsection').forEach(sub => {
+        const visible = sub.querySelectorAll('.test-item:not(.hidden)');
+        sub.classList.toggle('hidden', visible.length === 0);
+      });
+
+      document.querySelectorAll('.journey').forEach(j => {
+        const visible = j.querySelectorAll('.test-item:not(.hidden)');
+        j.classList.toggle('hidden', visible.length === 0);
+      });
+    });
+  });
+
+  // Export
+  window.exportProgress = function() {
+    const s = loadState();
+    const total = checkboxes.length;
+    const checked = Object.keys(s).length;
+    const data = {
+      exported: new Date().toISOString(),
+      progress: Math.round((checked / total) * 100) + '%',
+      completed: checked,
+      total: total,
+      checks: s
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'eventpass-test-progress-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Reset
+  window.resetAll = function() {
+    if (!confirm('Reset ALL test progress? This cannot be undone.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    checkboxes.forEach(cb => {
+      cb.checked = false;
+      cb.closest('.test-item').classList.remove('checked');
+    });
+    updateProgress();
+  };
+})();
+</script>
+</body>
+</html>

@@ -23,11 +23,10 @@ interface Accreditation {
 }
 
 interface AccreditationListTableProps {
-  projectId: string;
   accreditations: Accreditation[];
 }
 
-export function AccreditationListTable({ projectId, accreditations }: AccreditationListTableProps) {
+export function AccreditationListTable({ accreditations }: AccreditationListTableProps) {
   const columns: Column<Accreditation>[] = [
     {
       key: 'name',
@@ -83,7 +82,7 @@ export function AccreditationListTable({ projectId, accreditations }: Accreditat
           <Link href={`/admin/records/${acc.id}`}>
             <Button variant="outline" size="sm">View</Button>
           </Link>
-          <Link href={`/admin/records/${projectId}/records/${acc.id}/edit`}>
+          <Link href={`/admin/records/${acc.id}/edit`}>
             <Button variant="outline" size="sm">Edit</Button>
           </Link>
         </div>
@@ -93,7 +92,7 @@ export function AccreditationListTable({ projectId, accreditations }: Accreditat
           <Link href={`/admin/records/${acc.id}`} className="flex-1">
             <Button variant="outline" size="sm" className="w-full">View</Button>
           </Link>
-          <Link href={`/admin/records/${projectId}/records/${acc.id}/edit`} className="flex-1">
+          <Link href={`/admin/records/${acc.id}/edit`} className="flex-1">
             <Button variant="outline" size="sm" className="w-full">Edit</Button>
           </Link>
         </div>

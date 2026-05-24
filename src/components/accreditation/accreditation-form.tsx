@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -363,7 +364,11 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="qidExpiry">QID Expiry Date *</Label>
-                  <Input id="qidExpiry" type="date" {...register('qidExpiry')} />
+                  <DatePicker
+                    id="qidExpiry"
+                    value={watchedValues.qidExpiry}
+                    onChange={(date) => setValue('qidExpiry', date?.toISOString().split('T')[0] ?? '')}
+                  />
                   {errors.qidExpiry && <p className="text-sm text-destructive">{String(errors.qidExpiry.message)}</p>}
                 </div>
               </div>
@@ -382,7 +387,11 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="passportExpiry">Passport Expiry *</Label>
-                    <Input id="passportExpiry" type="date" {...register('passportExpiry')} />
+                    <DatePicker
+                      id="passportExpiry"
+                      value={watchedValues.passportExpiry}
+                      onChange={(date) => setValue('passportExpiry', date?.toISOString().split('T')[0] ?? '')}
+                    />
                     {errors.passportExpiry && <p className="text-sm text-destructive">{String(errors.passportExpiry.message)}</p>}
                   </div>
                 </div>
@@ -394,7 +403,11 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="hayyaExpiry">Hayya Expiry Date *</Label>
-                    <Input id="hayyaExpiry" type="date" {...register('hayyaExpiry')} />
+                    <DatePicker
+                      id="hayyaExpiry"
+                      value={watchedValues.hayyaExpiry}
+                      onChange={(date) => setValue('hayyaExpiry', date?.toISOString().split('T')[0] ?? '')}
+                    />
                     {errors.hayyaExpiry && <p className="text-sm text-destructive">{String(errors.hayyaExpiry.message)}</p>}
                   </div>
                 </div>
@@ -447,12 +460,20 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 <div className="grid gap-4 md:grid-cols-2 pl-6">
                   <div className="space-y-2">
                     <Label htmlFor="bumpInStart">Start Date *</Label>
-                    <Input id="bumpInStart" type="date" {...register('bumpInStart')} />
+                    <DatePicker
+                      id="bumpInStart"
+                      value={watchedValues.bumpInStart}
+                      onChange={(date) => setValue('bumpInStart', date?.toISOString().split('T')[0] ?? '')}
+                    />
                     {errors.bumpInStart && <p className="text-sm text-destructive">{String(errors.bumpInStart.message)}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bumpInEnd">End Date *</Label>
-                    <Input id="bumpInEnd" type="date" {...register('bumpInEnd')} />
+                    <DatePicker
+                      id="bumpInEnd"
+                      value={watchedValues.bumpInEnd}
+                      onChange={(date) => setValue('bumpInEnd', date?.toISOString().split('T')[0] ?? '')}
+                    />
                     {errors.bumpInEnd && <p className="text-sm text-destructive">{String(errors.bumpInEnd.message)}</p>}
                   </div>
                 </div>
@@ -469,12 +490,20 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 <div className="grid gap-4 md:grid-cols-2 pl-6">
                   <div className="space-y-2">
                     <Label htmlFor="liveStart">Start Date *</Label>
-                    <Input id="liveStart" type="date" {...register('liveStart')} />
+                    <DatePicker
+                      id="liveStart"
+                      value={watchedValues.liveStart}
+                      onChange={(date) => setValue('liveStart', date?.toISOString().split('T')[0] ?? '')}
+                    />
                     {errors.liveStart && <p className="text-sm text-destructive">{String(errors.liveStart.message)}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="liveEnd">End Date *</Label>
-                    <Input id="liveEnd" type="date" {...register('liveEnd')} />
+                    <DatePicker
+                      id="liveEnd"
+                      value={watchedValues.liveEnd}
+                      onChange={(date) => setValue('liveEnd', date?.toISOString().split('T')[0] ?? '')}
+                    />
                     {errors.liveEnd && <p className="text-sm text-destructive">{String(errors.liveEnd.message)}</p>}
                   </div>
                 </div>
@@ -491,12 +520,20 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 <div className="grid gap-4 md:grid-cols-2 pl-6">
                   <div className="space-y-2">
                     <Label htmlFor="bumpOutStart">Start Date *</Label>
-                    <Input id="bumpOutStart" type="date" {...register('bumpOutStart')} />
+                    <DatePicker
+                      id="bumpOutStart"
+                      value={watchedValues.bumpOutStart}
+                      onChange={(date) => setValue('bumpOutStart', date?.toISOString().split('T')[0] ?? '')}
+                    />
                     {errors.bumpOutStart && <p className="text-sm text-destructive">{String(errors.bumpOutStart.message)}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bumpOutEnd">End Date *</Label>
-                    <Input id="bumpOutEnd" type="date" {...register('bumpOutEnd')} />
+                    <DatePicker
+                      id="bumpOutEnd"
+                      value={watchedValues.bumpOutEnd}
+                      onChange={(date) => setValue('bumpOutEnd', date?.toISOString().split('T')[0] ?? '')}
+                    />
                     {errors.bumpOutEnd && <p className="text-sm text-destructive">{String(errors.bumpOutEnd.message)}</p>}
                   </div>
                 </div>

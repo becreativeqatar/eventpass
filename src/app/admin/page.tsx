@@ -1,19 +1,18 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { prisma } from '@/lib/prisma';
 import { getSelectedProject } from '@/lib/active-project';
 import { AccreditationStatus } from '@/lib/validations/accreditation';
-import { DashboardCharts } from '@/components/dashboard/dashboard-charts';
+import { PendingApprovals } from '@/components/dashboard/pending-approvals';
 import {
   Plus,
   Upload,
   BarChart3,
   QrCode,
-  ArrowRight,
   Calendar,
   ChevronRight,
 } from 'lucide-react';
@@ -41,43 +40,6 @@ async function getStats(projectId: string) {
   ]);
 
   return { accreditations, approved, pendingApprovals, scans };
-}
-
-async function getChartData(projectId: string) {
-  const [draft, rejected] = await Promise.all([
-    prisma.accreditation.count({ where: { projectId, status: AccreditationStatus.DRAFT } }),
-    prisma.accreditation.count({ where: { projectId, status: 'REJECTED' } }),
-  ]);
-
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const recentScans = await prisma.accreditationScan.findMany({
-    where: { accreditation: { projectId }, scannedAt: { gte: sevenDaysAgo } },
-    select: { scannedAt: true },
-  });
-
-  const scansByDay: Record<string, number> = {};
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-    scansByDay[d.toISOString().split('T')[0]] = 0;
-  }
-  for (const scan of recentScans) {
-    const key = new Date(scan.scannedAt).toISOString().split('T')[0];
-    if (key in scansByDay) scansByDay[key]++;
-  }
-
-  return {
-    scanActivity: Object.entries(scansByDay).map(([date, count]) => ({
-      date,
-      label: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
-      scans: count,
-    })),
-    funnel: [
-      { name: 'Draft', value: draft, color: 'var(--muted-foreground)' },
-      { name: 'Pending', value: 0, color: 'var(--warning)' }, // filled below
-      { name: 'Approved', value: 0, color: 'var(--success)' },
-      { name: 'Rejected', value: rejected, color: 'var(--destructive)' },
-    ],
-  };
 }
 
 async function getPendingApprovals(projectId: string) {
@@ -147,16 +109,11 @@ export default async function AdminDashboardPage() {
 
   const isReadOnly = activeProject.status !== 'ACTIVE';
 
-  const [stats, pending, recent, chartData] = await Promise.all([
+  const [stats, pending, recent] = await Promise.all([
     getStats(activeProject.id),
     getPendingApprovals(activeProject.id),
     getRecentActivity(activeProject.id),
-    getChartData(activeProject.id),
   ]);
-
-  // Fill funnel with actual stats
-  chartData.funnel[1].value = stats.pendingApprovals;
-  chartData.funnel[2].value = stats.approved;
 
   return (
     <div className="space-y-5">
@@ -183,72 +140,42 @@ export default async function AdminDashboardPage() {
           {/* Stats 2x2 */}
           <div className="grid grid-cols-2 gap-3">
             <Link href="/admin/records">
-              <Card className="border-t-2 border-t-secondary hover:border-t-secondary/80 transition-colors">
-                <CardHeader className="p-4 pb-4">
-                  <CardTitle className="text-2xl tabular-nums">{stats.accreditations}</CardTitle>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Total</p>
-                </CardHeader>
-              </Card>
+              <div className="bg-card rounded-xl border p-4 border-t-2 border-t-secondary hover:border-t-secondary/80 transition-colors">
+                <p className="text-2xl font-bold tabular-nums">{stats.accreditations}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Total</p>
+              </div>
             </Link>
             <Link href="/admin/records?status=APPROVED">
-              <Card className="border-t-2 border-t-success hover:border-t-success/80 transition-colors">
-                <CardHeader className="p-4 pb-4">
-                  <CardTitle className="text-2xl tabular-nums text-success">{stats.approved}</CardTitle>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Approved</p>
-                </CardHeader>
-              </Card>
+              <div className="bg-card rounded-xl border p-4 border-t-2 border-t-success hover:border-t-success/80 transition-colors">
+                <p className="text-2xl font-bold tabular-nums text-success">{stats.approved}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Approved</p>
+              </div>
             </Link>
             <Link href="/admin/records?status=PENDING">
-              <Card className="border-t-2 border-t-warning hover:border-t-warning/80 transition-colors">
-                <CardHeader className="p-4 pb-4">
-                  <CardTitle className="text-2xl tabular-nums text-warning">{stats.pendingApprovals}</CardTitle>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Pending</p>
-                </CardHeader>
-              </Card>
+              <div className="bg-card rounded-xl border p-4 border-t-2 border-t-warning hover:border-t-warning/80 transition-colors">
+                <p className="text-2xl font-bold tabular-nums text-warning">{stats.pendingApprovals}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Pending</p>
+              </div>
             </Link>
             <Link href="/admin/scans">
-              <Card className="border-t-2 border-t-primary hover:border-t-primary/80 transition-colors">
-                <CardHeader className="p-4 pb-4">
-                  <CardTitle className="text-2xl tabular-nums">{stats.scans}</CardTitle>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Scans</p>
-                </CardHeader>
-              </Card>
+              <div className="bg-card rounded-xl border p-4 border-t-2 border-t-primary hover:border-t-primary/80 transition-colors">
+                <p className="text-2xl font-bold tabular-nums">{stats.scans}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Scans</p>
+              </div>
             </Link>
           </div>
 
           {/* Pending Approvals */}
-          <Card>
-            <div className="flex items-center justify-between px-5 py-4 border-b">
-              <div className="flex items-center gap-3">
-                <h2 className="font-semibold">Pending Approvals</h2>
-                {stats.pendingApprovals > 0 && (
-                  <Badge variant="outline" className="border-warning/30 text-warning text-xs">{stats.pendingApprovals}</Badge>
-                )}
-              </div>
-              <Link href="/admin/records?status=PENDING" className="text-xs text-primary font-medium hover:underline">
-                View All
-              </Link>
-            </div>
-            {pending.length === 0 ? (
-              <CardContent className="py-8 text-center text-muted-foreground text-sm">
-                No pending approvals
-              </CardContent>
-            ) : (
-              <div className="p-3 space-y-2">
-                {pending.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={`/admin/records/${item.id}`}
-                    className="block bg-muted/50 rounded-lg p-3 hover:bg-muted transition-colors"
-                  >
-                    <p className="font-medium text-sm">{item.firstName} {item.lastName}</p>
-                    <p className="text-xs text-muted-foreground">{item.company} · {item.role}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{timeAgo(item.createdAt)}</p>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </Card>
+          <PendingApprovals
+            items={pending.map((item) => ({
+              id: item.id,
+              firstName: item.firstName,
+              lastName: item.lastName,
+              company: item.company,
+              role: item.role,
+            }))}
+            totalCount={stats.pendingApprovals}
+          />
         </div>
 
         {/* RIGHT: Quick Actions + Recent Activity */}
@@ -257,7 +184,7 @@ export default async function AdminDashboardPage() {
           {/* Quick Actions */}
           <Card>
             <div className="px-5 py-4 border-b">
-              <h2 className="font-semibold">Quick Actions</h2>
+              <h2 className="font-semibold text-base">Quick Actions</h2>
             </div>
             <div className="p-2">
               {!isReadOnly && (
@@ -270,8 +197,8 @@ export default async function AdminDashboardPage() {
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </Link>
                   <Link href="/admin/import" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors">
-                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                      <Upload className="h-4 w-4 text-secondary-foreground" />
+                    <div className="w-8 h-8 rounded-lg bg-[#8232a7]/10 flex items-center justify-center shrink-0">
+                      <Upload className="h-4 w-4 text-[#8232a7]" />
                     </div>
                     <span className="text-sm font-medium flex-1">Bulk Import</span>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -279,8 +206,8 @@ export default async function AdminDashboardPage() {
                 </>
               )}
               <Link href="/validator" className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <QrCode className="h-4 w-4 text-primary" />
+                <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
+                  <QrCode className="h-4 w-4 text-destructive" />
                 </div>
                 <span className="text-sm font-medium flex-1">QR Scanner</span>
                 <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -298,7 +225,7 @@ export default async function AdminDashboardPage() {
           {/* Recent Activity */}
           <Card>
             <div className="flex items-center justify-between px-5 py-4 border-b">
-              <h2 className="font-semibold">Recent Activity</h2>
+              <h2 className="font-semibold text-base">Recent Activity</h2>
               <Link href="/admin/records" className="text-xs text-muted-foreground hover:text-foreground">
                 View all
               </Link>
@@ -327,8 +254,6 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Charts */}
-      <DashboardCharts initialData={chartData} />
     </div>
   );
 }

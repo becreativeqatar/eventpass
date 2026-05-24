@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -130,7 +131,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
   const formatDateForInput = (date: Date | string | null | undefined): string => {
     if (!date) return '';
     const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toISOString().slice(0, 16);
+    return d.toISOString().split('T')[0];
   };
 
   // Date range validation
@@ -200,11 +201,10 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
 
             <div className="space-y-2">
               <Label htmlFor="eventDate">Event Date</Label>
-              <Input
+              <DatePicker
                 id="eventDate"
-                type="datetime-local"
-                defaultValue={formatDateForInput(project?.eventDate)}
-                onChange={(e) => setValue('eventDate', e.target.value ? new Date(e.target.value) : undefined)}
+                value={formatDateForInput(project?.eventDate)}
+                onChange={(date) => setValue('eventDate', date ?? undefined)}
               />
             </div>
           </div>
@@ -283,20 +283,18 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="bumpInStart">Start</Label>
-                <Input
+                <DatePicker
                   id="bumpInStart"
-                  type="datetime-local"
-                  defaultValue={formatDateForInput(project?.bumpInStart)}
-                  onChange={(e) => setValue('bumpInStart', e.target.value ? new Date(e.target.value) : undefined)}
+                  value={formatDateForInput(project?.bumpInStart)}
+                  onChange={(date) => setValue('bumpInStart', date ?? undefined)}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bumpInEnd">End</Label>
-                <Input
+                <DatePicker
                   id="bumpInEnd"
-                  type="datetime-local"
-                  defaultValue={formatDateForInput(project?.bumpInEnd)}
-                  onChange={(e) => setValue('bumpInEnd', e.target.value ? new Date(e.target.value) : undefined)}
+                  value={formatDateForInput(project?.bumpInEnd)}
+                  onChange={(date) => setValue('bumpInEnd', date ?? undefined)}
                 />
               </div>
             </div>
@@ -309,20 +307,18 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="liveStart">Start</Label>
-                <Input
+                <DatePicker
                   id="liveStart"
-                  type="datetime-local"
-                  defaultValue={formatDateForInput(project?.liveStart)}
-                  onChange={(e) => setValue('liveStart', e.target.value ? new Date(e.target.value) : undefined)}
+                  value={formatDateForInput(project?.liveStart)}
+                  onChange={(date) => setValue('liveStart', date ?? undefined)}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="liveEnd">End</Label>
-                <Input
+                <DatePicker
                   id="liveEnd"
-                  type="datetime-local"
-                  defaultValue={formatDateForInput(project?.liveEnd)}
-                  onChange={(e) => setValue('liveEnd', e.target.value ? new Date(e.target.value) : undefined)}
+                  value={formatDateForInput(project?.liveEnd)}
+                  onChange={(date) => setValue('liveEnd', date ?? undefined)}
                 />
               </div>
             </div>
@@ -335,20 +331,18 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="bumpOutStart">Start</Label>
-                <Input
+                <DatePicker
                   id="bumpOutStart"
-                  type="datetime-local"
-                  defaultValue={formatDateForInput(project?.bumpOutStart)}
-                  onChange={(e) => setValue('bumpOutStart', e.target.value ? new Date(e.target.value) : undefined)}
+                  value={formatDateForInput(project?.bumpOutStart)}
+                  onChange={(date) => setValue('bumpOutStart', date ?? undefined)}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bumpOutEnd">End</Label>
-                <Input
+                <DatePicker
                   id="bumpOutEnd"
-                  type="datetime-local"
-                  defaultValue={formatDateForInput(project?.bumpOutEnd)}
-                  onChange={(e) => setValue('bumpOutEnd', e.target.value ? new Date(e.target.value) : undefined)}
+                  value={formatDateForInput(project?.bumpOutEnd)}
+                  onChange={(date) => setValue('bumpOutEnd', date ?? undefined)}
                 />
               </div>
             </div>

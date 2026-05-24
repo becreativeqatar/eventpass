@@ -2,22 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ConfirmDialog } from '@/components/confirm-dialog';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Plus, Calendar, MapPin, Users, Play, CheckCircle, Archive, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -49,11 +39,9 @@ export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('All');
+  const router = useRouter();
   const [actionEvent, setActionEvent] = useState<{ event: Event; action: string } | null>(null);
   const [processing, setProcessing] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const [editForm, setEditForm] = useState({ name: '', description: '', venue: '', eventDate: '' });
-  const [saving, setSaving] = useState(false);
 
   const fetchEvents = async () => {
     try {
@@ -68,45 +56,6 @@ export default function EventsPage() {
   };
 
   useEffect(() => { fetchEvents(); }, []);
-
-  const openEditDialog = (event: Event) => {
-    setEditingEvent(event);
-    setEditForm({
-      name: event.name,
-      description: event.description || '',
-      venue: event.venue || '',
-      eventDate: event.eventDate ? event.eventDate.split('T')[0] : '',
-    });
-  };
-
-  const handleEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingEvent) return;
-    setSaving(true);
-    try {
-      const res = await fetch(`/api/events/${editingEvent.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: editForm.name,
-          description: editForm.description || null,
-          venue: editForm.venue || null,
-          eventDate: editForm.eventDate || null,
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to update event');
-      }
-      toast.success('Event updated');
-      setEditingEvent(null);
-      fetchEvents();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to update');
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const handleAction = async () => {
     if (!actionEvent) return;
@@ -153,7 +102,7 @@ export default function EventsPage() {
 
       {/* Active Event Banner */}
       {activeEvent && (
-        <Link href={`/admin/events/${activeEvent.id}`}>
+        <Link href={`/admin/events/${activeEvent.id}`} className="block">
           <Card className="border-success/30 bg-success/5 transition-colors hover:border-success/50">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -170,7 +119,7 @@ export default function EventsPage() {
                 </div>
                 {isAdmin && (
                   <div className="flex gap-2" onClick={(e) => e.preventDefault()}>
-                    <Button variant="outline" size="sm" onClick={() => openEditDialog(activeEvent)}>
+                    <Button variant="outline" size="sm" onClick={() => router.push(`/admin/events/${activeEvent.id}/edit`)}>
                       <Pencil className="h-4 w-4 mr-1" />
                       Edit
                     </Button>
@@ -234,7 +183,7 @@ export default function EventsPage() {
                     {isAdmin && (
                       <div className="flex gap-1" onClick={(e) => e.preventDefault()}>
                         {(event.status === 'DRAFT' || event.status === 'COMPLETED') && (
-                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(event)} title="Edit">
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => router.push(`/admin/events/${event.id}/edit`)} title="Edit">
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
                         )}
@@ -298,58 +247,6 @@ export default function EventsPage() {
         loading={processing}
       />
 
-      {/* Edit Event Dialog */}
-      <Dialog open={!!editingEvent} onOpenChange={(open) => { if (!open) setEditingEvent(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Event</DialogTitle>
-            <DialogDescription>Update event details</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleEdit}>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="eventName">Event Name</Label>
-                <Input
-                  id="eventName"
-                  value={editForm.name}
-                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="eventDescription">Description</Label>
-                <Textarea
-                  id="eventDescription"
-                  value={editForm.description}
-                  onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                  rows={3}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="eventVenue">Venue</Label>
-                <Input
-                  id="eventVenue"
-                  value={editForm.venue}
-                  onChange={(e) => setEditForm({ ...editForm, venue: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="eventDate">Event Date</Label>
-                <Input
-                  id="eventDate"
-                  type="date"
-                  value={editForm.eventDate}
-                  onChange={(e) => setEditForm({ ...editForm, eventDate: e.target.value })}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setEditingEvent(null)}>Cancel</Button>
-              <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

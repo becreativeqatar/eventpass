@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Upload, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
@@ -326,20 +327,16 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="bumpInStart">Start Date</Label>
-                        <Input
-                          id="bumpInStart"
-                          type="date"
+                        <DatePicker
                           value={formData.bumpInStart}
-                          onChange={(e) => setFormData({ ...formData, bumpInStart: e.target.value })}
+                          onChange={(date) => setFormData({ ...formData, bumpInStart: date?.toISOString().split('T')[0] ?? '' })}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpInEnd">End Date</Label>
-                        <Input
-                          id="bumpInEnd"
-                          type="date"
+                        <DatePicker
                           value={formData.bumpInEnd}
-                          onChange={(e) => setFormData({ ...formData, bumpInEnd: e.target.value })}
+                          onChange={(date) => setFormData({ ...formData, bumpInEnd: date?.toISOString().split('T')[0] ?? '' })}
                         />
                       </div>
                     </div>
@@ -360,20 +357,16 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="liveStart">Start Date</Label>
-                        <Input
-                          id="liveStart"
-                          type="date"
+                        <DatePicker
                           value={formData.liveStart}
-                          onChange={(e) => setFormData({ ...formData, liveStart: e.target.value })}
+                          onChange={(date) => setFormData({ ...formData, liveStart: date?.toISOString().split('T')[0] ?? '' })}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="liveEnd">End Date</Label>
-                        <Input
-                          id="liveEnd"
-                          type="date"
+                        <DatePicker
                           value={formData.liveEnd}
-                          onChange={(e) => setFormData({ ...formData, liveEnd: e.target.value })}
+                          onChange={(date) => setFormData({ ...formData, liveEnd: date?.toISOString().split('T')[0] ?? '' })}
                         />
                       </div>
                     </div>
@@ -394,20 +387,16 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutStart">Start Date</Label>
-                        <Input
-                          id="bumpOutStart"
-                          type="date"
+                        <DatePicker
                           value={formData.bumpOutStart}
-                          onChange={(e) => setFormData({ ...formData, bumpOutStart: e.target.value })}
+                          onChange={(date) => setFormData({ ...formData, bumpOutStart: date?.toISOString().split('T')[0] ?? '' })}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutEnd">End Date</Label>
-                        <Input
-                          id="bumpOutEnd"
-                          type="date"
+                        <DatePicker
                           value={formData.bumpOutEnd}
-                          onChange={(e) => setFormData({ ...formData, bumpOutEnd: e.target.value })}
+                          onChange={(date) => setFormData({ ...formData, bumpOutEnd: date?.toISOString().split('T')[0] ?? '' })}
                         />
                       </div>
                     </div>

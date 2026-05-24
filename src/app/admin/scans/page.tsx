@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { DatePicker } from '@/components/ui/date-picker';
 import { DataTable, type Column } from '@/components/data-table';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -173,11 +174,17 @@ export default function ScansPage() {
             </div>
             <div className="space-y-2">
               <Label>From Date</Label>
-              <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-[160px]" />
+              <DatePicker
+                value={fromDate}
+                onChange={(date) => setFromDate(date?.toISOString().split('T')[0] ?? '')}
+              />
             </div>
             <div className="space-y-2">
               <Label>To Date</Label>
-              <Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-[160px]" />
+              <DatePicker
+                value={toDate}
+                onChange={(date) => setToDate(date?.toISOString().split('T')[0] ?? '')}
+              />
             </div>
           </div>
         </CardContent>

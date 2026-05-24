@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Calendar, Plus, Edit } from 'lucide-react';
 import { toast } from 'sonner';
@@ -363,22 +364,16 @@ export default function AccreditationProjectsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="bumpInStart">Bump-In Start *</Label>
-                    <Input
-                      id="bumpInStart"
-                      type="date"
+                    <DatePicker
                       value={formData.bumpInStart}
-                      onChange={(e) => setFormData({ ...formData, bumpInStart: e.target.value })}
-                      required
+                      onChange={(date) => setFormData({ ...formData, bumpInStart: date?.toISOString().split('T')[0] ?? '' })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bumpInEnd">Bump-In End *</Label>
-                    <Input
-                      id="bumpInEnd"
-                      type="date"
+                    <DatePicker
                       value={formData.bumpInEnd}
-                      onChange={(e) => setFormData({ ...formData, bumpInEnd: e.target.value })}
-                      required
+                      onChange={(date) => setFormData({ ...formData, bumpInEnd: date?.toISOString().split('T')[0] ?? '' })}
                     />
                   </div>
                 </div>
@@ -386,22 +381,16 @@ export default function AccreditationProjectsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="liveStart">Live Start *</Label>
-                    <Input
-                      id="liveStart"
-                      type="date"
+                    <DatePicker
                       value={formData.liveStart}
-                      onChange={(e) => setFormData({ ...formData, liveStart: e.target.value })}
-                      required
+                      onChange={(date) => setFormData({ ...formData, liveStart: date?.toISOString().split('T')[0] ?? '' })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="liveEnd">Live End *</Label>
-                    <Input
-                      id="liveEnd"
-                      type="date"
+                    <DatePicker
                       value={formData.liveEnd}
-                      onChange={(e) => setFormData({ ...formData, liveEnd: e.target.value })}
-                      required
+                      onChange={(date) => setFormData({ ...formData, liveEnd: date?.toISOString().split('T')[0] ?? '' })}
                     />
                   </div>
                 </div>
@@ -409,22 +398,16 @@ export default function AccreditationProjectsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="bumpOutStart">Bump-Out Start *</Label>
-                    <Input
-                      id="bumpOutStart"
-                      type="date"
+                    <DatePicker
                       value={formData.bumpOutStart}
-                      onChange={(e) => setFormData({ ...formData, bumpOutStart: e.target.value })}
-                      required
+                      onChange={(date) => setFormData({ ...formData, bumpOutStart: date?.toISOString().split('T')[0] ?? '' })}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bumpOutEnd">Bump-Out End *</Label>
-                    <Input
-                      id="bumpOutEnd"
-                      type="date"
+                    <DatePicker
                       value={formData.bumpOutEnd}
-                      onChange={(e) => setFormData({ ...formData, bumpOutEnd: e.target.value })}
-                      required
+                      onChange={(date) => setFormData({ ...formData, bumpOutEnd: date?.toISOString().split('T')[0] ?? '' })}
                     />
                   </div>
                 </div>

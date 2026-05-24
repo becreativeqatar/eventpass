@@ -1,11 +1,11 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { SessionProvider } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppBreadcrumb } from '@/components/app-breadcrumb';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,6 +15,8 @@ import { ReadOnlyBanner } from '@/components/read-only-banner';
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const showBreadcrumb = pathname !== '/admin';
 
   if (status === 'loading') {
     return (
@@ -22,8 +24,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         <AppSidebar />
         <SidebarInset>
           <header className="flex h-14 shrink-0 items-center gap-2 border-b px-6">
-            <Skeleton className="h-6 w-6" />
-            <Separator orientation="vertical" className="h-4" />
             <Skeleton className="h-4 w-48" />
           </header>
           <main className="flex-1 p-6">
@@ -59,11 +59,11 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-6">
-          <SidebarTrigger className="-ml-2" />
-          <Separator orientation="vertical" className="h-4" />
-          <AppBreadcrumb />
-        </header>
+        {showBreadcrumb && (
+          <header className="flex h-14 shrink-0 items-center gap-2 border-b px-6">
+            <AppBreadcrumb />
+          </header>
+        )}
         <ReadOnlyBanner />
         <main className="flex-1 p-6">
           {children}

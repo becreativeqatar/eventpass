@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/date-picker';
 import { ArrowLeft, Upload, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import NextImage from 'next/image';
@@ -277,7 +278,7 @@ export default function NewRecordPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="qidExpiry">QID Expiry Date *</Label>
-                      <Input id="qidExpiry" type="date" value={formData.qidExpiry} onChange={(e) => setFormData({ ...formData, qidExpiry: e.target.value })} />
+                      <DatePicker value={formData.qidExpiry} onChange={(date) => setFormData(prev => ({ ...prev, qidExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
                     </div>
                   </div>
                 ) : (
@@ -294,7 +295,7 @@ export default function NewRecordPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="passportExpiry">Passport Expiry Date *</Label>
-                      <Input id="passportExpiry" type="date" value={formData.passportExpiry} onChange={(e) => setFormData({ ...formData, passportExpiry: e.target.value })} />
+                      <DatePicker value={formData.passportExpiry} onChange={(date) => setFormData(prev => ({ ...prev, passportExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
@@ -303,7 +304,7 @@ export default function NewRecordPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="hayyaExpiry">Hayya Expiry Date *</Label>
-                        <Input id="hayyaExpiry" type="date" value={formData.hayyaExpiry} onChange={(e) => setFormData({ ...formData, hayyaExpiry: e.target.value })} />
+                        <DatePicker value={formData.hayyaExpiry} onChange={(date) => setFormData(prev => ({ ...prev, hayyaExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
                       </div>
                     </div>
                   </>
@@ -350,11 +351,11 @@ export default function NewRecordPage() {
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="bumpInStart">Start Date</Label>
-                        <Input id="bumpInStart" type="date" value={formData.bumpInStart} onChange={(e) => setFormData({ ...formData, bumpInStart: e.target.value })} />
+                        <DatePicker value={formData.bumpInStart} onChange={(date) => setFormData(prev => ({ ...prev, bumpInStart: date?.toISOString().split('T')[0] ?? '' }))} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpInEnd">End Date</Label>
-                        <Input id="bumpInEnd" type="date" value={formData.bumpInEnd} onChange={(e) => setFormData({ ...formData, bumpInEnd: e.target.value })} />
+                        <DatePicker value={formData.bumpInEnd} onChange={(date) => setFormData(prev => ({ ...prev, bumpInEnd: date?.toISOString().split('T')[0] ?? '' }))} />
                       </div>
                     </div>
                   )}
@@ -370,11 +371,11 @@ export default function NewRecordPage() {
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="liveStart">Start Date</Label>
-                        <Input id="liveStart" type="date" value={formData.liveStart} onChange={(e) => setFormData({ ...formData, liveStart: e.target.value })} />
+                        <DatePicker value={formData.liveStart} onChange={(date) => setFormData(prev => ({ ...prev, liveStart: date?.toISOString().split('T')[0] ?? '' }))} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="liveEnd">End Date</Label>
-                        <Input id="liveEnd" type="date" value={formData.liveEnd} onChange={(e) => setFormData({ ...formData, liveEnd: e.target.value })} />
+                        <DatePicker value={formData.liveEnd} onChange={(date) => setFormData(prev => ({ ...prev, liveEnd: date?.toISOString().split('T')[0] ?? '' }))} />
                       </div>
                     </div>
                   )}
@@ -390,11 +391,11 @@ export default function NewRecordPage() {
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutStart">Start Date</Label>
-                        <Input id="bumpOutStart" type="date" value={formData.bumpOutStart} onChange={(e) => setFormData({ ...formData, bumpOutStart: e.target.value })} />
+                        <DatePicker value={formData.bumpOutStart} onChange={(date) => setFormData(prev => ({ ...prev, bumpOutStart: date?.toISOString().split('T')[0] ?? '' }))} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutEnd">End Date</Label>
-                        <Input id="bumpOutEnd" type="date" value={formData.bumpOutEnd} onChange={(e) => setFormData({ ...formData, bumpOutEnd: e.target.value })} />
+                        <DatePicker value={formData.bumpOutEnd} onChange={(date) => setFormData(prev => ({ ...prev, bumpOutEnd: date?.toISOString().split('T')[0] ?? '' }))} />
                       </div>
                     </div>
                   )}
