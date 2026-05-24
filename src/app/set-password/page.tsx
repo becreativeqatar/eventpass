@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,16 @@ function SetPasswordForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [tokenValid, setTokenValid] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!token) return;
+    fetch(`/api/auth/validate-token?token=${encodeURIComponent(token)}`)
+      .then(res => {
+        setTokenValid(res.ok);
+      })
+      .catch(() => setTokenValid(false));
+  }, [token]);
 
   if (!token) {
     return (
@@ -29,6 +39,37 @@ function SetPasswordForm() {
           <XCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h1 className="text-xl font-bold mb-2">Invalid Link</h1>
           <p className="text-sm text-muted-foreground mb-6">This link is missing or malformed.</p>
+          <Button onClick={() => router.push('/login')} className="w-full bce-gradient hover:opacity-90 text-white rounded-xl">
+            Go to Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (tokenValid === null) {
+    return (
+      <div className="w-full max-w-sm mx-4">
+        <div className="flex flex-col items-center mb-10">
+          <Image src="/images/bce-logo.webp" alt="BCE" width={180} height={54} className="h-16 w-auto object-contain" priority />
+        </div>
+        <div className="bg-white rounded-2xl shadow-xl shadow-black/5 p-8 text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mx-auto" />
+        </div>
+      </div>
+    );
+  }
+
+  if (tokenValid === false) {
+    return (
+      <div className="w-full max-w-sm mx-4">
+        <div className="flex flex-col items-center mb-10">
+          <Image src="/images/bce-logo.webp" alt="BCE" width={180} height={54} className="h-16 w-auto object-contain" priority />
+        </div>
+        <div className="bg-white rounded-2xl shadow-xl shadow-black/5 p-8 text-center">
+          <XCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <h1 className="text-xl font-bold mb-2">Link Expired</h1>
+          <p className="text-sm text-muted-foreground mb-6">This link has already been used or has expired. Please request a new one.</p>
           <Button onClick={() => router.push('/login')} className="w-full bce-gradient hover:opacity-90 text-white rounded-xl">
             Go to Login
           </Button>
