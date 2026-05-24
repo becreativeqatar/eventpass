@@ -19,6 +19,7 @@ import {
   ScanLine,
   BarChart3,
   Loader2,
+  Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConfirmDialog } from '@/components/confirm-dialog';
@@ -89,15 +90,27 @@ export default function EventDetailPage() {
     if (!actionEvent || !event) return;
     setProcessing(true);
     try {
-      const res = await fetch(`/api/events/${event.id}/${actionEvent.action}`, { method: 'PATCH' });
-      if (res.ok) {
-        toast.success(`Event ${actionEvent.action}d successfully`);
-        const data = await res.json();
-        setEvent(data.data || event);
-        router.refresh();
+      if (actionEvent.action === 'delete') {
+        const res = await fetch(`/api/events/${event.id}`, { method: 'DELETE' });
+        if (res.ok) {
+          toast.success('Event deleted');
+          router.push('/admin/events');
+          return;
+        } else {
+          const data = await res.json();
+          toast.error(data.error || 'Delete failed');
+        }
       } else {
-        const data = await res.json();
-        toast.error(data.error || 'Action failed');
+        const res = await fetch(`/api/events/${event.id}/${actionEvent.action}`, { method: 'PATCH' });
+        if (res.ok) {
+          toast.success(`Event ${actionEvent.action}d successfully`);
+          const data = await res.json();
+          setEvent(data.data || event);
+          router.refresh();
+        } else {
+          const data = await res.json();
+          toast.error(data.error || 'Action failed');
+        }
       }
     } catch {
       toast.error('Action failed');
@@ -164,6 +177,11 @@ export default function EventDetailPage() {
                 <Pencil className="h-4 w-4 mr-1" /> Edit
               </Button>
             </Link>
+          )}
+          {event.status === 'DRAFT' && (
+            <Button variant="outline" size="sm" className="text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => setActionEvent({ action: 'delete' })}>
+              <Trash2 className="h-4 w-4 mr-1" /> Delete
+            </Button>
           )}
         </div>
       </div>
@@ -287,15 +305,18 @@ export default function EventDetailPage() {
       <ConfirmDialog
         open={!!actionEvent}
         onOpenChange={() => setActionEvent(null)}
-        title={`${actionEvent?.action === 'activate' ? 'Activate' : actionEvent?.action === 'complete' ? 'Complete' : 'Archive'} Event`}
+        title={`${actionEvent?.action === 'delete' ? 'Delete' : actionEvent?.action === 'activate' ? 'Activate' : actionEvent?.action === 'complete' ? 'Complete' : 'Archive'} Event`}
         description={
-          actionEvent?.action === 'activate'
+          actionEvent?.action === 'delete'
+            ? `Permanently delete "${event.name}"? This cannot be undone.`
+            : actionEvent?.action === 'activate'
             ? `Activate "${event.name}"? The current active event will be marked as completed.`
             : actionEvent?.action === 'complete'
             ? `Mark "${event.name}" as completed?`
             : `Archive "${event.name}"? Archived events are read-only.`
         }
-        confirmLabel={actionEvent?.action === 'activate' ? 'Activate' : actionEvent?.action === 'complete' ? 'Complete' : 'Archive'}
+        confirmLabel={actionEvent?.action === 'delete' ? 'Delete' : actionEvent?.action === 'activate' ? 'Activate' : actionEvent?.action === 'complete' ? 'Complete' : 'Archive'}
+        variant={actionEvent?.action === 'delete' ? 'destructive' : 'default'}
         onConfirm={handleAction}
         loading={processing}
       />

@@ -2,13 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ConfirmDialog } from '@/components/confirm-dialog';
-import { Plus, Calendar, MapPin, Users, Play, CheckCircle, Archive, Pencil } from 'lucide-react';
+import { Plus, Calendar, MapPin, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Event {
@@ -39,43 +37,21 @@ export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('All');
-  const router = useRouter();
-  const [actionEvent, setActionEvent] = useState<{ event: Event; action: string } | null>(null);
-  const [processing, setProcessing] = useState(false);
 
-  const fetchEvents = async () => {
-    try {
-      const res = await fetch('/api/events');
-      const data = await res.json();
-      setEvents(data.data || []);
-    } catch {
-      toast.error('Failed to fetch events');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchEvents(); }, []);
-
-  const handleAction = async () => {
-    if (!actionEvent) return;
-    setProcessing(true);
-    try {
-      const res = await fetch(`/api/events/${actionEvent.event.id}/${actionEvent.action}`, { method: 'PATCH' });
-      if (res.ok) {
-        toast.success(`Event ${actionEvent.action}d successfully`);
-        fetchEvents();
-      } else {
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const res = await fetch('/api/events');
         const data = await res.json();
-        toast.error(data.error || 'Action failed');
+        setEvents(data.data || []);
+      } catch {
+        toast.error('Failed to fetch events');
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      toast.error('Action failed');
-    } finally {
-      setProcessing(false);
-      setActionEvent(null);
     }
-  };
+    fetchEvents();
+  }, []);
 
   const activeEvent = events.find((e) => e.status === 'ACTIVE');
   const filteredEvents = events.filter((e) => {
@@ -131,18 +107,6 @@ export default function EventsPage() {
                     <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" />{activeEvent._count.accreditations} records</span>
                   </CardDescription>
                 </div>
-                {isAdmin && (
-                  <div className="flex gap-2" onClick={(e) => e.preventDefault()}>
-                    <Button variant="outline" size="sm" onClick={() => router.push(`/admin/events/${(activeEvent.code || activeEvent.id).toLowerCase()}/edit`)}>
-                      <Pencil className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => setActionEvent({ event: activeEvent, action: 'complete' })}>
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                      Complete
-                    </Button>
-                  </div>
-                )}
               </div>
             </CardHeader>
           </Card>
@@ -180,30 +144,6 @@ export default function EventsPage() {
                       <Badge className={STATUS_STYLES[event.status] || ''}>{event.status}</Badge>
                       <span className="text-xs text-muted-foreground">{event.code}</span>
                     </div>
-                    {isAdmin && (
-                      <div className="flex gap-1" onClick={(e) => e.preventDefault()}>
-                        {(event.status === 'DRAFT' || event.status === 'COMPLETED') && (
-                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => router.push(`/admin/events/${(event.code || event.id).toLowerCase()}/edit`)} title="Edit">
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                        )}
-                        {event.status === 'DRAFT' && (
-                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setActionEvent({ event, action: 'activate' })} title="Activate">
-                            <Play className="h-3.5 w-3.5" />
-                          </Button>
-                        )}
-                        {event.status === 'COMPLETED' && (
-                          <>
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setActionEvent({ event, action: 'activate' })} title="Reactivate">
-                              <Play className="h-3.5 w-3.5" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setActionEvent({ event, action: 'archive' })} title="Archive">
-                              <Archive className="h-3.5 w-3.5" />
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    )}
                   </div>
                   <CardTitle className="text-base">{event.name}</CardTitle>
                   {event.description && (
@@ -230,22 +170,6 @@ export default function EventsPage() {
           ))}
         </div>
       )}
-
-      <ConfirmDialog
-        open={!!actionEvent}
-        onOpenChange={() => setActionEvent(null)}
-        title={`${actionEvent?.action === 'activate' ? 'Activate' : actionEvent?.action === 'complete' ? 'Complete' : 'Archive'} Event`}
-        description={
-          actionEvent?.action === 'activate'
-            ? `Activate "${actionEvent?.event.name}"? The current active event will be marked as completed.`
-            : actionEvent?.action === 'complete'
-            ? `Mark "${actionEvent?.event.name}" as completed?`
-            : `Archive "${actionEvent?.event.name}"? Archived events are read-only.`
-        }
-        confirmLabel={actionEvent?.action === 'activate' ? 'Activate' : actionEvent?.action === 'complete' ? 'Complete' : 'Archive'}
-        onConfirm={handleAction}
-        loading={processing}
-      />
 
     </div>
   );
