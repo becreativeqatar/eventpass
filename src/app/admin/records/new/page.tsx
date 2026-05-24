@@ -42,7 +42,7 @@ export default function NewRecordPage() {
     role: '',
     accessGroup: '',
     email: '',
-    phone: '',
+    phone: '+974 ',
     identificationType: 'qid' as 'qid' | 'passport',
     qidNumber: '',
     qidExpiry: '',

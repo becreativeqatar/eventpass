@@ -123,7 +123,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
       firstName: accreditation?.firstName || '',
       lastName: accreditation?.lastName || '',
       email: accreditation?.email || '',
-      phone: accreditation?.phone || '',
+      phone: accreditation?.phone || '+974 ',
       company: accreditation?.company || '',
       role: accreditation?.role || '',
       accessGroup: accreditation?.accessGroup || availableAccessGroups[0] || 'General',
