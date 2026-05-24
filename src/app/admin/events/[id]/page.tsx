@@ -1,9 +1,18 @@
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+'use client';
 
-export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const cookieStore = await cookies();
-  cookieStore.set('ep_selected_event', id, { path: '/', maxAge: 31536000 });
-  redirect('/admin');
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+
+export default function EventDetailPage() {
+  const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
+
+  useEffect(() => {
+    document.cookie = `ep_selected_event=${id};path=/;max-age=31536000`;
+    router.replace('/admin');
+  }, [id, router]);
+
+  return null;
 }
