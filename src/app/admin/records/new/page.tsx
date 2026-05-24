@@ -14,6 +14,13 @@ import { ArrowLeft, Upload, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import NextImage from 'next/image';
 
+/** Convert ISO date string to local YYYY-MM-DD (respects browser timezone) */
+function toLocalDate(iso: string | null): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 interface ActiveProject {
   id: string;
   name: string;
@@ -81,12 +88,12 @@ export default function NewRecordPage() {
         setProject(proj);
         setFormData((prev) => ({
           ...prev,
-          bumpInStart: proj.bumpInStart?.slice(0, 10) || '',
-          bumpInEnd: proj.bumpInEnd?.slice(0, 10) || '',
-          liveStart: proj.liveStart?.slice(0, 10) || '',
-          liveEnd: proj.liveEnd?.slice(0, 10) || '',
-          bumpOutStart: proj.bumpOutStart?.slice(0, 10) || '',
-          bumpOutEnd: proj.bumpOutEnd?.slice(0, 10) || '',
+          bumpInStart: toLocalDate(proj.bumpInStart),
+          bumpInEnd: toLocalDate(proj.bumpInEnd),
+          liveStart: toLocalDate(proj.liveStart),
+          liveEnd: toLocalDate(proj.liveEnd),
+          bumpOutStart: toLocalDate(proj.bumpOutStart),
+          bumpOutEnd: toLocalDate(proj.bumpOutEnd),
         }));
       }
     } catch (error) {
@@ -357,22 +364,20 @@ export default function NewRecordPage() {
                       <div className="space-y-2">
                         <Label htmlFor="bumpInStart">Start Date</Label>
                         <DatePicker value={formData.bumpInStart} onChange={(date) => {
-                          const val = date?.toISOString().split('T')[0] ?? '';
-                          if (project?.bumpInStart && val && val < project.bumpInStart.slice(0, 10)) {
-                            toast.error('Start date cannot be before event bump-in start');
-                            return;
-                          }
+                          if (!date) { setFormData(prev => ({ ...prev, bumpInStart: '' })); return; }
+                          const val = toLocalDate(date.toISOString());
+                          const limit = project?.bumpInStart ? toLocalDate(project.bumpInStart) : '';
+                          if (limit && val < limit) { toast.error('Start date cannot be before event bump-in start'); return; }
                           setFormData(prev => ({ ...prev, bumpInStart: val }));
                         }} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpInEnd">End Date</Label>
                         <DatePicker value={formData.bumpInEnd} onChange={(date) => {
-                          const val = date?.toISOString().split('T')[0] ?? '';
-                          if (project?.bumpInEnd && val && val > project.bumpInEnd.slice(0, 10)) {
-                            toast.error('End date cannot be after event bump-in end');
-                            return;
-                          }
+                          if (!date) { setFormData(prev => ({ ...prev, bumpInEnd: '' })); return; }
+                          const val = toLocalDate(date.toISOString());
+                          const limit = project?.bumpInEnd ? toLocalDate(project.bumpInEnd) : '';
+                          if (limit && val > limit) { toast.error('End date cannot be after event bump-in end'); return; }
                           setFormData(prev => ({ ...prev, bumpInEnd: val }));
                         }} />
                       </div>
@@ -396,22 +401,20 @@ export default function NewRecordPage() {
                       <div className="space-y-2">
                         <Label htmlFor="liveStart">Start Date</Label>
                         <DatePicker value={formData.liveStart} onChange={(date) => {
-                          const val = date?.toISOString().split('T')[0] ?? '';
-                          if (project?.liveStart && val && val < project.liveStart.slice(0, 10)) {
-                            toast.error('Start date cannot be before event live start');
-                            return;
-                          }
+                          if (!date) { setFormData(prev => ({ ...prev, liveStart: '' })); return; }
+                          const val = toLocalDate(date.toISOString());
+                          const limit = project?.liveStart ? toLocalDate(project.liveStart) : '';
+                          if (limit && val < limit) { toast.error('Start date cannot be before event live start'); return; }
                           setFormData(prev => ({ ...prev, liveStart: val }));
                         }} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="liveEnd">End Date</Label>
                         <DatePicker value={formData.liveEnd} onChange={(date) => {
-                          const val = date?.toISOString().split('T')[0] ?? '';
-                          if (project?.liveEnd && val && val > project.liveEnd.slice(0, 10)) {
-                            toast.error('End date cannot be after event live end');
-                            return;
-                          }
+                          if (!date) { setFormData(prev => ({ ...prev, liveEnd: '' })); return; }
+                          const val = toLocalDate(date.toISOString());
+                          const limit = project?.liveEnd ? toLocalDate(project.liveEnd) : '';
+                          if (limit && val > limit) { toast.error('End date cannot be after event live end'); return; }
                           setFormData(prev => ({ ...prev, liveEnd: val }));
                         }} />
                       </div>
@@ -435,22 +438,20 @@ export default function NewRecordPage() {
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutStart">Start Date</Label>
                         <DatePicker value={formData.bumpOutStart} onChange={(date) => {
-                          const val = date?.toISOString().split('T')[0] ?? '';
-                          if (project?.bumpOutStart && val && val < project.bumpOutStart.slice(0, 10)) {
-                            toast.error('Start date cannot be before event bump-out start');
-                            return;
-                          }
+                          if (!date) { setFormData(prev => ({ ...prev, bumpOutStart: '' })); return; }
+                          const val = toLocalDate(date.toISOString());
+                          const limit = project?.bumpOutStart ? toLocalDate(project.bumpOutStart) : '';
+                          if (limit && val < limit) { toast.error('Start date cannot be before event bump-out start'); return; }
                           setFormData(prev => ({ ...prev, bumpOutStart: val }));
                         }} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="bumpOutEnd">End Date</Label>
                         <DatePicker value={formData.bumpOutEnd} onChange={(date) => {
-                          const val = date?.toISOString().split('T')[0] ?? '';
-                          if (project?.bumpOutEnd && val && val > project.bumpOutEnd.slice(0, 10)) {
-                            toast.error('End date cannot be after event bump-out end');
-                            return;
-                          }
+                          if (!date) { setFormData(prev => ({ ...prev, bumpOutEnd: '' })); return; }
+                          const val = toLocalDate(date.toISOString());
+                          const limit = project?.bumpOutEnd ? toLocalDate(project.bumpOutEnd) : '';
+                          if (limit && val > limit) { toast.error('End date cannot be after event bump-out end'); return; }
                           setFormData(prev => ({ ...prev, bumpOutEnd: val }));
                         }} />
                       </div>
