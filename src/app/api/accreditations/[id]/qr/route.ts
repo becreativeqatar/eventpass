@@ -39,7 +39,7 @@ export async function GET(
       color: { dark: '#101820', light: '#ffffff' },
     });
 
-    return new NextResponse(qrBuffer, {
+    return new NextResponse(new Uint8Array(qrBuffer), {
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=3600',

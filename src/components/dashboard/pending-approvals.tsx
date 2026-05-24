@@ -113,19 +113,25 @@ export function PendingApprovals({ items: initialItems, totalCount }: PendingApp
                   {[item.company, item.role].filter(Boolean).join(' · ')}
                 </p>
                 <div className="flex gap-2 mt-2">
+                  <Link
+                    href={`/admin/records/${item.id}`}
+                    className="flex-1 text-center py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity"
+                  >
+                    View
+                  </Link>
                   <button
                     onClick={() => handleAction(item.id, 'approve')}
                     disabled={isProcessing}
-                    className="flex-1 text-center py-1.5 rounded-md bg-success/10 text-success text-xs font-medium hover:bg-success hover:text-white transition-colors disabled:opacity-50"
+                    className="flex-1 text-center py-1.5 rounded-md border border-success/30 text-success text-xs font-medium hover:bg-success/10 transition-colors disabled:opacity-50"
                   >
                     Approve
                   </button>
                   <button
                     onClick={() => handleAction(item.id, 'reject')}
                     disabled={isProcessing}
-                    className="flex-1 text-center py-1.5 rounded-md bg-destructive/10 text-destructive text-xs font-medium hover:bg-destructive hover:text-white transition-colors disabled:opacity-50"
+                    className="flex-1 text-center py-1.5 rounded-md border border-destructive/30 text-destructive text-xs font-medium hover:bg-destructive/10 transition-colors disabled:opacity-50"
                   >
-                    Reject
+                    Decline
                   </button>
                 </div>
               </div>
