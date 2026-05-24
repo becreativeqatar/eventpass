@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Calendar, Plus, Edit } from 'lucide-react';
+import { toQatarDateString } from '@/lib/date';
 import { toast } from 'sonner';
 
 interface AccreditationProject {
@@ -152,12 +153,12 @@ export default function AccreditationProjectsPage() {
     setFormData({
       name: project.name,
       code: project.code || '',
-      bumpInStart: new Date(project.bumpInStart).toISOString().slice(0, 10),
-      bumpInEnd: new Date(project.bumpInEnd).toISOString().slice(0, 10),
-      liveStart: new Date(project.liveStart).toISOString().slice(0, 10),
-      liveEnd: new Date(project.liveEnd).toISOString().slice(0, 10),
-      bumpOutStart: new Date(project.bumpOutStart).toISOString().slice(0, 10),
-      bumpOutEnd: new Date(project.bumpOutEnd).toISOString().slice(0, 10),
+      bumpInStart: toQatarDateString(project.bumpInStart),
+      bumpInEnd: toQatarDateString(project.bumpInEnd),
+      liveStart: toQatarDateString(project.liveStart),
+      liveEnd: toQatarDateString(project.liveEnd),
+      bumpOutStart: toQatarDateString(project.bumpOutStart),
+      bumpOutEnd: toQatarDateString(project.bumpOutEnd),
       accessGroups: Array.isArray(project.accessGroups) ? project.accessGroups : [],
       newAccessGroup: '',
     });

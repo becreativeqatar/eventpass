@@ -13,6 +13,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { ArrowLeft, Upload, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import NextImage from 'next/image';
+import { toQatarDateString } from '@/lib/date';
 
 interface AccreditationProject {
   id: string;
@@ -104,22 +105,22 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
           accessGroup: record.accessGroup || '',
           identificationType: record.identificationType || 'qid',
           qidNumber: record.qidNumber || '',
-          qidExpiry: record.qidExpiry ? record.qidExpiry.slice(0, 10) : '',
+          qidExpiry: toQatarDateString(record.qidExpiry),
           passportNumber: record.passportNumber || '',
           passportCountry: record.passportCountry || '',
-          passportExpiry: record.passportExpiry ? record.passportExpiry.slice(0, 10) : '',
+          passportExpiry: toQatarDateString(record.passportExpiry),
           hayyaNumber: record.hayyaNumber || '',
-          hayyaExpiry: record.hayyaExpiry ? record.hayyaExpiry.slice(0, 10) : '',
+          hayyaExpiry: toQatarDateString(record.hayyaExpiry),
           notes: record.notes || '',
           hasBumpInAccess: record.hasBumpInAccess || false,
-          bumpInStart: record.bumpInStart ? record.bumpInStart.slice(0, 10) : '',
-          bumpInEnd: record.bumpInEnd ? record.bumpInEnd.slice(0, 10) : '',
+          bumpInStart: toQatarDateString(record.bumpInStart),
+          bumpInEnd: toQatarDateString(record.bumpInEnd),
           hasLiveAccess: record.hasLiveAccess || false,
-          liveStart: record.liveStart ? record.liveStart.slice(0, 10) : '',
-          liveEnd: record.liveEnd ? record.liveEnd.slice(0, 10) : '',
+          liveStart: toQatarDateString(record.liveStart),
+          liveEnd: toQatarDateString(record.liveEnd),
           hasBumpOutAccess: record.hasBumpOutAccess || false,
-          bumpOutStart: record.bumpOutStart ? record.bumpOutStart.slice(0, 10) : '',
-          bumpOutEnd: record.bumpOutEnd ? record.bumpOutEnd.slice(0, 10) : '',
+          bumpOutStart: toQatarDateString(record.bumpOutStart),
+          bumpOutEnd: toQatarDateString(record.bumpOutEnd),
         });
       } else {
         toast.error('Failed to load accreditation');

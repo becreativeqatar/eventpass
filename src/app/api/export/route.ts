@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { withErrorHandler } from '@/lib/http/handler';
 import { stringToPhases } from '@/lib/validations/accreditation';
+import { toQatarDateString } from '@/lib/date';
 import ExcelJS from 'exceljs';
 
 // GET /api/export - Export accreditations to Excel
@@ -74,16 +75,16 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
       accessGroup: acc.accessGroup,
       idType: acc.identificationType?.toUpperCase() || 'QID',
       qidNumber: acc.qidNumber || '',
-      qidExpiry: acc.qidExpiry?.toISOString().split('T')[0] || '',
+      qidExpiry: toQatarDateString(acc.qidExpiry),
       passportNumber: acc.passportNumber || '',
-      passportExpiry: acc.passportExpiry?.toISOString().split('T')[0] || '',
+      passportExpiry: toQatarDateString(acc.passportExpiry),
       status: acc.status,
       phases: stringToPhases(acc.phases).join(', '),
       project: acc.project.name,
       createdBy: acc.createdBy.name || acc.createdBy.email,
-      createdAt: acc.createdAt.toISOString().split('T')[0],
+      createdAt: toQatarDateString(acc.createdAt),
       approvedBy: acc.approvedBy?.name || acc.approvedBy?.email || '',
-      approvedAt: acc.approvedAt?.toISOString().split('T')[0] || '',
+      approvedAt: toQatarDateString(acc.approvedAt),
     });
   });
 
@@ -92,7 +93,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   return new NextResponse(buffer, {
     headers: {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'Content-Disposition': `attachment; filename="accreditations-${new Date().toISOString().split('T')[0]}.xlsx"`,
+      'Content-Disposition': `attachment; filename="accreditations-${toQatarDateString(new Date())}.xlsx"`,
     },
   });
 }, { requireAuth: true });

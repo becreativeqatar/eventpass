@@ -13,13 +13,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { ArrowLeft, Upload, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import NextImage from 'next/image';
-
-/** Convert ISO date string to local YYYY-MM-DD (respects browser timezone) */
-function toLocalDate(iso: string | null): string {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
+import { toQatarDateString } from '@/lib/date';
 
 interface ActiveProject {
   id: string;
@@ -88,12 +82,12 @@ export default function NewRecordPage() {
         setProject(proj);
         setFormData((prev) => ({
           ...prev,
-          bumpInStart: toLocalDate(proj.bumpInStart),
-          bumpInEnd: toLocalDate(proj.bumpInEnd),
-          liveStart: toLocalDate(proj.liveStart),
-          liveEnd: toLocalDate(proj.liveEnd),
-          bumpOutStart: toLocalDate(proj.bumpOutStart),
-          bumpOutEnd: toLocalDate(proj.bumpOutEnd),
+          bumpInStart: toQatarDateString(proj.bumpInStart),
+          bumpInEnd: toQatarDateString(proj.bumpInEnd),
+          liveStart: toQatarDateString(proj.liveStart),
+          liveEnd: toQatarDateString(proj.liveEnd),
+          bumpOutStart: toQatarDateString(proj.bumpOutStart),
+          bumpOutEnd: toQatarDateString(proj.bumpOutEnd),
         }));
       }
     } catch (error) {
@@ -188,6 +182,7 @@ export default function NewRecordPage() {
 
       toast.success(status === 'DRAFT' ? 'Draft saved successfully' : 'Submitted for approval');
       router.push('/admin/records');
+      router.refresh();
     } catch (error) {
       console.error('Error creating accreditation:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to create accreditation');
@@ -365,8 +360,8 @@ export default function NewRecordPage() {
                         <Label htmlFor="bumpInStart">Start Date</Label>
                         <DatePicker value={formData.bumpInStart} onChange={(date) => {
                           if (!date) { setFormData(prev => ({ ...prev, bumpInStart: '' })); return; }
-                          const val = toLocalDate(date.toISOString());
-                          const limit = project?.bumpInStart ? toLocalDate(project.bumpInStart) : '';
+                          const val = toQatarDateString(date.toISOString());
+                          const limit = project?.bumpInStart ? toQatarDateString(project.bumpInStart) : '';
                           if (limit && val < limit) { toast.error('Start date cannot be before event bump-in start'); return; }
                           setFormData(prev => ({ ...prev, bumpInStart: val }));
                         }} />
@@ -375,8 +370,8 @@ export default function NewRecordPage() {
                         <Label htmlFor="bumpInEnd">End Date</Label>
                         <DatePicker value={formData.bumpInEnd} onChange={(date) => {
                           if (!date) { setFormData(prev => ({ ...prev, bumpInEnd: '' })); return; }
-                          const val = toLocalDate(date.toISOString());
-                          const limit = project?.bumpInEnd ? toLocalDate(project.bumpInEnd) : '';
+                          const val = toQatarDateString(date.toISOString());
+                          const limit = project?.bumpInEnd ? toQatarDateString(project.bumpInEnd) : '';
                           if (limit && val > limit) { toast.error('End date cannot be after event bump-in end'); return; }
                           setFormData(prev => ({ ...prev, bumpInEnd: val }));
                         }} />
@@ -402,8 +397,8 @@ export default function NewRecordPage() {
                         <Label htmlFor="liveStart">Start Date</Label>
                         <DatePicker value={formData.liveStart} onChange={(date) => {
                           if (!date) { setFormData(prev => ({ ...prev, liveStart: '' })); return; }
-                          const val = toLocalDate(date.toISOString());
-                          const limit = project?.liveStart ? toLocalDate(project.liveStart) : '';
+                          const val = toQatarDateString(date.toISOString());
+                          const limit = project?.liveStart ? toQatarDateString(project.liveStart) : '';
                           if (limit && val < limit) { toast.error('Start date cannot be before event live start'); return; }
                           setFormData(prev => ({ ...prev, liveStart: val }));
                         }} />
@@ -412,8 +407,8 @@ export default function NewRecordPage() {
                         <Label htmlFor="liveEnd">End Date</Label>
                         <DatePicker value={formData.liveEnd} onChange={(date) => {
                           if (!date) { setFormData(prev => ({ ...prev, liveEnd: '' })); return; }
-                          const val = toLocalDate(date.toISOString());
-                          const limit = project?.liveEnd ? toLocalDate(project.liveEnd) : '';
+                          const val = toQatarDateString(date.toISOString());
+                          const limit = project?.liveEnd ? toQatarDateString(project.liveEnd) : '';
                           if (limit && val > limit) { toast.error('End date cannot be after event live end'); return; }
                           setFormData(prev => ({ ...prev, liveEnd: val }));
                         }} />
@@ -439,8 +434,8 @@ export default function NewRecordPage() {
                         <Label htmlFor="bumpOutStart">Start Date</Label>
                         <DatePicker value={formData.bumpOutStart} onChange={(date) => {
                           if (!date) { setFormData(prev => ({ ...prev, bumpOutStart: '' })); return; }
-                          const val = toLocalDate(date.toISOString());
-                          const limit = project?.bumpOutStart ? toLocalDate(project.bumpOutStart) : '';
+                          const val = toQatarDateString(date.toISOString());
+                          const limit = project?.bumpOutStart ? toQatarDateString(project.bumpOutStart) : '';
                           if (limit && val < limit) { toast.error('Start date cannot be before event bump-out start'); return; }
                           setFormData(prev => ({ ...prev, bumpOutStart: val }));
                         }} />
@@ -449,8 +444,8 @@ export default function NewRecordPage() {
                         <Label htmlFor="bumpOutEnd">End Date</Label>
                         <DatePicker value={formData.bumpOutEnd} onChange={(date) => {
                           if (!date) { setFormData(prev => ({ ...prev, bumpOutEnd: '' })); return; }
-                          const val = toLocalDate(date.toISOString());
-                          const limit = project?.bumpOutEnd ? toLocalDate(project.bumpOutEnd) : '';
+                          const val = toQatarDateString(date.toISOString());
+                          const limit = project?.bumpOutEnd ? toQatarDateString(project.bumpOutEnd) : '';
                           if (limit && val > limit) { toast.error('End date cannot be after event bump-out end'); return; }
                           setFormData(prev => ({ ...prev, bumpOutEnd: val }));
                         }} />

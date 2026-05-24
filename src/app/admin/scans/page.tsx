@@ -8,11 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/date-picker';
+import { toQatarDateString } from '@/lib/date';
 import { DataTable, type Column } from '@/components/data-table';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { ScanLine, Download } from 'lucide-react';
+import { toast } from 'sonner';
 import { useEventContext } from '@/contexts/event-context';
 
 interface Scan {
@@ -99,6 +101,7 @@ export default function ScansPage() {
       setPagination(data.pagination || { page: 1, limit: 50, total: 0, pages: 0 });
     } catch (err) {
       console.error('Failed to fetch scans:', err);
+      toast.error('Failed to load scans');
     } finally {
       setLoading(false);
     }
@@ -176,14 +179,14 @@ export default function ScansPage() {
               <Label>From Date</Label>
               <DatePicker
                 value={fromDate}
-                onChange={(date) => setFromDate(date?.toISOString().split('T')[0] ?? '')}
+                onChange={(date) => setFromDate(date ? toQatarDateString(date) : '')}
               />
             </div>
             <div className="space-y-2">
               <Label>To Date</Label>
               <DatePicker
                 value={toDate}
-                onChange={(date) => setToDate(date?.toISOString().split('T')[0] ?? '')}
+                onChange={(date) => setToDate(date ? toQatarDateString(date) : '')}
               />
             </div>
           </div>

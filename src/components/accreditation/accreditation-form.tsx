@@ -217,7 +217,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
   const goPrev = () => setCurrentStep((s) => Math.max(s - 1, 0));
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, () => toast.error('Please fill in all required fields'))} className="space-y-6">
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
@@ -314,7 +314,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
             <div className="space-y-2">
               <Label>Access Group *</Label>
               <Select
-                defaultValue={accreditation?.accessGroup || availableAccessGroups[0] || 'General'}
+                value={watchedValues.accessGroup || availableAccessGroups[0] || 'General'}
                 onValueChange={(value) => setValue('accessGroup', value)}
               >
                 <SelectTrigger className="w-[250px]">

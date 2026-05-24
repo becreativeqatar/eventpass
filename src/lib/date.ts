@@ -48,3 +48,29 @@ export function parseEventDate(dateStr: string | null | undefined): Date | null 
   if (!dateStr) return null;
   return toQatarStartOfDay(dateStr);
 }
+
+/**
+ * Convert an ISO date string (from DB) to YYYY-MM-DD in Qatar timezone for display.
+ * Use this instead of .slice(0, 10) or .toISOString().split('T')[0].
+ */
+export function toQatarDateString(iso: string | Date | null | undefined): string {
+  if (!iso) return '';
+  const d = typeof iso === 'string' ? new Date(iso) : iso;
+  // Format in Qatar timezone (UTC+3)
+  const qatarTime = new Date(d.getTime() + QATAR_OFFSET_HOURS * 60 * 60 * 1000);
+  return `${qatarTime.getUTCFullYear()}-${String(qatarTime.getUTCMonth() + 1).padStart(2, '0')}-${String(qatarTime.getUTCDate()).padStart(2, '0')}`;
+}
+
+/**
+ * Format a date for display in Qatar timezone (e.g., "Jun 1, 2026").
+ */
+export function formatQatarDate(iso: string | Date | null | undefined): string {
+  if (!iso) return '—';
+  const d = typeof iso === 'string' ? new Date(iso) : iso;
+  return d.toLocaleDateString('en-US', {
+    timeZone: 'Asia/Qatar',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}

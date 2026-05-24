@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Upload, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import NextImage from 'next/image';
+import { toQatarDateString } from '@/lib/date';
 
 interface AccreditationProject {
   id: string;
@@ -75,12 +76,12 @@ export default function NewAccreditationPage({ params }: NewAccreditationPagePro
         // Pre-fill phase dates with project dates
         setFormData((prev) => ({
           ...prev,
-          bumpInStart: proj.bumpInStart?.slice(0, 10) || '',
-          bumpInEnd: proj.bumpInEnd?.slice(0, 10) || '',
-          liveStart: proj.liveStart?.slice(0, 10) || '',
-          liveEnd: proj.liveEnd?.slice(0, 10) || '',
-          bumpOutStart: proj.bumpOutStart?.slice(0, 10) || '',
-          bumpOutEnd: proj.bumpOutEnd?.slice(0, 10) || '',
+          bumpInStart: toQatarDateString(proj.bumpInStart),
+          bumpInEnd: toQatarDateString(proj.bumpInEnd),
+          liveStart: toQatarDateString(proj.liveStart),
+          liveEnd: toQatarDateString(proj.liveEnd),
+          bumpOutStart: toQatarDateString(proj.bumpOutStart),
+          bumpOutEnd: toQatarDateString(proj.bumpOutEnd),
         }));
       }
     } catch (error) {
