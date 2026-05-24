@@ -5,13 +5,15 @@ import { prisma } from '@/lib/prisma';
 
 // Lookup event by id or code
 async function findEvent(idOrCode: string) {
-  // Try by id first, then by code
   const event = await prisma.accreditationProject.findFirst({
     where: {
       OR: [
         { id: idOrCode },
         { code: idOrCode },
       ],
+    },
+    include: {
+      _count: { select: { accreditations: true } },
     },
   });
   return event;
