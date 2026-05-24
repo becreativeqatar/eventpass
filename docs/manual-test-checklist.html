@@ -399,10 +399,12 @@ h3 { font-size: 1rem; margin: 0 0 8px 0; color: var(--text-muted); font-weight: 
       <h3>Password Management</h3>
       <div class="test-item" data-priority="critical"><input type="checkbox" id="t1_9"><label for="t1_9">Set password page works for new user invite link</label><span class="tag tag-critical">Critical</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t1_10"><label for="t1_10">Set password with mismatched confirmation — shows error</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t1_10b"><label for="t1_10b">Already-used set-password link shows "Link Expired" (not the form)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t1_10c"><label for="t1_10c">Expired token shows "Link Expired" message</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t1_11"><label for="t1_11">Change password from user menu — requires current password</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t1_12"><label for="t1_12">Change password with wrong current password — shows error</label><span class="tag tag-high">High</span></div>
-      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_13"><label for="t1_13">Forgot password sends reset email (if implemented)</label><span class="tag tag-medium">Medium</span></div>
-      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_14"><label for="t1_14">Expired/invalid set-password token shows error</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_13"><label for="t1_13">Forgot password sends reset email</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t1_14"><label for="t1_14">Invite email button visible (gradient background with solid fallback)</label><span class="tag tag-medium">Medium</span></div>
     </div>
     <div class="subsection">
       <h3>Session & Security</h3>
@@ -439,22 +441,34 @@ h3 { font-size: 1rem; margin: 0 0 8px 0; color: var(--text-muted); font-weight: 
     <div class="subsection">
       <h3>Event Activation & Status</h3>
       <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_8"><label for="t2_8">Activate draft event — status changes to ACTIVE</label><span class="tag tag-critical">Critical</span></div>
-      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_9"><label for="t2_9">Activating new event auto-completes previous ACTIVE event</label><span class="tag tag-critical">Critical</span></div>
-      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_10"><label for="t2_10">Only one ACTIVE event exists at any time (verify in DB/UI)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_9"><label for="t2_9">Multiple events can be ACTIVE simultaneously</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_10"><label for="t2_10">Activating a new event does NOT deactivate other active events</label><span class="tag tag-critical">Critical</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t2_11"><label for="t2_11">Complete an active event — status changes to COMPLETED</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t2_12"><label for="t2_12">Archive a completed event — status changes to ARCHIVED</label><span class="tag tag-high">High</span></div>
-      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_13"><label for="t2_13">Draft event does not require complete date validation</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_13"><label for="t2_13">Event auto-completes when bump-out end date passes</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_13b"><label for="t2_13b">Draft event does not require complete date validation</label><span class="tag tag-medium">Medium</span></div>
+    </div>
+    <div class="subsection">
+      <h3>Event Detail Page</h3>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_14"><label for="t2_14">Event detail page loads with event info, phases, access groups</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_14b"><label for="t2_14b">Event URL uses lowercase code (e.g., /admin/events/qatar-expo)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_14c"><label for="t2_14c">Quick links to Records, Scans, Reports work from detail page</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_14d"><label for="t2_14d">Action buttons (Activate/Complete/Archive) on detail page work</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_14e"><label for="t2_14e">Delete button shown for DRAFT events — deletes with confirmation</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_14f"><label for="t2_14f">Cannot delete last admin account</label><span class="tag tag-high">High</span></div>
     </div>
     <div class="subsection">
       <h3>Edit Event</h3>
-      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_14"><label for="t2_14">Edit event name, venue, dates — saves correctly</label><span class="tag tag-high">High</span></div>
-      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_15"><label for="t2_15">Edit form pre-populates with existing event data</label><span class="tag tag-high">High</span></div>
-      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_16"><label for="t2_16">Cannot edit archived event (read-only or hidden edit option)</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_15"><label for="t2_15">Edit event name, venue, code, status, dates — all save correctly</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_15b"><label for="t2_15b">Edit form pre-populates with existing event data</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t2_15c"><label for="t2_15c">Changing status via edit form persists (not silently ignored)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_16"><label for="t2_16">Cannot edit archived event (edit button hidden)</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_16b"><label for="t2_16b">Validation error toast shown when required fields missing</label><span class="tag tag-medium">Medium</span></div>
     </div>
     <div class="subsection">
       <h3>Event Switcher</h3>
       <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_17"><label for="t2_17">Event switcher in sidebar shows all events grouped by status</label><span class="tag tag-critical">Critical</span></div>
-      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_18"><label for="t2_18">Switching event updates all dashboard data and records</label><span class="tag tag-critical">Critical</span></div>
+      <div class="test-item" data-priority="critical"><input type="checkbox" id="t2_18"><label for="t2_18">Switching event updates dashboard immediately (no hard refresh needed)</label><span class="tag tag-critical">Critical</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t2_19"><label for="t2_19">Non-active event shows read-only banner</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t2_20"><label for="t2_20">Read-only mode disables create/edit/approve actions</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="medium"><input type="checkbox" id="t2_21"><label for="t2_21">Event switcher works correctly on mobile</label><span class="tag tag-mobile">Mobile</span></div>
@@ -510,6 +524,8 @@ h3 { font-size: 1rem; margin: 0 0 8px 0; color: var(--text-muted); font-weight: 
       <div class="test-item" data-priority="high"><input type="checkbox" id="t3_24"><label for="t3_24">Select BUMP_OUT phase — checkbox toggles correctly</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_25"><label for="t3_25">Per-accreditation phase date override — custom dates save correctly</label><span class="tag tag-medium">Medium</span></div>
       <div class="test-item" data-priority="medium"><input type="checkbox" id="t3_26"><label for="t3_26">Phase date override validates sequential order</label><span class="tag tag-medium">Medium</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_26b"><label for="t3_26b">Date picker shows selected date in the input box after picking</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t3_26c"><label for="t3_26c">Date picker next/previous month buttons work</label><span class="tag tag-high">High</span></div>
     </div>
     <div class="subsection">
       <h3>Photo Upload</h3>
@@ -742,6 +758,7 @@ h3 { font-size: 1rem; margin: 0 0 8px 0; color: var(--text-muted); font-weight: 
       <div class="test-item" data-priority="critical"><input type="checkbox" id="t8_4"><label for="t8_4">Create user with VALIDATOR role — saves successfully</label><span class="tag tag-critical">Critical</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t8_5"><label for="t8_5">Invite email sent with set-password link</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t8_6"><label for="t8_6">Duplicate email — shows error (already exists)</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t8_6b"><label for="t8_6b">Cannot delete the last admin account — shows error</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="medium"><input type="checkbox" id="t8_7"><label for="t8_7">Required fields validation (name, email, role)</label><span class="tag tag-medium">Medium</span></div>
     </div>
     <div class="subsection">
@@ -917,7 +934,7 @@ h3 { font-size: 1rem; margin: 0 0 8px 0; color: var(--text-muted); font-weight: 
       <h3>Error Handling</h3>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t12_6"><label for="t12_6">API error (500) shows toast error notification</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="high"><input type="checkbox" id="t12_7"><label for="t12_7">Network offline — shows appropriate error (not blank page)</label><span class="tag tag-high">High</span></div>
-      <div class="test-item" data-priority="high"><input type="checkbox" id="t12_8"><label for="t12_8">404 for non-existent record ID — shows not found message</label><span class="tag tag-high">High</span></div>
+      <div class="test-item" data-priority="high"><input type="checkbox" id="t12_8"><label for="t12_8">404 page shows branded design with BCE logo and "Back to Dashboard" button</label><span class="tag tag-high">High</span></div>
       <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_9"><label for="t12_9">Form submission with server validation error — shows inline errors</label><span class="tag tag-medium">Medium</span></div>
       <div class="test-item" data-priority="medium"><input type="checkbox" id="t12_10"><label for="t12_10">Bulk action partial failure — shows count of successes/failures</label><span class="tag tag-medium">Medium</span></div>
     </div>
