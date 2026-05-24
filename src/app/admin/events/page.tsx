@@ -100,8 +100,22 @@ export default function EventsPage() {
         )}
       </div>
 
+      {/* Status Filter */}
+      <div className="flex gap-2">
+        {FILTERS.map((f) => (
+          <Button
+            key={f}
+            variant={filter === f ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter(f)}
+          >
+            {f}
+          </Button>
+        ))}
+      </div>
+
       {/* Active Event Banner */}
-      {activeEvent && (
+      {activeEvent && (filter === 'All' || filter === 'Active') && (
         <Link href={`/admin/events/${activeEvent.id}`} className="block">
           <Card className="border-success/30 bg-success/5 transition-colors hover:border-success/50">
             <CardHeader className="pb-3">
@@ -134,20 +148,6 @@ export default function EventsPage() {
           </Card>
         </Link>
       )}
-
-      {/* Status Filter */}
-      <div className="flex gap-2">
-        {FILTERS.map((f) => (
-          <Button
-            key={f}
-            variant={filter === f ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter(f)}
-          >
-            {f}
-          </Button>
-        ))}
-      </div>
 
       {/* Events Grid */}
       {loading ? (
