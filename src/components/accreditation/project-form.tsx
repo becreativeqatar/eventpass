@@ -128,13 +128,8 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
     }
   };
 
-  const formatDateForInput = (date: Date | string | null | undefined): string => {
-    if (!date) return '';
-    const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toISOString().split('T')[0];
-  };
-
-  // Date range validation
+  // Watch all date fields for display and validation
+  const eventDate = watch('eventDate');
   const bumpInStart = watch('bumpInStart');
   const bumpInEnd = watch('bumpInEnd');
   const liveStart = watch('liveStart');
@@ -203,7 +198,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
               <Label htmlFor="eventDate">Event Date</Label>
               <DatePicker
                 id="eventDate"
-                value={formatDateForInput(project?.eventDate)}
+                value={eventDate}
                 onChange={(date) => setValue('eventDate', date ?? undefined)}
               />
             </div>
@@ -285,7 +280,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
                 <Label htmlFor="bumpInStart">Start</Label>
                 <DatePicker
                   id="bumpInStart"
-                  value={formatDateForInput(project?.bumpInStart)}
+                  value={bumpInStart}
                   onChange={(date) => setValue('bumpInStart', date ?? undefined)}
                 />
               </div>
@@ -293,7 +288,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
                 <Label htmlFor="bumpInEnd">End</Label>
                 <DatePicker
                   id="bumpInEnd"
-                  value={formatDateForInput(project?.bumpInEnd)}
+                  value={bumpInEnd}
                   onChange={(date) => setValue('bumpInEnd', date ?? undefined)}
                 />
               </div>
@@ -309,7 +304,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
                 <Label htmlFor="liveStart">Start</Label>
                 <DatePicker
                   id="liveStart"
-                  value={formatDateForInput(project?.liveStart)}
+                  value={liveStart}
                   onChange={(date) => setValue('liveStart', date ?? undefined)}
                 />
               </div>
@@ -317,7 +312,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
                 <Label htmlFor="liveEnd">End</Label>
                 <DatePicker
                   id="liveEnd"
-                  value={formatDateForInput(project?.liveEnd)}
+                  value={liveEnd}
                   onChange={(date) => setValue('liveEnd', date ?? undefined)}
                 />
               </div>
@@ -333,7 +328,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
                 <Label htmlFor="bumpOutStart">Start</Label>
                 <DatePicker
                   id="bumpOutStart"
-                  value={formatDateForInput(project?.bumpOutStart)}
+                  value={bumpOutStart}
                   onChange={(date) => setValue('bumpOutStart', date ?? undefined)}
                 />
               </div>
@@ -341,7 +336,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
                 <Label htmlFor="bumpOutEnd">End</Label>
                 <DatePicker
                   id="bumpOutEnd"
-                  value={formatDateForInput(project?.bumpOutEnd)}
+                  value={bumpOutEnd}
                   onChange={(date) => setValue('bumpOutEnd', date ?? undefined)}
                 />
               </div>
