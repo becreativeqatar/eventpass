@@ -35,7 +35,34 @@ export default function NewRecordPage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+  const [fieldWarnings, setFieldWarnings] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const validateEmail = (email: string) => {
+    if (!email) { setFieldWarnings(prev => ({ ...prev, email: '' })); return; }
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setFieldWarnings(prev => ({ ...prev, email: valid ? '' : 'Invalid email format' }));
+  };
+
+  const validateExpiryDate = (field: string, dateStr: string) => {
+    if (!dateStr) { setFieldWarnings(prev => ({ ...prev, [field]: '' })); return; }
+    // Find the latest phase end date the user has access to
+    const phaseEnds: string[] = [];
+    if (formData.hasBumpInAccess && formData.bumpInEnd) phaseEnds.push(formData.bumpInEnd);
+    if (formData.hasLiveAccess && formData.liveEnd) phaseEnds.push(formData.liveEnd);
+    if (formData.hasBumpOutAccess && formData.bumpOutEnd) phaseEnds.push(formData.bumpOutEnd);
+    // Also check project-level phase ends
+    if (formData.hasBumpInAccess && project?.bumpInEnd) phaseEnds.push(toQatarDateString(project.bumpInEnd));
+    if (formData.hasLiveAccess && project?.liveEnd) phaseEnds.push(toQatarDateString(project.liveEnd));
+    if (formData.hasBumpOutAccess && project?.bumpOutEnd) phaseEnds.push(toQatarDateString(project.bumpOutEnd));
+
+    const latestEnd = phaseEnds.sort().pop();
+    if (latestEnd && dateStr < latestEnd) {
+      setFieldWarnings(prev => ({ ...prev, [field]: 'ID expires before access period ends' }));
+    } else {
+      setFieldWarnings(prev => ({ ...prev, [field]: '' }));
+    }
+  };
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -227,7 +254,8 @@ export default function NewRecordPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="email@example.com" />
+                    <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} onBlur={(e) => validateEmail(e.target.value)} placeholder="email@example.com" className={fieldWarnings.email ? 'border-warning' : ''} />
+                    {fieldWarnings.email && <p className="text-xs text-warning">{fieldWarnings.email}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone</Label>
@@ -280,7 +308,12 @@ export default function NewRecordPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="qidExpiry">QID Expiry Date *</Label>
-                      <DatePicker value={formData.qidExpiry} onChange={(date) => setFormData(prev => ({ ...prev, qidExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
+                      <DatePicker value={formData.qidExpiry} onChange={(date) => {
+                        const val = date ? toQatarDateString(date) : '';
+                        setFormData(prev => ({ ...prev, qidExpiry: val }));
+                        validateExpiryDate('qidExpiry', val);
+                      }} />
+                      {fieldWarnings.qidExpiry && <p className="text-xs text-warning">{fieldWarnings.qidExpiry}</p>}
                     </div>
                   </div>
                 ) : (
@@ -297,7 +330,12 @@ export default function NewRecordPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="passportExpiry">Passport Expiry Date *</Label>
-                      <DatePicker value={formData.passportExpiry} onChange={(date) => setFormData(prev => ({ ...prev, passportExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
+                      <DatePicker value={formData.passportExpiry} onChange={(date) => {
+                        const val = date ? toQatarDateString(date) : '';
+                        setFormData(prev => ({ ...prev, passportExpiry: val }));
+                        validateExpiryDate('passportExpiry', val);
+                      }} />
+                      {fieldWarnings.passportExpiry && <p className="text-xs text-warning">{fieldWarnings.passportExpiry}</p>}
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
@@ -306,7 +344,12 @@ export default function NewRecordPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="hayyaExpiry">Hayya / Visit Visa Expiry *</Label>
-                        <DatePicker value={formData.hayyaExpiry} onChange={(date) => setFormData(prev => ({ ...prev, hayyaExpiry: date?.toISOString().split('T')[0] ?? '' }))} />
+                        <DatePicker value={formData.hayyaExpiry} onChange={(date) => {
+                          const val = date ? toQatarDateString(date) : '';
+                          setFormData(prev => ({ ...prev, hayyaExpiry: val }));
+                          validateExpiryDate('hayyaExpiry', val);
+                        }} />
+                        {fieldWarnings.hayyaExpiry && <p className="text-xs text-warning">{fieldWarnings.hayyaExpiry}</p>}
                       </div>
                     </div>
                   </>
