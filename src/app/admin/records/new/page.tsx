@@ -171,24 +171,13 @@ export default function NewRecordPage() {
           hasBumpOutAccess: formData.hasBumpOutAccess,
           bumpOutStart: formData.hasBumpOutAccess && formData.bumpOutStart ? formData.bumpOutStart : null,
           bumpOutEnd: formData.hasBumpOutAccess && formData.bumpOutEnd ? formData.bumpOutEnd : null,
-          status: 'DRAFT',
+          status,
         }),
       });
 
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || 'Failed to create accreditation');
-      }
-
-      const { data: accreditation } = await response.json();
-
-      if (status === 'PENDING') {
-        const submitResponse = await fetch(`/api/accreditations/${accreditation.id}/submit`, {
-          method: 'POST',
-        });
-        if (!submitResponse.ok) {
-          toast.warning('Created as draft, but failed to submit for approval');
-        }
       }
 
       toast.success(status === 'DRAFT' ? 'Draft saved successfully' : 'Submitted for approval');
