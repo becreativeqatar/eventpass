@@ -118,7 +118,7 @@ export default function ImportPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <h3 className="text-lg font-medium mb-2">Not available</h3>
-            <p className="text-muted-foreground">This feature is only available for the active event.</p>
+            <p className="text-muted-foreground">Import is only available for active events. Switch to an active event to import records.</p>
           </CardContent>
         </Card>
       </div>

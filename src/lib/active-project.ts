@@ -20,6 +20,7 @@ export async function getActiveProject() {
   await autoCompleteExpiredEvents();
   const project = await prisma.accreditationProject.findFirst({
     where: { status: 'ACTIVE' },
+    orderBy: { createdAt: 'desc' },
   });
   return project;
 }

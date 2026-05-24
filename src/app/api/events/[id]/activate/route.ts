@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-// PATCH /api/events/[id]/activate - Activate an event (deactivates current)
+// PATCH /api/events/[id]/activate - Activate an event
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,18 +20,9 @@ export async function PATCH(
 
     const { id } = await params;
 
-    const event = await prisma.$transaction(async (tx) => {
-      // Complete the current active event
-      await tx.accreditationProject.updateMany({
-        where: { status: 'ACTIVE' },
-        data: { status: 'COMPLETED' },
-      });
-
-      // Activate the target event
-      return tx.accreditationProject.update({
-        where: { id },
-        data: { status: 'ACTIVE' },
-      });
+    const event = await prisma.accreditationProject.update({
+      where: { id },
+      data: { status: 'ACTIVE' },
     });
 
     return NextResponse.json({ data: event });
