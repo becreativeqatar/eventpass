@@ -955,6 +955,8 @@ h3 { font-size: 1rem; margin: 0 0 8px 0; color: var(--text-muted); font-weight: 
 <script>
 (function() {
   const STORAGE_KEY = 'eventpass-test-checklist';
+  const FILTER_KEY = 'eventpass-test-filter';
+  const SEARCH_KEY = 'eventpass-test-search';
 
   // Load state
   function loadState() {
@@ -1036,48 +1038,71 @@ h3 { font-size: 1rem; margin: 0 0 8px 0; color: var(--text-muted); font-weight: 
   };
 
   // Search
-  document.getElementById('searchInput').addEventListener('input', function() {
-    const q = this.value.toLowerCase().trim();
+  function applySearch(q) {
     document.querySelectorAll('.test-item').forEach(item => {
       const text = item.querySelector('label').textContent.toLowerCase();
       item.classList.toggle('hidden', q && !text.includes(q));
     });
-    // Show/hide subsections that have no visible items
     document.querySelectorAll('.subsection').forEach(sub => {
       const visible = sub.querySelectorAll('.test-item:not(.hidden)');
       sub.classList.toggle('hidden', visible.length === 0);
     });
+  }
+
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    localStorage.setItem(SEARCH_KEY, this.value);
+    applySearch(q);
   });
+
+  // Restore saved search on load
+  const savedSearch = localStorage.getItem(SEARCH_KEY) || '';
+  if (savedSearch) {
+    searchInput.value = savedSearch;
+    applySearch(savedSearch.toLowerCase().trim());
+  }
+
+  // Apply filter logic
+  function applyFilter(filter) {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    const activePill = document.querySelector(`.pill[data-filter="${filter}"]`);
+    if (activePill) activePill.classList.add('active');
+
+    document.querySelectorAll('.test-item').forEach(item => {
+      const checked = item.querySelector('input').checked;
+      const priority = item.dataset.priority;
+      let show = true;
+      if (filter === 'pending') show = !checked;
+      else if (filter === 'done') show = checked;
+      else if (filter === 'critical') show = priority === 'critical';
+      else if (filter === 'mobile') show = item.querySelector('.tag-mobile') !== null;
+      item.classList.toggle('hidden', !show);
+    });
+
+    document.querySelectorAll('.subsection').forEach(sub => {
+      const visible = sub.querySelectorAll('.test-item:not(.hidden)');
+      sub.classList.toggle('hidden', visible.length === 0);
+    });
+
+    document.querySelectorAll('.journey').forEach(j => {
+      const visible = j.querySelectorAll('.test-item:not(.hidden)');
+      j.classList.toggle('hidden', visible.length === 0);
+    });
+  }
 
   // Filter pills
   document.querySelectorAll('.pill').forEach(pill => {
     pill.addEventListener('click', function() {
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      this.classList.add('active');
       const filter = this.dataset.filter;
-
-      document.querySelectorAll('.test-item').forEach(item => {
-        const checked = item.querySelector('input').checked;
-        const priority = item.dataset.priority;
-        let show = true;
-        if (filter === 'pending') show = !checked;
-        else if (filter === 'done') show = checked;
-        else if (filter === 'critical') show = priority === 'critical';
-        else if (filter === 'mobile') show = item.querySelector('.tag-mobile') !== null;
-        item.classList.toggle('hidden', !show);
-      });
-
-      document.querySelectorAll('.subsection').forEach(sub => {
-        const visible = sub.querySelectorAll('.test-item:not(.hidden)');
-        sub.classList.toggle('hidden', visible.length === 0);
-      });
-
-      document.querySelectorAll('.journey').forEach(j => {
-        const visible = j.querySelectorAll('.test-item:not(.hidden)');
-        j.classList.toggle('hidden', visible.length === 0);
-      });
+      localStorage.setItem(FILTER_KEY, filter);
+      applyFilter(filter);
     });
   });
+
+  // Restore saved filter on load
+  const savedFilter = localStorage.getItem(FILTER_KEY) || 'all';
+  if (savedFilter !== 'all') applyFilter(savedFilter);
 
   // Export
   window.exportProgress = function() {

@@ -42,7 +42,7 @@ export async function sendInviteEmail(email: string, name: string, token: string
         An account has been created for you on BCE EventPass. Click the button below to set your password and get started.
       </p>
       <div style="text-align:center;margin:32px 0;">
-        <a href="${url}" style="display:inline-block;background:linear-gradient(135deg,#e0251c,#8232a7);color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;">Set Your Password</a>
+        <a href="${url}" style="display:inline-block;background-color:#e0251c;background-image:linear-gradient(135deg,#e0251c,#8232a7);color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;">Set Your Password</a>
       </div>
       <p style="margin:0;color:#999;font-size:12px;">This link expires in 24 hours. If you didn't expect this email, you can ignore it.</p>`
   );
@@ -83,7 +83,7 @@ export async function sendApprovalNotificationEmail(
         <tr><td style="padding:8px 0;font-weight:800;">Number</td><td style="padding:8px 0;">${accreditation.accreditationNumber}</td></tr>
       </table>
       <div style="text-align:center;margin:32px 0;">
-        <a href="${url}" style="display:inline-block;background:linear-gradient(135deg,#e0251c,#8232a7);color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;">Review Approvals</a>
+        <a href="${url}" style="display:inline-block;background-color:#e0251c;background-image:linear-gradient(135deg,#e0251c,#8232a7);color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;">Review Approvals</a>
       </div>`
   );
 
@@ -116,7 +116,7 @@ export async function sendPasswordResetEmail(email: string, name: string, token:
         We received a request to reset your password. Click the button below to choose a new one.
       </p>
       <div style="text-align:center;margin:32px 0;">
-        <a href="${url}" style="display:inline-block;background:linear-gradient(135deg,#e0251c,#8232a7);color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;">Reset Password</a>
+        <a href="${url}" style="display:inline-block;background-color:#e0251c;background-image:linear-gradient(135deg,#e0251c,#8232a7);color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;">Reset Password</a>
       </div>
       <p style="margin:0;color:#999;font-size:12px;">This link expires in 1 hour. If you didn't request this, you can ignore it.</p>`
   );

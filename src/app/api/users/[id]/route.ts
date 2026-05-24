@@ -158,6 +158,17 @@ export const DELETE = withErrorHandler(async (
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
+  // Prevent deleting the last admin
+  if (existing.role === 'ADMIN') {
+    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } });
+    if (adminCount <= 1) {
+      return NextResponse.json(
+        { error: 'Cannot delete the last admin account' },
+        { status: 400 }
+      );
+    }
+  }
+
   await prisma.user.delete({ where: { id } });
 
   return NextResponse.json({ success: true });
