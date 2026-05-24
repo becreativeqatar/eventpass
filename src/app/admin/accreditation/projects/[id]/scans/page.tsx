@@ -179,7 +179,7 @@ export default function ProjectScansPage() {
       {/* Scan History */}
       <ScanHistory
         projectId={projectId}
-        title="Project Scan History"
+        title="Event Scan History"
       />
     </div>
   );

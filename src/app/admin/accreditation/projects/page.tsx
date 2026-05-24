@@ -206,12 +206,12 @@ export default function AccreditationProjectsPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-semibold text-foreground">Accreditation Projects</h1>
+              <h1 className="text-3xl font-semibold text-foreground">Accreditation Events</h1>
               <p className="text-muted-foreground mt-1">View and manage event accreditation projects</p>
             </div>
             <Button onClick={() => setIsDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              New Project
+              New Event
             </Button>
           </div>
 
@@ -223,11 +223,11 @@ export default function AccreditationProjectsPage() {
             <Card className="shadow-sm">
               <CardContent className="py-12 text-center">
                 <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground mb-2">No accreditation projects</h3>
-                <p className="text-muted-foreground mb-4">Get started by creating your first accreditation project</p>
+                <h3 className="text-lg font-medium text-foreground mb-2">No accreditation events</h3>
+                <p className="text-muted-foreground mb-4">Get started by creating your first accreditation event</p>
                 <Button onClick={() => setIsDialogOpen(true)} className="bg-slate-700 hover:bg-slate-800 text-white shadow-sm">
                   <Plus className="h-4 w-4 mr-2" />
-                  Create Project
+                  Create Event
                 </Button>
               </CardContent>
             </Card>
@@ -307,7 +307,7 @@ export default function AccreditationProjectsPage() {
                           onClick={() => router.push(`/admin/accreditation/projects/${project.id}`)}
                           className="w-full bg-slate-700 hover:bg-slate-800 text-white shadow-sm"
                         >
-                          Open Project
+                          Open Event
                         </Button>
                       </div>
                     </CardContent>
@@ -326,7 +326,7 @@ export default function AccreditationProjectsPage() {
           }}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{isEditMode ? 'Edit Accreditation Project' : 'Create Accreditation Project'}</DialogTitle>
+              <DialogTitle>{isEditMode ? 'Edit Accreditation Event' : 'Create Accreditation Event'}</DialogTitle>
               <DialogDescription>
                 {isEditMode ? 'Update phase dates and access groups for event accreditation' : 'Set up phase dates and access groups for event accreditation'}
               </DialogDescription>
@@ -453,7 +453,7 @@ export default function AccreditationProjectsPage() {
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting
                     ? (isEditMode ? 'Updating...' : 'Creating...')
-                    : (isEditMode ? 'Update Project' : 'Create Project')
+                    : (isEditMode ? 'Update Event' : 'Create Event')
                   }
                 </Button>
               </DialogFooter>

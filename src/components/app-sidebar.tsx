@@ -112,6 +112,7 @@ export function AppSidebar() {
       </SidebarFooter>
       <button
         onClick={toggleSidebar}
+        aria-label="Toggle sidebar"
         className="absolute -right-3 top-4 z-20 hidden h-6 w-6 items-center justify-center rounded-full border bg-background shadow-sm hover:bg-accent md:flex"
       >
         <ChevronsLeft className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${open ? '' : 'rotate-180'}`} />

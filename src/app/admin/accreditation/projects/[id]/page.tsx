@@ -215,14 +215,14 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
             </Card>
           </div>
 
-          {/* Delete Project Button - Only show if no records exist */}
+          {/* Delete Event Button - Only show if no records exist */}
           {stats.totalAccreditations === 0 && (
             <Card className="border-red-200 bg-red-50">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-base font-semibold text-red-900 mb-1">Delete Project</h3>
-                    <p className="text-sm text-red-700">Permanently remove this project (no records exist)</p>
+                    <h3 className="text-base font-semibold text-red-900 mb-1">Delete Event</h3>
+                    <p className="text-sm text-red-700">Permanently remove this event (no records exist)</p>
                   </div>
                   <Button
                     variant="destructive"
@@ -242,9 +242,9 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Project</DialogTitle>
+            <DialogTitle>Delete Event</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this project? This action cannot be undone.
+              Are you sure you want to delete this event? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -260,7 +260,7 @@ export default function ProjectOverviewPage({ params }: ProjectOverviewProps) {
               onClick={handleDelete}
               disabled={isDeleting}
             >
-              {isDeleting ? 'Deleting...' : 'Delete Project'}
+              {isDeleting ? 'Deleting...' : 'Delete Event'}
             </Button>
           </DialogFooter>
         </DialogContent>

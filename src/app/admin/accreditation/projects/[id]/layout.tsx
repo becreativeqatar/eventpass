@@ -59,10 +59,10 @@ export default function ProjectLayout({ children, params }: ProjectLayoutProps) 
   const getBackButton = () => {
     if (!pathname || !projectId) return null;
 
-    // From project overview -> Back to Projects (listing)
+    // From project overview -> Back to Events (listing)
     if (pathname === `/admin/accreditation/projects/${projectId}`) {
       return {
-        label: 'Back to Projects',
+        label: 'Back to Events',
         href: '/admin/accreditation/projects',
       };
     }
@@ -75,17 +75,17 @@ export default function ProjectLayout({ children, params }: ProjectLayoutProps) 
       };
     }
 
-    // From records listing, approvals, reports, or scans -> Back to Project
+    // From records listing, approvals, reports, or scans -> Back to Event
     if (pathname.includes('/records') || pathname.includes('/approvals') || pathname.includes('/reports') || pathname.includes('/scans')) {
       return {
-        label: 'Back to Project',
+        label: 'Back to Event',
         href: `/admin/accreditation/projects/${projectId}`,
       };
     }
 
     // Default fallback
     return {
-      label: 'Back to Projects',
+      label: 'Back to Events',
       href: '/admin/accreditation/projects',
     };
   };

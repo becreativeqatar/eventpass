@@ -27,7 +27,7 @@ export async function GET() {
       accessGroups: p.accessGroups ? p.accessGroups.split(',').map((g) => g.trim()) : [],
     }));
 
-    return NextResponse.json({ projects: formattedProjects });
+    return NextResponse.json({ data: formattedProjects, projects: formattedProjects });
   } catch (error) {
     console.error('Error fetching projects:', error);
     return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });

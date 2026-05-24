@@ -13,17 +13,17 @@ export async function GET() {
     const project = await getSelectedProject();
 
     if (!project) {
-      return NextResponse.json({ project: null });
+      return NextResponse.json({ data: null, project: null });
     }
 
-    return NextResponse.json({
-      project: {
-        ...project,
-        accessGroups: project.accessGroups
-          ? project.accessGroups.split(',').map((g) => g.trim())
-          : [],
-      },
-    });
+    const formatted = {
+      ...project,
+      accessGroups: project.accessGroups
+        ? project.accessGroups.split(',').map((g) => g.trim())
+        : [],
+    };
+
+    return NextResponse.json({ data: formatted, project: formatted });
   } catch (error) {
     console.error('Error fetching active project:', error);
     return NextResponse.json({ error: 'Failed to fetch active project' }, { status: 500 });
