@@ -212,8 +212,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
 
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
-      const fields = Object.keys(errors).map(k => k.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()));
-      toast.error(`Required: ${fields.join(', ')}`);
+      toast.error('Please fill in all highlighted fields');
       return;
     }
     setFieldErrors({});
@@ -338,6 +337,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                     onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }); setFieldErrors(prev => ({ ...prev, firstName: false })); }}
                     className={fieldErrors.firstName ? 'border-destructive' : ''}
                   />
+                  {fieldErrors.firstName && <p className="text-xs text-destructive">First name is required</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Last Name *</Label>
@@ -347,6 +347,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                     onChange={(e) => { setFormData({ ...formData, lastName: e.target.value }); setFieldErrors(prev => ({ ...prev, lastName: false })); }}
                     className={fieldErrors.lastName ? 'border-destructive' : ''}
                   />
+                  {fieldErrors.lastName && <p className="text-xs text-destructive">Last name is required</p>}
                 </div>
               </div>
 
@@ -370,6 +371,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   onChange={(e) => { setFormData({ ...formData, company: e.target.value }); setFieldErrors(prev => ({ ...prev, company: false })); }}
                   className={fieldErrors.company ? 'border-destructive' : ''}
                 />
+                {fieldErrors.company && <p className="text-xs text-destructive">Company is required</p>}
               </div>
 
               <div className="space-y-2">
@@ -380,6 +382,7 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   onChange={(e) => { setFormData({ ...formData, role: e.target.value }); setFieldErrors(prev => ({ ...prev, role: false })); }}
                   className={fieldErrors.role ? 'border-destructive' : ''}
                 />
+                {fieldErrors.role && <p className="text-xs text-destructive">Role is required</p>}
               </div>
 
               <div className="space-y-2">
