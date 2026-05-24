@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { autoCompleteExpiredEvents } from '@/lib/active-project';
+import { parsePhaseStart, parsePhaseEnd, parseEventDate } from '@/lib/date';
 
 // GET /api/events - List all events
 export async function GET() {
@@ -70,13 +71,13 @@ export async function POST(request: NextRequest) {
         code: code || name.toUpperCase().replace(/\s+/g, '-').slice(0, 20),
         description: description || null,
         venue: venue || null,
-        eventDate: eventDate ? new Date(eventDate) : null,
-        bumpInStart: bumpInStart ? new Date(bumpInStart) : null,
-        bumpInEnd: bumpInEnd ? new Date(bumpInEnd) : null,
-        liveStart: liveStart ? new Date(liveStart) : null,
-        liveEnd: liveEnd ? new Date(liveEnd) : null,
-        bumpOutStart: bumpOutStart ? new Date(bumpOutStart) : null,
-        bumpOutEnd: bumpOutEnd ? new Date(bumpOutEnd) : null,
+        eventDate: parseEventDate(eventDate),
+        bumpInStart: parsePhaseStart(bumpInStart),
+        bumpInEnd: parsePhaseEnd(bumpInEnd),
+        liveStart: parsePhaseStart(liveStart),
+        liveEnd: parsePhaseEnd(liveEnd),
+        bumpOutStart: parsePhaseStart(bumpOutStart),
+        bumpOutEnd: parsePhaseEnd(bumpOutEnd),
         accessGroups: accessGroupsStr,
         status: targetStatus,
         createdById: session.user.id,

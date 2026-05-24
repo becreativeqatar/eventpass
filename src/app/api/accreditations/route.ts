@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { withErrorHandler } from '@/lib/http/handler';
+import { parsePhaseStart, parsePhaseEnd } from '@/lib/date';
 import {
   createAccreditationSchema,
   accreditationQuerySchema,
@@ -125,12 +126,26 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
   const { phases: providedPhases, ...restData } = data;
   const computedPhases = providedPhases || getPhases(data);
 
+  // Convert phase date strings to Qatar timezone (start=00:00, end=23:59:59 Qatar)
+  const qatarDates = {
+    bumpInStart: parsePhaseStart(restData.bumpInStart as string | null),
+    bumpInEnd: parsePhaseEnd(restData.bumpInEnd as string | null),
+    liveStart: parsePhaseStart(restData.liveStart as string | null),
+    liveEnd: parsePhaseEnd(restData.liveEnd as string | null),
+    bumpOutStart: parsePhaseStart(restData.bumpOutStart as string | null),
+    bumpOutEnd: parsePhaseEnd(restData.bumpOutEnd as string | null),
+    qidExpiry: parsePhaseEnd(restData.qidExpiry as string | null),
+    passportExpiry: parsePhaseEnd(restData.passportExpiry as string | null),
+    hayyaExpiry: parsePhaseEnd(restData.hayyaExpiry as string | null),
+  };
+
   // Generate unique accreditation number
   const accreditationNumber = await generateAccreditationNumber();
 
   const accreditation = await prisma.accreditation.create({
     data: {
       ...restData,
+      ...qatarDates,
       accreditationNumber,
       phases: phasesToString(computedPhases),
       createdById: session.user.id,
