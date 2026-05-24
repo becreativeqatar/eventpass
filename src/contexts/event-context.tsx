@@ -53,7 +53,7 @@ export function EventProvider({ children }: { children: ReactNode }) {
 
       // Resolve selection: cookie → localStorage → active event
       const persistedId = getCookie() || localStorage.getItem(LS_KEY);
-      const persisted = persistedId ? list.find((e) => e.id === persistedId) : null;
+      const persisted = persistedId ? list.find((e) => e.id === persistedId || e.code === persistedId) : null;
       const active = list.find((e) => e.status === 'ACTIVE');
       const resolved = persisted || active || list[0] || null;
 

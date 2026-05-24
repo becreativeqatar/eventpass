@@ -21,8 +21,13 @@ export async function getSelectedProject() {
   const selectedId = cookieStore.get('ep_selected_event')?.value;
 
   if (selectedId) {
-    const project = await prisma.accreditationProject.findUnique({
-      where: { id: selectedId },
+    const project = await prisma.accreditationProject.findFirst({
+      where: {
+        OR: [
+          { id: selectedId },
+          { code: selectedId },
+        ],
+      },
     });
     if (project) return project;
   }

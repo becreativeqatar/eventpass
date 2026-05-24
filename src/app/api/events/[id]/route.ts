@@ -3,6 +3,20 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
+// Lookup event by id or code
+async function findEvent(idOrCode: string) {
+  // Try by id first, then by code
+  const event = await prisma.accreditationProject.findFirst({
+    where: {
+      OR: [
+        { id: idOrCode },
+        { code: idOrCode },
+      ],
+    },
+  });
+  return event;
+}
+
 // GET /api/events/[id] - Get event details
 export async function GET(
   request: NextRequest,
@@ -16,9 +30,7 @@ export async function GET(
 
     const { id } = await params;
 
-    const event = await prisma.accreditationProject.findUnique({
-      where: { id },
-    });
+    const event = await findEvent(id);
 
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
@@ -48,7 +60,7 @@ export async function PATCH(
 
     const { id } = await params;
 
-    const existing = await prisma.accreditationProject.findUnique({ where: { id } });
+    const existing = await findEvent(id);
     if (!existing) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
@@ -59,7 +71,7 @@ export async function PATCH(
     const accessGroupsStr = Array.isArray(accessGroups) ? accessGroups.join(',') : undefined;
 
     const event = await prisma.accreditationProject.update({
-      where: { id },
+      where: { id: existing.id },
       data: {
         ...(name !== undefined && { name }),
         ...(description !== undefined && { description: description || null }),
@@ -99,8 +111,13 @@ export async function DELETE(
 
     const { id } = await params;
 
+    const found = await findEvent(id);
+    if (!found) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 });
+    }
+
     const existing = await prisma.accreditationProject.findUnique({
-      where: { id },
+      where: { id: found.id },
       include: { _count: { select: { accreditations: true } } },
     });
 
@@ -122,7 +139,7 @@ export async function DELETE(
       );
     }
 
-    await prisma.accreditationProject.delete({ where: { id } });
+    await prisma.accreditationProject.delete({ where: { id: found.id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {

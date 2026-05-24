@@ -116,7 +116,7 @@ export default function EventsPage() {
 
       {/* Active Event Banner */}
       {activeEvent && (filter === 'All' || filter === 'Active') && (
-        <Link href={`/admin/events/${activeEvent.id}`} className="block">
+        <Link href={`/admin/events/${activeEvent.code || activeEvent.id}`} className="block">
           <Card className="border-success/30 bg-success/5 transition-colors hover:border-success/50">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -172,7 +172,7 @@ export default function EventsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredEvents.map((event) => (
-            <Link key={event.id} href={`/admin/events/${event.id}`}>
+            <Link key={event.id} href={`/admin/events/${event.code || event.id}`}>
               <Card className="transition-colors hover:border-primary/30 h-full">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
