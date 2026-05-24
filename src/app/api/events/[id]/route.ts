@@ -68,14 +68,23 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { name, description, venue, eventDate, bumpInStart, bumpInEnd, liveStart, liveEnd, bumpOutStart, bumpOutEnd, accessGroups } = body;
+    const { name, status, description, venue, eventDate, bumpInStart, bumpInEnd, liveStart, liveEnd, bumpOutStart, bumpOutEnd, accessGroups } = body;
 
     const accessGroupsStr = Array.isArray(accessGroups) ? accessGroups.join(',') : undefined;
+
+    // If activating, deactivate current active project
+    if (status === 'ACTIVE' && existing.status !== 'ACTIVE') {
+      await prisma.accreditationProject.updateMany({
+        where: { status: 'ACTIVE', id: { not: existing.id } },
+        data: { status: 'COMPLETED' },
+      });
+    }
 
     const event = await prisma.accreditationProject.update({
       where: { id: existing.id },
       data: {
         ...(name !== undefined && { name }),
+        ...(status !== undefined && { status }),
         ...(description !== undefined && { description: description || null }),
         ...(venue !== undefined && { venue: venue || null }),
         ...(eventDate !== undefined && { eventDate: eventDate ? new Date(eventDate) : null }),
