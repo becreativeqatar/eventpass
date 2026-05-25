@@ -4,6 +4,7 @@ vi.mock('@/lib/prisma', () => ({
   prisma: {
     user: {
       findUnique: vi.fn(),
+      count: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
     },
@@ -229,6 +230,7 @@ describe('DELETE /api/users/[id]', () => {
 
     const existing = buildUser({ id: 'user-2' });
     mockPrisma.user.findUnique.mockResolvedValue(existing as never);
+    mockPrisma.user.count.mockResolvedValue(2 as never);
     mockPrisma.user.delete.mockResolvedValue(existing as never);
 
     const req = createMockRequest('/api/users/user-2', { method: 'DELETE' });

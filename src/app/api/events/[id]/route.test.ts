@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     accreditationProject: {
+      findFirst: vi.fn(),
       findUnique: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
@@ -67,7 +68,7 @@ describe('PATCH /api/events/[id]', () => {
 
   it('returns 404 when event not found', async () => {
     mockGetSession.mockResolvedValue(mockSession());
-    mockPrisma.accreditationProject.findUnique.mockResolvedValue(null as never);
+    mockPrisma.accreditationProject.findFirst.mockResolvedValue(null as never);
 
     const req = createMockRequest('/api/events/p-1', {
       method: 'PATCH',
@@ -84,7 +85,7 @@ describe('PATCH /api/events/[id]', () => {
     mockGetSession.mockResolvedValue(mockSession());
 
     const existing = buildProject({ id: 'p-1' });
-    mockPrisma.accreditationProject.findUnique.mockResolvedValue(existing as never);
+    mockPrisma.accreditationProject.findFirst.mockResolvedValue(existing as never);
 
     const updated = { ...existing, name: 'Updated Event', venue: 'New Venue' };
     mockPrisma.accreditationProject.update.mockResolvedValue(updated as never);
@@ -109,7 +110,7 @@ describe('PATCH /api/events/[id]', () => {
     mockGetSession.mockResolvedValue(mockSession({ role: 'MANAGER' }));
 
     const existing = buildProject({ id: 'p-1' });
-    mockPrisma.accreditationProject.findUnique.mockResolvedValue(existing as never);
+    mockPrisma.accreditationProject.findFirst.mockResolvedValue(existing as never);
     mockPrisma.accreditationProject.update.mockResolvedValue(existing as never);
 
     const req = createMockRequest('/api/events/p-1', {
@@ -143,7 +144,7 @@ describe('DELETE /api/events/[id]', () => {
 
   it('returns 404 when event not found', async () => {
     mockGetSession.mockResolvedValue(mockSession());
-    mockPrisma.accreditationProject.findUnique.mockResolvedValue(null as never);
+    mockPrisma.accreditationProject.findFirst.mockResolvedValue(null as never);
 
     const req = createMockRequest('/api/events/p-1', { method: 'DELETE' });
     const res = await DELETE(req, createParamsContext('p-1'));
@@ -153,9 +154,9 @@ describe('DELETE /api/events/[id]', () => {
 
   it('returns 400 when event is not DRAFT', async () => {
     mockGetSession.mockResolvedValue(mockSession());
-    mockPrisma.accreditationProject.findUnique.mockResolvedValue(
-      buildProject({ id: 'p-1', status: 'ACTIVE', _count: { accreditations: 0 } }) as never,
-    );
+    const project = buildProject({ id: 'p-1', status: 'ACTIVE', _count: { accreditations: 0 } });
+    mockPrisma.accreditationProject.findFirst.mockResolvedValue(project as never);
+    mockPrisma.accreditationProject.findUnique.mockResolvedValue(project as never);
 
     const req = createMockRequest('/api/events/p-1', { method: 'DELETE' });
     const res = await DELETE(req, createParamsContext('p-1'));
@@ -167,9 +168,9 @@ describe('DELETE /api/events/[id]', () => {
 
   it('returns 409 when event has accreditations', async () => {
     mockGetSession.mockResolvedValue(mockSession());
-    mockPrisma.accreditationProject.findUnique.mockResolvedValue(
-      buildProject({ id: 'p-1', status: 'DRAFT', _count: { accreditations: 3 } }) as never,
-    );
+    const project = buildProject({ id: 'p-1', status: 'DRAFT', _count: { accreditations: 3 } });
+    mockPrisma.accreditationProject.findFirst.mockResolvedValue(project as never);
+    mockPrisma.accreditationProject.findUnique.mockResolvedValue(project as never);
 
     const req = createMockRequest('/api/events/p-1', { method: 'DELETE' });
     const res = await DELETE(req, createParamsContext('p-1'));

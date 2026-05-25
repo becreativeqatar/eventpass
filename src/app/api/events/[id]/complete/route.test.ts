@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     accreditationProject: {
+      findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
@@ -60,6 +61,9 @@ describe('PATCH /api/events/[id]/complete', () => {
   it('sets event status to COMPLETED', async () => {
     mockGetSession.mockResolvedValue(mockSession());
 
+    const existing = buildProject({ id: 'p-1', status: 'ACTIVE' });
+    mockPrisma.accreditationProject.findUnique.mockResolvedValue(existing as never);
+
     const completed = buildProject({ id: 'p-1', status: 'COMPLETED' });
     mockPrisma.accreditationProject.update.mockResolvedValue(completed as never);
 
@@ -77,6 +81,9 @@ describe('PATCH /api/events/[id]/complete', () => {
 
   it('allows MANAGER role', async () => {
     mockGetSession.mockResolvedValue(mockSession({ role: 'MANAGER' }));
+
+    const existing = buildProject({ id: 'p-1', status: 'ACTIVE' });
+    mockPrisma.accreditationProject.findUnique.mockResolvedValue(existing as never);
 
     const completed = buildProject({ id: 'p-1', status: 'COMPLETED' });
     mockPrisma.accreditationProject.update.mockResolvedValue(completed as never);

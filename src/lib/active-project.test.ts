@@ -2,7 +2,7 @@ vi.mock('@/lib/prisma', () => ({
   prisma: {
     accreditationProject: {
       findFirst: vi.fn(),
-      findUnique: vi.fn(),
+      updateMany: vi.fn(() => Promise.resolve({ count: 0 })),
     },
   },
 }));
@@ -20,7 +20,6 @@ import {
 } from '@/lib/active-project';
 
 const mockFindFirst = vi.mocked(prisma.accreditationProject.findFirst);
-const mockFindUnique = vi.mocked(prisma.accreditationProject.findUnique);
 const mockCookies = vi.mocked(cookies);
 
 const activeProject = {
@@ -44,6 +43,7 @@ describe('getActiveProject', () => {
     expect(result).toEqual(activeProject);
     expect(mockFindFirst).toHaveBeenCalledWith({
       where: { status: 'ACTIVE' },
+      orderBy: { createdAt: 'desc' },
     });
   });
 
@@ -89,13 +89,19 @@ describe('getSelectedProject', () => {
         name === 'ep_selected_event' ? { name, value: 'proj-cookie' } : undefined,
       ),
     } as never);
-    mockFindUnique.mockResolvedValue(cookieProject);
+    // getSelectedProject now uses findFirst with an OR clause for id/code lookup
+    mockFindFirst.mockResolvedValueOnce(cookieProject);
 
     const result = await getSelectedProject();
 
     expect(result).toEqual(cookieProject);
-    expect(mockFindUnique).toHaveBeenCalledWith({
-      where: { id: 'proj-cookie' },
+    expect(mockFindFirst).toHaveBeenCalledWith({
+      where: {
+        OR: [
+          { id: 'proj-cookie' },
+          { code: { equals: 'proj-cookie', mode: 'insensitive' } },
+        ],
+      },
     });
   });
 
@@ -105,13 +111,16 @@ describe('getSelectedProject', () => {
         name === 'ep_selected_event' ? { name, value: 'nonexistent-id' } : undefined,
       ),
     } as never);
-    mockFindUnique.mockResolvedValue(null);
-    mockFindFirst.mockResolvedValue(activeProject);
+    // First findFirst call (cookie lookup) returns null, second (getActiveProject) returns activeProject
+    mockFindFirst.mockResolvedValueOnce(null).mockResolvedValueOnce(activeProject);
 
     const result = await getSelectedProject();
 
     expect(result).toEqual(activeProject);
-    expect(mockFindFirst).toHaveBeenCalledWith({ where: { status: 'ACTIVE' } });
+    expect(mockFindFirst).toHaveBeenCalledWith({
+      where: { status: 'ACTIVE' },
+      orderBy: { createdAt: 'desc' },
+    });
   });
 
   it('falls back to active project when no cookie set', async () => {
@@ -123,7 +132,8 @@ describe('getSelectedProject', () => {
     const result = await getSelectedProject();
 
     expect(result).toEqual(activeProject);
-    expect(mockFindUnique).not.toHaveBeenCalled();
+    // When no cookie, findFirst should only be called once (via getActiveProject), not for cookie lookup
+    expect(mockFindFirst).toHaveBeenCalledTimes(1);
   });
 
   it('returns null when no cookie and no active project', async () => {

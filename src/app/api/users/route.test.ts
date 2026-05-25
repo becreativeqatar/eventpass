@@ -133,8 +133,8 @@ describe('GET /api/users', () => {
     expect(whereArg.role).toBe('MANAGER');
     expect(whereArg.OR).toBeDefined();
     expect(whereArg.OR).toEqual([
-      { name: { contains: 'john' } },
-      { email: { contains: 'john' } },
+      { name: { contains: 'john', mode: 'insensitive' } },
+      { email: { contains: 'john', mode: 'insensitive' } },
     ]);
   });
 });

@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     accreditationProject: {
+      findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
@@ -60,6 +61,9 @@ describe('PATCH /api/events/[id]/archive', () => {
   it('sets event status to ARCHIVED', async () => {
     mockGetSession.mockResolvedValue(mockSession());
 
+    const existing = buildProject({ id: 'p-1', status: 'COMPLETED' });
+    mockPrisma.accreditationProject.findUnique.mockResolvedValue(existing as never);
+
     const archived = buildProject({ id: 'p-1', status: 'ARCHIVED' });
     mockPrisma.accreditationProject.update.mockResolvedValue(archived as never);
 
@@ -77,6 +81,9 @@ describe('PATCH /api/events/[id]/archive', () => {
 
   it('allows ADMIN role to archive', async () => {
     mockGetSession.mockResolvedValue(mockSession({ role: 'ADMIN' }));
+
+    const existing = buildProject({ id: 'p-1', status: 'COMPLETED' });
+    mockPrisma.accreditationProject.findUnique.mockResolvedValue(existing as never);
 
     const archived = buildProject({ id: 'p-1', status: 'ARCHIVED' });
     mockPrisma.accreditationProject.update.mockResolvedValue(archived as never);

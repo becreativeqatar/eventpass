@@ -42,6 +42,18 @@ export const PATCH = withErrorHandler(async (
     );
   }
 
+  // Create history first, then update with full includes so response has history
+  await prisma.accreditationHistory.create({
+    data: {
+      accreditationId: id,
+      action: 'APPROVED',
+      oldStatus: AccreditationStatus.PENDING,
+      newStatus: AccreditationStatus.APPROVED,
+      notes: body.notes,
+      performedById: session.user.id,
+    },
+  });
+
   const accreditation = await prisma.accreditation.update({
     where: { id },
     data: {
@@ -51,18 +63,10 @@ export const PATCH = withErrorHandler(async (
     },
     include: {
       project: { select: { id: true, name: true } },
-    },
-  });
-
-  // Create history record
-  await prisma.accreditationHistory.create({
-    data: {
-      accreditationId: id,
-      action: 'APPROVED',
-      oldStatus: AccreditationStatus.PENDING,
-      newStatus: AccreditationStatus.APPROVED,
-      notes: body.notes,
-      performedById: session.user.id,
+      history: {
+        include: { performedBy: { select: { id: true, name: true, email: true } } },
+        orderBy: { performedAt: 'desc' },
+      },
     },
   });
 

@@ -9,12 +9,12 @@ vi.mock('@/lib/auth', () => ({
 }));
 
 vi.mock('@/lib/active-project', () => ({
-  getActiveProject: vi.fn(),
+  getSelectedProject: vi.fn(),
 }));
 
 import { GET } from '@/app/api/active-project/route';
 import { getServerSession } from 'next-auth/next';
-import { getActiveProject } from '@/lib/active-project';
+import { getSelectedProject } from '@/lib/active-project';
 import {
   mockSession,
   parseJsonResponse,
@@ -22,7 +22,7 @@ import {
 import { buildProject, resetCounters } from '@/test/factories';
 
 const mockGetSession = vi.mocked(getServerSession);
-const mockGetActiveProject = vi.mocked(getActiveProject);
+const mockGetSelectedProject = vi.mocked(getSelectedProject);
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -43,7 +43,7 @@ describe('GET /api/active-project', () => {
 
   it('returns project: null when no active project', async () => {
     mockGetSession.mockResolvedValue(mockSession());
-    mockGetActiveProject.mockResolvedValue(null);
+    mockGetSelectedProject.mockResolvedValue(null);
 
     const res = await GET();
     const body = await parseJsonResponse<{ project: null }>(res);
@@ -58,7 +58,7 @@ describe('GET /api/active-project', () => {
       status: 'ACTIVE',
       accessGroups: 'General,VIP,Media',
     });
-    mockGetActiveProject.mockResolvedValue(project as never);
+    mockGetSelectedProject.mockResolvedValue(project as never);
 
     const res = await GET();
     const body = await parseJsonResponse<{
@@ -76,7 +76,7 @@ describe('GET /api/active-project', () => {
       status: 'ACTIVE',
       accessGroups: null,
     });
-    mockGetActiveProject.mockResolvedValue(project as never);
+    mockGetSelectedProject.mockResolvedValue(project as never);
 
     const res = await GET();
     const body = await parseJsonResponse<{

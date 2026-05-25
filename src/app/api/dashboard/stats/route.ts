@@ -10,6 +10,10 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  if (!['ADMIN', 'MANAGER'].includes(session.user.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   const activeProject = await getSelectedProject();
   if (!activeProject) {
     return NextResponse.json({ stats: null });

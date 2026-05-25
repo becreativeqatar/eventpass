@@ -2,7 +2,10 @@ import { vi } from 'vitest';
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
-    $transaction: vi.fn(),
+    accreditationProject: {
+      findUnique: vi.fn(),
+      update: vi.fn(),
+    },
   },
 }));
 
@@ -64,21 +67,13 @@ describe('PATCH /api/events/[id]/activate', () => {
     expect(res.status).toBe(403);
   });
 
-  it('completes current active event and activates target', async () => {
+  it('activates a DRAFT event', async () => {
     mockGetSession.mockResolvedValue(mockSession());
 
+    const existing = buildProject({ id: 'p-1', status: 'DRAFT' });
     const activated = buildProject({ id: 'p-1', status: 'ACTIVE' });
-    mockPrisma.$transaction.mockImplementation(async (cb: unknown) => {
-      if (typeof cb === 'function') {
-        const tx = {
-          accreditationProject: {
-            updateMany: vi.fn().mockResolvedValue({ count: 1 }),
-            update: vi.fn().mockResolvedValue(activated),
-          },
-        };
-        return cb(tx);
-      }
-    });
+    mockPrisma.accreditationProject.findUnique.mockResolvedValue(existing as never);
+    mockPrisma.accreditationProject.update.mockResolvedValue(activated as never);
 
     const req = createMockRequest('/api/events/p-1/activate', { method: 'PATCH', body: {} });
     const res = await PATCH(req, createParamsContext('p-1'));
@@ -88,25 +83,18 @@ describe('PATCH /api/events/[id]/activate', () => {
     expect(body.data.id).toBe('p-1');
     expect(body.data.status).toBe('ACTIVE');
 
-    // Verify transaction was called
-    expect(mockPrisma.$transaction).toHaveBeenCalledTimes(1);
+    const updateArgs = (mockPrisma.accreditationProject.update as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(updateArgs.where.id).toBe('p-1');
+    expect(updateArgs.data.status).toBe('ACTIVE');
   });
 
   it('allows MANAGER role', async () => {
     mockGetSession.mockResolvedValue(mockSession({ role: 'MANAGER' }));
 
+    const existing = buildProject({ id: 'p-1', status: 'DRAFT' });
     const activated = buildProject({ id: 'p-1', status: 'ACTIVE' });
-    mockPrisma.$transaction.mockImplementation(async (cb: unknown) => {
-      if (typeof cb === 'function') {
-        const tx = {
-          accreditationProject: {
-            updateMany: vi.fn().mockResolvedValue({ count: 0 }),
-            update: vi.fn().mockResolvedValue(activated),
-          },
-        };
-        return cb(tx);
-      }
-    });
+    mockPrisma.accreditationProject.findUnique.mockResolvedValue(existing as never);
+    mockPrisma.accreditationProject.update.mockResolvedValue(activated as never);
 
     const req = createMockRequest('/api/events/p-1/activate', { method: 'PATCH', body: {} });
     const res = await PATCH(req, createParamsContext('p-1'));

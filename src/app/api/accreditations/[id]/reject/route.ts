@@ -41,17 +41,6 @@ export const PATCH = withErrorHandler(async (
     );
   }
 
-  const accreditation = await prisma.accreditation.update({
-    where: { id },
-    data: {
-      status: AccreditationStatus.REJECTED,
-      notes: body.reason || existing.notes,
-    },
-    include: {
-      project: { select: { id: true, name: true } },
-    },
-  });
-
   await prisma.accreditationHistory.create({
     data: {
       accreditationId: id,
@@ -60,6 +49,21 @@ export const PATCH = withErrorHandler(async (
       newStatus: AccreditationStatus.REJECTED,
       notes: body.reason,
       performedById: session.user.id,
+    },
+  });
+
+  const accreditation = await prisma.accreditation.update({
+    where: { id },
+    data: {
+      status: AccreditationStatus.REJECTED,
+      notes: body.reason || existing.notes,
+    },
+    include: {
+      project: { select: { id: true, name: true } },
+      history: {
+        include: { performedBy: { select: { id: true, name: true, email: true } } },
+        orderBy: { performedAt: 'desc' },
+      },
     },
   });
 

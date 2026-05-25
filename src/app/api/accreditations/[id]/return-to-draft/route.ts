@@ -50,16 +50,6 @@ export const PATCH = withErrorHandler(async (
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const accreditation = await prisma.accreditation.update({
-    where: { id },
-    data: {
-      status: AccreditationStatus.DRAFT,
-    },
-    include: {
-      project: { select: { id: true, name: true } },
-    },
-  });
-
   await prisma.accreditationHistory.create({
     data: {
       accreditationId: id,
@@ -68,6 +58,20 @@ export const PATCH = withErrorHandler(async (
       newStatus: AccreditationStatus.DRAFT,
       notes: body.reason || 'Returned to draft for editing',
       performedById: session.user.id,
+    },
+  });
+
+  const accreditation = await prisma.accreditation.update({
+    where: { id },
+    data: {
+      status: AccreditationStatus.DRAFT,
+    },
+    include: {
+      project: { select: { id: true, name: true } },
+      history: {
+        include: { performedBy: { select: { id: true, name: true, email: true } } },
+        orderBy: { performedAt: 'desc' },
+      },
     },
   });
 

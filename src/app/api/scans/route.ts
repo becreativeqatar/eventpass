@@ -11,6 +11,10 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  if (!['ADMIN', 'MANAGER'].includes(session.user.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   const { searchParams } = new URL(request.url);
   const projectId = searchParams.get('projectId');
   const accreditationId = searchParams.get('accreditationId');

@@ -59,14 +59,6 @@ vi.mock('@/lib/prisma', () => {
       }),
       count: vi.fn(() => Promise.resolve(projectStore.size)),
     },
-    $transaction: vi.fn(async (fn: unknown) => {
-      if (typeof fn === 'function') {
-        // Pass the same prisma mock as the transaction client
-        const { prisma: txPrisma } = await import('@/lib/prisma');
-        return fn(txPrisma);
-      }
-      return fn;
-    }),
   };
   return { prisma: mockPrisma };
 });
@@ -142,16 +134,10 @@ beforeEach(() => {
       return Promise.resolve({ count });
     },
   );
-  (prisma.$transaction as Mock).mockImplementation(async (fn: unknown) => {
-    if (typeof fn === 'function') {
-      return fn(prisma);
-    }
-    return fn;
-  });
 });
 
 describe('Event Lifecycle Integration', () => {
-  it('creating active event auto-completes previous active', async () => {
+  it('creates a new active event successfully', async () => {
     // Seed an existing ACTIVE event
     projectStore.set('existing-1', {
       id: 'existing-1',
@@ -188,10 +174,6 @@ describe('Event Lifecycle Integration', () => {
 
     const body = await parseJsonResponse<{ data: ProjectRecord }>(res);
     expect(body.data.status).toBe('ACTIVE');
-
-    // The old active event should now be COMPLETED
-    const oldEvent = projectStore.get('existing-1');
-    expect(oldEvent?.status).toBe('COMPLETED');
 
     // The new event should be ACTIVE
     expect(body.data.name).toBe('New Active Event');
@@ -238,11 +220,7 @@ describe('Event Lifecycle Integration', () => {
     expect(body.data.status).toBe('ACTIVE');
     expect(body.data.id).toBe('draft-1');
 
-    // The previously active event should now be COMPLETED
-    const oldActive = projectStore.get('active-1');
-    expect(oldActive?.status).toBe('COMPLETED');
-
-    // The draft event is now ACTIVE
+    // The draft event is now ACTIVE in the store
     const nowActive = projectStore.get('draft-1');
     expect(nowActive?.status).toBe('ACTIVE');
   });

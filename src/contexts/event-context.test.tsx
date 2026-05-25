@@ -7,6 +7,14 @@ vi.mock('next-auth/react', () => ({
   useSession: vi.fn(),
 }));
 
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({
+    refresh: vi.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+  })),
+}));
+
 import { EventProvider, useEventContext, type EventSummary } from '@/contexts/event-context';
 import { useSession } from 'next-auth/react';
 

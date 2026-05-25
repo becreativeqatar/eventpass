@@ -123,10 +123,10 @@ const validAccreditationBody = {
   qidExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
   status: 'PENDING',
   hasBumpInAccess: true,
-  bumpInStart: new Date(Date.now() + 7 * 86400000).toISOString(),
-  bumpInEnd: new Date(Date.now() + 8 * 86400000).toISOString(),
+  bumpInStart: new Date(Date.now() - 3 * 86400000).toISOString(),
+  bumpInEnd: new Date(Date.now() - 2 * 86400000).toISOString(),
   hasLiveAccess: true,
-  liveStart: new Date(Date.now() + 9 * 86400000).toISOString(),
+  liveStart: new Date(Date.now() - 1 * 86400000).toISOString(),
   liveEnd: new Date(Date.now() + 10 * 86400000).toISOString(),
   hasBumpOutAccess: false,
 };

@@ -8,7 +8,6 @@ vi.mock('@/lib/prisma', () => ({
       create: vi.fn(),
       updateMany: vi.fn(),
     },
-    $transaction: vi.fn(),
   },
 }));
 
@@ -151,21 +150,11 @@ describe('POST /api/events', () => {
     expect(createArgs.data.createdById).toBe('admin-1');
   });
 
-  it('auto-completes active event when creating with ACTIVE status', async () => {
+  it('creates event with ACTIVE status when specified', async () => {
     mockGetSession.mockResolvedValue(mockSession({ id: 'admin-1' }));
 
     const created = buildProject({ id: 'p-new', name: 'Active Event', status: 'ACTIVE' });
-    mockPrisma.$transaction.mockImplementation(async (cb: unknown) => {
-      if (typeof cb === 'function') {
-        const tx = {
-          accreditationProject: {
-            updateMany: vi.fn().mockResolvedValue({ count: 1 }),
-            create: vi.fn().mockResolvedValue(created),
-          },
-        };
-        return cb(tx);
-      }
-    });
+    mockPrisma.accreditationProject.create.mockResolvedValue(created as never);
 
     const req = createMockRequest('/api/events', {
       method: 'POST',
@@ -176,7 +165,9 @@ describe('POST /api/events', () => {
 
     expect(res.status).toBe(201);
     expect(body.data.id).toBe('p-new');
-    expect(mockPrisma.$transaction).toHaveBeenCalled();
+
+    const createArgs = (mockPrisma.accreditationProject.create as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(createArgs.data.status).toBe('ACTIVE');
   });
 
   it('returns 400 when event code already exists', async () => {
