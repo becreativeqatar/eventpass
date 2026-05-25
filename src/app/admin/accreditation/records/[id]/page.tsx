@@ -556,12 +556,10 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
               )}
 
               {/* Scan Logs */}
-              {accreditation.status === 'APPROVED' && (
-                <ScanHistory
-                  accreditationId={accreditation.id}
-                  title="QR Code Scan History"
-                />
-              )}
+              <ScanHistory
+                accreditationId={accreditation.id}
+                title="QR Code Scan History"
+              />
             </div>
 
             {/* Sidebar */}
