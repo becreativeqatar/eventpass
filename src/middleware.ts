@@ -46,6 +46,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  const role = token.role as string | undefined;
+
+  // VALIDATOR can only access /validator (and shared pages like /set-password)
+  if (role === 'VALIDATOR' && pathname.startsWith('/admin')) {
+    return NextResponse.redirect(new URL('/validator', request.url));
+  }
+
   return NextResponse.next();
 }
 
