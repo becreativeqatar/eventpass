@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { SessionProvider } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppBreadcrumb } from '@/components/app-breadcrumb';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CommandSearch } from '@/components/command-search';
+import { Separator } from '@/components/ui/separator';
 import { EventProvider } from '@/contexts/event-context';
 import { ReadOnlyBanner } from '@/components/read-only-banner';
 
@@ -59,13 +60,17 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        {showBreadcrumb && (
-          <header className="flex h-14 shrink-0 items-center gap-2 border-b px-6">
-            <AppBreadcrumb />
-          </header>
-        )}
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4 md:px-6">
+          <SidebarTrigger className="md:hidden" />
+          {showBreadcrumb && (
+            <>
+              <Separator orientation="vertical" className="h-4 md:hidden" />
+              <AppBreadcrumb />
+            </>
+          )}
+        </header>
         <ReadOnlyBanner />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 md:p-6 overflow-x-hidden">
           {children}
         </main>
       </SidebarInset>

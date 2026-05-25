@@ -95,12 +95,12 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Reports</h1>
-          <p className="text-muted-foreground">Statistics and analytics for {selectedProject.name}</p>
+          <p className="text-muted-foreground text-sm">Statistics and analytics for {selectedProject.name}</p>
         </div>
-        <Button onClick={exportReport}>Export to Excel</Button>
+        <Button onClick={exportReport} className="w-full sm:w-auto">Export to Excel</Button>
       </div>
 
       <Card>
@@ -109,7 +109,7 @@ export default function ReportsPage() {
             <div className="space-y-2">
               <Label>Report Type</Label>
               <Select value={reportType} onValueChange={setReportType}>
-                <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[200px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="summary">Summary</SelectItem>
                   <SelectItem value="by-company">By Company</SelectItem>

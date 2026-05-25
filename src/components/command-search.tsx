@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Users, Loader2 } from 'lucide-react';
+import { FileText, Users, Loader2, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   CommandDialog,
   CommandInput,
@@ -94,6 +95,16 @@ export function CommandSearch() {
   const hasResults = accreditations.length > 0 || users.length > 0;
 
   return (
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="md:hidden fixed bottom-4 right-4 z-40 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 hover:text-primary-foreground"
+        onClick={() => setOpen(true)}
+        aria-label="Search"
+      >
+        <Search className="h-5 w-5" />
+      </Button>
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput
         placeholder="Search accreditations, users..."
@@ -155,5 +166,6 @@ export function CommandSearch() {
         )}
       </CommandList>
     </CommandDialog>
+    </>
   );
 }

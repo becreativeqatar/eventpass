@@ -119,7 +119,7 @@ export function PhotoUpload({ accreditationId, currentPhotoUrl, onPhotoChange }:
                 alt="Accreditation photo"
                 className="w-40 h-40 object-cover rounded-lg border"
               />
-              <div className="absolute inset-0 rounded-lg bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <div className="absolute inset-0 rounded-lg bg-black/50 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                 <Button
                   type="button"
                   variant="secondary"

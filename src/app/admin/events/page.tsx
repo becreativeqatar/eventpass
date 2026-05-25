@@ -60,14 +60,14 @@ export default function EventsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Events</h1>
-          <p className="text-muted-foreground">Manage and browse all events</p>
+          <p className="text-muted-foreground text-sm">Manage and browse all events</p>
         </div>
         {isAdmin && (
           <Link href="/admin/events/new">
-            <Button>
+            <Button className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
               New Event
             </Button>
@@ -76,7 +76,7 @@ export default function EventsPage() {
       </div>
 
       {/* Status Filter */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {FILTERS.map((f) => (
           <Button
             key={f}

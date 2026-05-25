@@ -135,12 +135,12 @@ export default function ScansPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Scan History</h1>
-          <p className="text-muted-foreground">QR code scans and verification attempts</p>
+          <p className="text-muted-foreground text-sm">QR code scans and verification attempts</p>
         </div>
-        <Button onClick={exportScans}>
+        <Button onClick={exportScans} className="w-full sm:w-auto">
           <Download className="h-4 w-4 mr-2" />
           Export
         </Button>
@@ -148,11 +148,11 @@ export default function ScansPage() {
 
       <Card>
         <CardContent className="pt-6">
-          <div className="flex gap-4 flex-wrap">
+          <div className="grid grid-cols-2 sm:flex gap-4">
             <div className="space-y-2">
               <Label>Phase</Label>
               <Select value={selectedPhase} onValueChange={setSelectedPhase}>
-                <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[140px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Phases</SelectItem>
                   <SelectItem value="BUMP_IN">Bump In</SelectItem>
@@ -164,7 +164,7 @@ export default function ScansPage() {
             <div className="space-y-2">
               <Label>Result</Label>
               <Select value={selectedResult} onValueChange={setSelectedResult}>
-                <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-full sm:w-[140px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Results</SelectItem>
                   <SelectItem value="ALLOWED">Allowed</SelectItem>
