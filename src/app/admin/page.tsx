@@ -118,14 +118,14 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-5">
       {/* Event Header */}
-      <div className="bg-gradient-to-r from-[#101820] to-[#1a2530] text-white rounded-xl px-5 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Badge className={`border-0 text-[10px] uppercase tracking-wider ${activeProject.status === 'ACTIVE' ? 'bg-success text-white' : 'bg-white/20 text-white/80'}`}>
+      <div className="bg-gradient-to-r from-[#101820] to-[#1a2530] text-white rounded-xl px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div className="flex items-center gap-3 min-w-0">
+          <Badge className={`border-0 text-[10px] uppercase tracking-wider shrink-0 ${activeProject.status === 'ACTIVE' ? 'bg-success text-white' : 'bg-white/20 text-white/80'}`}>
             {activeProject.status}
           </Badge>
-          <span className="font-semibold text-sm">{activeProject.name}</span>
+          <span className="font-semibold text-sm truncate">{activeProject.name}</span>
         </div>
-        <span className="text-xs text-white/60">
+        <span className="text-xs text-white/60 shrink-0">
           {activeProject.eventDate && new Date(activeProject.eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           {activeProject.venue && ` · ${activeProject.venue}`}
         </span>

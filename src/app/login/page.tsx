@@ -37,7 +37,14 @@ function LoginForm() {
       if (result?.error) {
         setError('Invalid email or password');
       } else if (result?.ok) {
-        window.location.href = callbackUrl;
+        // Fetch session to check role for proper redirect
+        const sessionRes = await fetch('/api/auth/session');
+        const session = await sessionRes.json();
+        if (session?.user?.role === 'VALIDATOR') {
+          window.location.href = '/validator';
+        } else {
+          window.location.href = callbackUrl;
+        }
       }
     } catch {
       setError('An error occurred. Please try again.');

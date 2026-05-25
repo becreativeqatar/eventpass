@@ -317,7 +317,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 value={watchedValues.accessGroup || availableAccessGroups[0] || 'General'}
                 onValueChange={(value) => setValue('accessGroup', value)}
               >
-                <SelectTrigger className="w-[250px]">
+                <SelectTrigger className="w-full sm:w-[250px]">
                   <SelectValue placeholder="Select access group" />
                 </SelectTrigger>
                 <SelectContent>
@@ -344,7 +344,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
             <div className="space-y-2">
               <Label>ID Type *</Label>
               <Select value={idType} onValueChange={setIdType}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -431,7 +431,7 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
                 value={status}
                 onValueChange={(value) => setValue('status', value as keyof typeof AccreditationStatus)}
               >
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>

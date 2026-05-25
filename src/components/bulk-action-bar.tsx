@@ -25,28 +25,28 @@ export function BulkActionBar({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-card border shadow-xl rounded-xl px-4 py-3 flex items-center gap-3 animate-in slide-in-from-bottom-4 fade-in duration-200">
-      <span className="text-sm font-medium">{selectedCount} selected</span>
+    <div className="fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-50 bg-card border shadow-xl rounded-xl px-4 py-3 flex items-center gap-2 sm:gap-3 animate-in slide-in-from-bottom-4 fade-in duration-200">
+      <span className="text-sm font-medium shrink-0">{selectedCount} selected</span>
 
-      <div className="h-4 w-px bg-border" />
+      <div className="h-4 w-px bg-border shrink-0" />
 
       {hasPending && (
         <>
           <Button size="sm" variant="outline" className="text-success border-success/30 hover:bg-success/10" onClick={onApprove}>
-            <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
-            Approve
+            <CheckCircle className="h-3.5 w-3.5 sm:mr-1.5" />
+            <span className="hidden sm:inline">Approve</span>
           </Button>
           <Button size="sm" variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10" onClick={onReject}>
-            <XCircle className="h-3.5 w-3.5 mr-1.5" />
-            Reject
+            <XCircle className="h-3.5 w-3.5 sm:mr-1.5" />
+            <span className="hidden sm:inline">Reject</span>
           </Button>
         </>
       )}
 
       {hasDraft && (
         <Button size="sm" variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10" onClick={onDelete}>
-          <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-          Delete
+          <Trash2 className="h-3.5 w-3.5 sm:mr-1.5" />
+          <span className="hidden sm:inline">Delete</span>
         </Button>
       )}
 
