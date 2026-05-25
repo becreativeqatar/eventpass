@@ -11,6 +11,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Plus, Search, Download, Upload, Eye, QrCode, Users, CheckCircle, FileText, XCircle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { BulkActionBar } from '@/components/bulk-action-bar';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { toast } from 'sonner';
@@ -62,7 +72,12 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
   }, [searchParams]);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [bulkConfirm, setBulkConfirm] = useState<{ action: 'approve' | 'reject' | 'delete' } | null>(null);
+  const [bulkConfirm, setBulkConfirm] = useState<{ action: 'approve' | 'delete' } | null>(null);
+  const [bulkRejectOpen, setBulkRejectOpen] = useState(false);
+  const [bulkRejectReason, setBulkRejectReason] = useState('');
+  const [rejectDialog, setRejectDialog] = useState<{ id: string; name: string } | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectLoading, setRejectLoading] = useState(false);
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -155,12 +170,12 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
   const hasPending = selectedStatuses.some((s) => s === 'PENDING');
   const hasDraft = selectedStatuses.some((s) => s === 'DRAFT');
 
-  const handleBulkAction = async (action: 'approve' | 'reject' | 'delete') => {
+  const handleBulkAction = async (action: 'approve' | 'reject' | 'delete', reason?: string) => {
     try {
       const res = await fetch('/api/accreditations/bulk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action, ids: Array.from(selectedIds) }),
+        body: JSON.stringify({ action, ids: Array.from(selectedIds), ...(reason && { reason }) }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -174,18 +189,43 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
     setBulkConfirm(null);
   };
 
-  const handleQuickAction = async (id: string, action: 'approve' | 'reject') => {
+  const handleQuickApprove = async (id: string) => {
     try {
-      const res = await fetch(`/api/accreditations/${id}/${action}`, { method: 'PATCH' });
+      const res = await fetch(`/api/accreditations/${id}/approve`, { method: 'PATCH' });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || `Failed to ${action}`);
+        throw new Error(data.error || 'Failed to approve');
       }
-      toast.success(`Record ${action}d`);
+      toast.success('Record approved');
       fetchAccreditations();
       fetchStats();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : `Failed to ${action}`);
+      toast.error(err instanceof Error ? err.message : 'Failed to approve');
+    }
+  };
+
+  const handleReject = async () => {
+    if (!rejectDialog || !rejectReason.trim()) return;
+    setRejectLoading(true);
+    try {
+      const res = await fetch(`/api/accreditations/${rejectDialog.id}/reject`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: rejectReason }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to reject');
+      }
+      toast.success('Record rejected');
+      setRejectDialog(null);
+      setRejectReason('');
+      fetchAccreditations();
+      fetchStats();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to reject');
+    } finally {
+      setRejectLoading(false);
     }
   };
 
@@ -260,7 +300,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <Card>
           <CardHeader className="pb-1 pt-3 px-4">
             <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
@@ -323,58 +363,65 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
       </div>
 
       {/* Filters & Actions */}
-      <div className="flex items-center gap-3">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by name, company, or accreditation number..."
-            className="pl-10"
-            value={filters.q}
-            onChange={(e) => setFilters({ ...filters, q: e.target.value })}
-          />
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by name, company, or number..."
+              className="pl-10"
+              value={filters.q}
+              onChange={(e) => setFilters({ ...filters, q: e.target.value })}
+            />
+          </div>
+
+          <Select
+            value={filters.status}
+            onValueChange={(value) => setFilters({ ...filters, status: value })}
+          >
+            <SelectTrigger className="w-full sm:w-40">
+              <SelectValue placeholder="All Statuses" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="DRAFT">Draft</SelectItem>
+              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="APPROVED">Approved</SelectItem>
+              <SelectItem value="REJECTED">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <Select
-          value={filters.status}
-          onValueChange={(value) => setFilters({ ...filters, status: value })}
-        >
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="All Statuses" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="DRAFT">Draft</SelectItem>
-            <SelectItem value="PENDING">Pending</SelectItem>
-            <SelectItem value="APPROVED">Approved</SelectItem>
-            <SelectItem value="REJECTED">Rejected</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Button variant="outline" size="icon" onClick={exportToCSV} title="Export CSV">
-          <Download className="h-4 w-4" />
-        </Button>
-
-        <Button variant="outline" size="icon" onClick={exportQRCodes} title="Export QR Codes">
-          <QrCode className="h-4 w-4" />
-        </Button>
-
-        <Link href="/admin/import">
-          <Button variant="outline" size="icon" title="Import CSV">
-            <Upload className="h-4 w-4" />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" onClick={exportToCSV} title="Export CSV">
+            <Download className="h-4 w-4" />
           </Button>
-        </Link>
 
-        <Link href="/admin/records/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New Record
+          <Button variant="outline" size="icon" onClick={exportQRCodes} title="Export QR Codes">
+            <QrCode className="h-4 w-4" />
           </Button>
-        </Link>
+
+          <Link href="/admin/import">
+            <Button variant="outline" size="icon" title="Import CSV">
+              <Upload className="h-4 w-4" />
+            </Button>
+          </Link>
+
+          <div className="flex-1" />
+
+          <Link href="/admin/records/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">New Record</span>
+              <span className="sm:hidden">New</span>
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      {/* Table */}
+      {/* Table - Desktop */}
       <Card>
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-muted/50 border-b">
               <tr>
@@ -460,10 +507,10 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
                       <div className="flex items-center justify-end gap-1">
                         {acc.status === 'PENDING' && (
                           <>
-                            <Button variant="ghost" size="sm" onClick={() => handleQuickAction(acc.id, 'approve')} title="Approve">
+                            <Button variant="ghost" size="sm" onClick={() => handleQuickApprove(acc.id)} title="Approve">
                               <CheckCircle className="h-4 w-4 text-success" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => handleQuickAction(acc.id, 'reject')} title="Reject">
+                            <Button variant="ghost" size="sm" onClick={() => setRejectDialog({ id: acc.id, name: `${acc.firstName} ${acc.lastName}` })} title="Reject">
                               <XCircle className="h-4 w-4 text-destructive" />
                             </Button>
                           </>
@@ -482,13 +529,85 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
           </table>
         </div>
 
+        {/* Mobile Cards */}
+        <div className="md:hidden divide-y">
+          {isLoading ? (
+            [...Array(3)].map((_, i) => (
+              <div key={i} className="p-4 space-y-3">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-8 w-full" />
+              </div>
+            ))
+          ) : accreditations.length === 0 ? (
+            <div className="px-6 py-12">
+              <EmptyState
+                icon={FileText}
+                title={filters.status !== 'all' ? `No ${filters.status.toLowerCase()} records found` : "No records found"}
+                description={filters.status !== 'all' ? "Try changing the status filter or create a new record" : "Get started by creating a new accreditation record"}
+                action={
+                  <Link href="/admin/records/new">
+                    <Button className="w-full">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Record
+                    </Button>
+                  </Link>
+                }
+              />
+            </div>
+          ) : (
+            accreditations.map((acc) => (
+              <div key={acc.id} className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <Checkbox
+                      checked={selectedIds.has(acc.id)}
+                      onCheckedChange={() => toggleSelect(acc.id)}
+                      aria-label={`Select ${acc.firstName} ${acc.lastName}`}
+                      className="mt-0.5"
+                    />
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm truncate">{acc.firstName} {acc.lastName}</p>
+                      <p className="text-xs text-muted-foreground truncate">{acc.company} {acc.role ? `· ${acc.role}` : ''}</p>
+                    </div>
+                  </div>
+                  {getStatusBadge(acc.status)}
+                </div>
+                <div className="flex items-center gap-2 pl-7">
+                  <span className="text-xs font-mono text-muted-foreground">{acc.accreditationNumber}</span>
+                  <Badge variant="outline" className="text-xs">{acc.accessGroup}</Badge>
+                </div>
+                <div className="flex gap-2 pl-7">
+                  {acc.status === 'PENDING' && (
+                    <>
+                      <Button variant="outline" size="sm" className="flex-1 h-9" onClick={() => handleQuickApprove(acc.id)}>
+                        <CheckCircle className="h-4 w-4 mr-1.5 text-success" />
+                        Approve
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1 h-9" onClick={() => setRejectDialog({ id: acc.id, name: `${acc.firstName} ${acc.lastName}` })}>
+                        <XCircle className="h-4 w-4 mr-1.5 text-destructive" />
+                        Reject
+                      </Button>
+                    </>
+                  )}
+                  <Link href={`/admin/records/${acc.id}`} className={acc.status === 'PENDING' ? '' : 'flex-1'}>
+                    <Button variant="outline" size="sm" className="w-full h-9">
+                      <Eye className="h-4 w-4 mr-1.5" />
+                      View
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
         {/* Pagination */}
         {pagination.totalPages > 1 && (
           <div className="border-t border-border px-4 py-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <div className="text-sm text-muted-foreground">
-                Showing {(pagination.page - 1) * pagination.pageSize + 1} to{' '}
-                {Math.min(pagination.page * pagination.pageSize, pagination.total)} of {pagination.total} results
+                <span className="hidden sm:inline">Showing </span>{(pagination.page - 1) * pagination.pageSize + 1}–{Math.min(pagination.page * pagination.pageSize, pagination.total)} of {pagination.total}
               </div>
               <div className="flex gap-2">
                 <Button
@@ -518,7 +637,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
         hasPending={hasPending}
         hasDraft={hasDraft}
         onApprove={() => setBulkConfirm({ action: 'approve' })}
-        onReject={() => setBulkConfirm({ action: 'reject' })}
+        onReject={() => setBulkRejectOpen(true)}
         onDelete={() => setBulkConfirm({ action: 'delete' })}
         onClear={() => setSelectedIds(new Set())}
       />
@@ -527,11 +646,105 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
         open={!!bulkConfirm}
         onOpenChange={(open) => { if (!open) setBulkConfirm(null); }}
         title={`Bulk ${bulkConfirm?.action || ''}`}
-        description={`Are you sure you want to ${bulkConfirm?.action} ${selectedIds.size} record${selectedIds.size !== 1 ? 's' : ''}? This action cannot be undone.`}
-        confirmLabel={bulkConfirm?.action === 'delete' ? 'Delete' : bulkConfirm?.action === 'approve' ? 'Approve' : 'Reject'}
+        description={`Are you sure you want to ${bulkConfirm?.action} ${selectedIds.size} record${selectedIds.size !== 1 ? 's' : ''}?`}
+        confirmLabel={bulkConfirm?.action === 'delete' ? 'Delete' : 'Approve'}
         variant={bulkConfirm?.action === 'approve' ? 'default' : 'destructive'}
         onConfirm={() => { if (bulkConfirm) handleBulkAction(bulkConfirm.action); }}
       />
+
+      <Dialog
+        open={bulkRejectOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setBulkRejectOpen(false);
+            setBulkRejectReason('');
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Bulk Reject</DialogTitle>
+            <DialogDescription>
+              Provide a reason for rejecting {selectedIds.size} record{selectedIds.size !== 1 ? 's' : ''}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="bulk-reject-reason">Reason for rejection *</Label>
+            <Textarea
+              id="bulk-reject-reason"
+              placeholder="Enter the reason for rejecting these accreditations..."
+              value={bulkRejectReason}
+              onChange={(e) => setBulkRejectReason(e.target.value)}
+              rows={3}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => { setBulkRejectOpen(false); setBulkRejectReason(''); }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                handleBulkAction('reject', bulkRejectReason);
+                setBulkRejectOpen(false);
+                setBulkRejectReason('');
+              }}
+              disabled={!bulkRejectReason.trim()}
+            >
+              Reject {selectedIds.size} Record{selectedIds.size !== 1 ? 's' : ''}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={!!rejectDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setRejectDialog(null);
+            setRejectReason('');
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject Accreditation</DialogTitle>
+            <DialogDescription>
+              Provide a reason for rejecting{' '}
+              <span className="font-medium">{rejectDialog?.name}</span>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="reject-reason">Reason for rejection *</Label>
+            <Textarea
+              id="reject-reason"
+              placeholder="Enter the reason for rejecting this accreditation..."
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              rows={3}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => { setRejectDialog(null); setRejectReason(''); }}
+              disabled={rejectLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleReject}
+              disabled={rejectLoading || !rejectReason.trim()}
+            >
+              {rejectLoading ? 'Rejecting...' : 'Reject'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
