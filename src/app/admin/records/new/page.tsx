@@ -390,10 +390,17 @@ export default function NewRecordPage() {
                     </div>
                     <div className="flex-1">
                       <Input ref={fileInputRef} type="file" accept="image/jpeg,image/png" onChange={handlePhotoChange} className="hidden" />
-                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                        <Upload className="h-4 w-4 mr-2" />
-                        Choose Photo
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                          <Upload className="h-4 w-4 mr-2" />
+                          {photoPreview ? 'Change Photo' : 'Choose Photo'}
+                        </Button>
+                        {photoPreview && (
+                          <Button type="button" variant="outline" className="text-destructive" onClick={() => { setPhotoPreview(null); setPhotoFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}>
+                            Remove
+                          </Button>
+                        )}
+                      </div>
                       <p className="text-xs text-muted-foreground mt-2">JPG or PNG, max 5MB</p>
                     </div>
                   </div>
