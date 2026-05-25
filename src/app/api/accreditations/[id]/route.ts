@@ -41,6 +41,12 @@ export const GET = withErrorHandler(async (
       createdBy: { select: { id: true, name: true, email: true } },
       approvedBy: { select: { id: true, name: true, email: true } },
       revokedBy: { select: { id: true, name: true, email: true } },
+      history: {
+        include: {
+          performedBy: { select: { id: true, name: true, email: true } },
+        },
+        orderBy: { performedAt: 'desc' },
+      },
       scans: {
         include: {
           scannedBy: { select: { id: true, name: true, email: true } },

@@ -69,7 +69,7 @@ interface Accreditation {
     id: string;
     action: string;
     notes: string | null;
-    createdAt: string;
+    performedAt: string;
     performedBy: {
       name: string;
       email: string;
@@ -641,7 +641,7 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                           </div>
                           <div>
                             <p className="text-sm text-red-700">Rejected On</p>
-                            <p className="font-medium text-red-900">{formatDateTime(rejectionEntry.createdAt)}</p>
+                            <p className="font-medium text-red-900">{formatDateTime(rejectionEntry.performedAt)}</p>
                           </div>
                           {rejectionEntry.notes && (
                             <div>
@@ -674,7 +674,7 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                       {accreditation.history.slice(0, historyPage * HISTORY_PER_PAGE).map((entry) => (
                         <div key={entry.id} className="border-l-2 border-blue-500 pl-4 py-2">
                           <p className="text-sm font-medium">{entry.action}</p>
-                          <p className="text-xs text-muted-foreground">{formatDateTime(entry.createdAt)}</p>
+                          <p className="text-xs text-muted-foreground">{formatDateTime(entry.performedAt)}</p>
                           <p className="text-xs text-muted-foreground">By {entry.performedBy.name}</p>
                           {entry.notes && <p className="text-sm text-foreground mt-1">{entry.notes}</p>}
                         </div>
