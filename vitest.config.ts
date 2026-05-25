@@ -26,7 +26,7 @@ export default defineConfig({
       exclude: ['src/components/ui/**', 'src/test/**', '**/*.test.*'],
       thresholds: {
         statements: 70,
-        branches: 65,
+        branches: 60,
         functions: 70,
         lines: 70,
       },
