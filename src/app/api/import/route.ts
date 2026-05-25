@@ -127,6 +127,17 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     )
   );
 
+  // Log CREATED history for all imported records
+  await prisma.accreditationHistory.createMany({
+    data: created.map((acc) => ({
+      accreditationId: acc.id,
+      action: 'CREATED',
+      newStatus: acc.status,
+      notes: 'Imported from Excel',
+      performedById: session.user.id,
+    })),
+  });
+
   return NextResponse.json({
     message: `Successfully imported ${created.length} accreditations`,
     imported: created.length,

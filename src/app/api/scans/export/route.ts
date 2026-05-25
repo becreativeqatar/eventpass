@@ -82,14 +82,15 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   };
 
   scans.forEach((scan) => {
+    const acc = scan.accreditation;
     worksheet.addRow({
-      project: scan.accreditation.project.name,
-      accreditationNumber: scan.accreditation.accreditationNumber || '',
-      firstName: scan.accreditation.firstName,
-      lastName: scan.accreditation.lastName,
-      company: scan.accreditation.company || '',
-      role: scan.accreditation.role || '',
-      accessGroup: scan.accreditation.accessGroup || '',
+      project: acc?.project.name ?? '',
+      accreditationNumber: acc?.accreditationNumber ?? '',
+      firstName: acc?.firstName ?? '',
+      lastName: acc?.lastName ?? '',
+      company: acc?.company ?? '',
+      role: acc?.role ?? '',
+      accessGroup: acc?.accessGroup ?? '',
       phase: scan.phase,
       result: scan.result,
       location: scan.location || '',

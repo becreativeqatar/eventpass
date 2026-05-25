@@ -7,6 +7,9 @@ vi.mock('@/lib/prisma', () => ({
       update: vi.fn(),
       delete: vi.fn(),
     },
+    accreditationHistory: {
+      create: vi.fn(),
+    },
   },
 }));
 
@@ -117,6 +120,8 @@ describe('PATCH /api/accreditations/[id]', () => {
 
   it('returns 403 for status update by non-admin/manager', async () => {
     mockGetSession.mockResolvedValue(mockSession({ role: 'STAFF' }));
+    const existing = buildAccreditation({ status: 'PENDING' });
+    mockPrisma.accreditation.findUnique.mockResolvedValue(existing as never);
 
     const req = createMockRequest('/api/accreditations/acc-1', {
       method: 'PATCH',
@@ -130,6 +135,8 @@ describe('PATCH /api/accreditations/[id]', () => {
   it('allows status update by ADMIN', async () => {
     mockGetSession.mockResolvedValue(mockSession({ role: 'ADMIN' }));
 
+    const existing = buildAccreditation({ status: 'PENDING' });
+    mockPrisma.accreditation.findUnique.mockResolvedValue(existing as never);
     const updated = buildAccreditation({
       status: 'APPROVED',
       phases: 'LIVE',
@@ -152,6 +159,8 @@ describe('PATCH /api/accreditations/[id]', () => {
   it('allows status update by MANAGER', async () => {
     mockGetSession.mockResolvedValue(mockSession({ role: 'MANAGER' }));
 
+    const existing = buildAccreditation({ status: 'PENDING' });
+    mockPrisma.accreditation.findUnique.mockResolvedValue(existing as never);
     const updated = buildAccreditation({
       status: 'REJECTED',
       phases: 'BUMP_IN',
@@ -172,6 +181,8 @@ describe('PATCH /api/accreditations/[id]', () => {
   it('performs full update when body has non-status fields', async () => {
     mockGetSession.mockResolvedValue(mockSession());
 
+    const existing = buildAccreditation({ firstName: 'Old' });
+    mockPrisma.accreditation.findUnique.mockResolvedValue(existing as never);
     const updated = buildAccreditation({
       firstName: 'Updated',
       phases: 'LIVE',
@@ -192,6 +203,8 @@ describe('PATCH /api/accreditations/[id]', () => {
   it('converts phases array to string on full update', async () => {
     mockGetSession.mockResolvedValue(mockSession());
 
+    const existing = buildAccreditation();
+    mockPrisma.accreditation.findUnique.mockResolvedValue(existing as never);
     const updated = buildAccreditation({
       phases: 'BUMP_IN,BUMP_OUT',
       project: { id: 'p-1', name: 'Test' },
@@ -212,6 +225,8 @@ describe('PATCH /api/accreditations/[id]', () => {
   it('transforms phases in response', async () => {
     mockGetSession.mockResolvedValue(mockSession());
 
+    const existing = buildAccreditation();
+    mockPrisma.accreditation.findUnique.mockResolvedValue(existing as never);
     const updated = buildAccreditation({
       phases: 'BUMP_IN,LIVE,BUMP_OUT',
       project: { id: 'p-1', name: 'Test' },

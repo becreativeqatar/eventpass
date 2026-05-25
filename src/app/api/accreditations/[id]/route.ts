@@ -73,6 +73,12 @@ export const PATCH = withErrorHandler(async (
     return NextResponse.json({ error: 'ID required' }, { status: 400 });
   }
 
+  // Fetch current record for change tracking
+  const existing = await prisma.accreditation.findUnique({ where: { id } });
+  if (!existing) {
+    return NextResponse.json({ error: 'Accreditation not found' }, { status: 404 });
+  }
+
   const body = await request.json();
 
   // Check if this is a status update or a full update
@@ -126,6 +132,31 @@ export const PATCH = withErrorHandler(async (
       createdBy: { select: { id: true, name: true, email: true } },
     },
   });
+
+  // Build change summary for audit trail
+  const changedFields: string[] = [];
+  for (const key of Object.keys(updateData)) {
+    const oldVal = existing[key as keyof typeof existing];
+    const newVal = updateData[key];
+    if (oldVal instanceof Date || newVal instanceof Date) {
+      if (String(oldVal) !== String(newVal)) changedFields.push(key);
+    } else if (oldVal !== newVal) {
+      changedFields.push(key);
+    }
+  }
+
+  if (changedFields.length > 0) {
+    await prisma.accreditationHistory.create({
+      data: {
+        accreditationId: id,
+        action: isStatusUpdate ? 'STATUS_CHANGE' : 'UPDATED',
+        oldStatus: existing.status,
+        newStatus: accreditation.status,
+        notes: `Changed: ${changedFields.join(', ')}`,
+        performedById: session.user.id,
+      },
+    });
+  }
 
   return NextResponse.json({ data: transformAccreditation(accreditation), accreditation: transformAccreditation(accreditation) });
 }, { requireAuth: true });

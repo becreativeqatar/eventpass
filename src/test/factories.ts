@@ -95,7 +95,6 @@ export function buildAccreditation(overrides: Record<string, unknown> = {}) {
     bumpOutStart: new Date(Date.now() + 11 * 24 * 60 * 60 * 1000),
     bumpOutEnd: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000),
     verificationToken: `token-${accreditationCounter}`,
-    qrCode: null,
     photoUrl: null,
     notes: null,
     approvedById: null,

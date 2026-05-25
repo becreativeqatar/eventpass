@@ -9,6 +9,9 @@ vi.mock('@/lib/prisma', () => ({
       findFirst: vi.fn(),
       create: vi.fn().mockReturnValue({ id: 'mock-create-promise' }),
     },
+    accreditationHistory: {
+      createMany: vi.fn(),
+    },
     $transaction: vi.fn(),
   },
 }));

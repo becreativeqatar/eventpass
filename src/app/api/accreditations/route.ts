@@ -156,6 +156,16 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     },
   });
 
+  // Log creation in history
+  await prisma.accreditationHistory.create({
+    data: {
+      accreditationId: accreditation.id,
+      action: 'CREATED',
+      newStatus: accreditation.status,
+      performedById: session.user.id,
+    },
+  });
+
   // Notify admin if submitted for approval (fire-and-forget)
   if (accreditation.status === 'PENDING') {
     const { notifyAdminOfPendingApproval } = await import('@/lib/notifications');

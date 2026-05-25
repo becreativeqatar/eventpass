@@ -44,6 +44,25 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
   });
 
   if (!accreditation) {
+    // Log failed scan for unknown tokens
+    const userAgent = request.headers.get('user-agent') || null;
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const realIp = request.headers.get('x-real-ip');
+    const ipAddress = forwardedFor?.split(',')[0]?.trim() || realIp || null;
+
+    await prisma.accreditationScan.create({
+      data: {
+        accreditationId: null,
+        scannedById: session.user.id,
+        phase,
+        location,
+        result: 'DENIED',
+        notes: notes || 'Invalid or unknown accreditation token',
+        device: userAgent,
+        ipAddress,
+      },
+    });
+
     return NextResponse.json({
       data: {
         allowed: false,

@@ -58,14 +58,6 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
         },
       });
 
-      // Store QR code in database if not already stored
-      if (!acc.qrCode) {
-        await prisma.accreditation.update({
-          where: { id: acc.id },
-          data: { qrCode: qrDataUrl },
-        });
-      }
-
       return {
         id: acc.id,
         firstName: acc.firstName,

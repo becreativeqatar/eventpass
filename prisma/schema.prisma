@@ -141,7 +141,6 @@ model Accreditation {
 
   // Verification
   verificationToken String  @unique @default(cuid())
-  qrCode            String?
 
   // Approval tracking
   approvedById String?
@@ -194,9 +193,9 @@ model AccreditationHistory {
 }
 
 model AccreditationScan {
-  id              String        @id @default(cuid())
-  accreditationId String
-  accreditation   Accreditation @relation(fields: [accreditationId], references: [id], onDelete: Cascade)
+  id              String         @id @default(cuid())
+  accreditationId String?
+  accreditation   Accreditation? @relation(fields: [accreditationId], references: [id], onDelete: Cascade)
 
   scannedById String
   scannedBy   User   @relation(fields: [scannedById], references: [id])

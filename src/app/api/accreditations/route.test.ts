@@ -11,6 +11,9 @@ vi.mock('@/lib/prisma', () => ({
     accreditationProject: {
       findUnique: vi.fn(),
     },
+    accreditationHistory: {
+      create: vi.fn(),
+    },
   },
 }));
 
@@ -140,8 +143,8 @@ describe('GET /api/accreditations', () => {
 
     const whereArg = (mockPrisma.accreditation.findMany as ReturnType<typeof vi.fn>).mock.calls[0][0].where;
     expect(whereArg.OR).toBeDefined();
-    expect(whereArg.OR).toHaveLength(4);
-    expect(whereArg.OR[0]).toEqual({ firstName: { contains: 'john' } });
+    expect(whereArg.OR).toHaveLength(5);
+    expect(whereArg.OR[0]).toEqual({ firstName: { contains: 'john', mode: 'insensitive' } });
   });
 
   it('respects page and pageSize params', async () => {

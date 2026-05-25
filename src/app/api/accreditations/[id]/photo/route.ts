@@ -99,6 +99,16 @@ export const POST = withErrorHandler(async (
       data: { photoUrl },
     });
 
+    // Log photo change in history
+    await prisma.accreditationHistory.create({
+      data: {
+        accreditationId: id,
+        action: 'UPDATED',
+        notes: accreditation.photoUrl ? 'Photo replaced' : 'Photo uploaded',
+        performedById: session.user.id,
+      },
+    });
+
     return NextResponse.json({ data: { photoUrl } });
   } catch (error) {
     console.error('Photo upload error:', error);
@@ -147,6 +157,16 @@ export const DELETE = withErrorHandler(async (
     await prisma.accreditation.update({
       where: { id },
       data: { photoUrl: null },
+    });
+
+    // Log photo removal in history
+    await prisma.accreditationHistory.create({
+      data: {
+        accreditationId: id,
+        action: 'UPDATED',
+        notes: 'Photo removed',
+        performedById: session.user.id,
+      },
     });
 
     return NextResponse.json({ success: true });

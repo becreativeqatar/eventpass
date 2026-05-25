@@ -6,6 +6,9 @@ vi.mock('@/lib/prisma', () => ({
       findUnique: vi.fn(),
       update: vi.fn(),
     },
+    accreditationHistory: {
+      create: vi.fn(),
+    },
   },
 }));
 

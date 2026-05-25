@@ -4,7 +4,6 @@ vi.mock('@/lib/prisma', () => ({
   prisma: {
     accreditation: {
       findMany: vi.fn(),
-      update: vi.fn(),
     },
   },
 }));
@@ -89,11 +88,9 @@ describe('POST /api/qr/batch', () => {
     const acc = buildAccreditation({
       id: 'acc-1',
       verificationToken: 'token-1',
-      qrCode: null,
       project: { name: 'Test Event' },
     });
     mockPrisma.accreditation.findMany.mockResolvedValue([acc] as never);
-    mockPrisma.accreditation.update.mockResolvedValue({} as never);
 
     const req = createMockRequest('/api/qr/batch', {
       method: 'POST',
@@ -110,10 +107,9 @@ describe('POST /api/qr/batch', () => {
 
   it('generates QR codes by projectId', async () => {
     mockGetSession.mockResolvedValue(mockSession({ role: 'MANAGER' }));
-    const acc1 = buildAccreditation({ qrCode: null, project: { name: 'Event' } });
-    const acc2 = buildAccreditation({ qrCode: null, project: { name: 'Event' } });
+    const acc1 = buildAccreditation({ project: { name: 'Event' } });
+    const acc2 = buildAccreditation({ project: { name: 'Event' } });
     mockPrisma.accreditation.findMany.mockResolvedValue([acc1, acc2] as never);
-    mockPrisma.accreditation.update.mockResolvedValue({} as never);
 
     const req = createMockRequest('/api/qr/batch', {
       method: 'POST',
@@ -130,21 +126,4 @@ describe('POST /api/qr/batch', () => {
     expect(findArgs.where.projectId).toBe('project-1');
   });
 
-  it('skips storing QR code when already present', async () => {
-    mockGetSession.mockResolvedValue(mockSession({ role: 'ADMIN' }));
-    const acc = buildAccreditation({
-      qrCode: 'existing-qr-data',
-      project: { name: 'Event' },
-    });
-    mockPrisma.accreditation.findMany.mockResolvedValue([acc] as never);
-
-    const req = createMockRequest('/api/qr/batch', {
-      method: 'POST',
-      body: { ids: ['acc-1'] },
-    });
-    await POST(req, createMockContext());
-
-    // update should not have been called since qrCode already exists
-    expect(mockPrisma.accreditation.update).not.toHaveBeenCalled();
-  });
 });
