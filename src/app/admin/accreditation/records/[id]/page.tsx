@@ -555,15 +555,6 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
                 </Card>
               )}
 
-              {/* Created By */}
-              <Card className="bg-white shadow-sm border border-border">
-                <CardContent className="pt-4">
-                  <p className="text-xs text-muted-foreground">
-                    Created by {accreditation.createdBy?.name || accreditation.createdBy?.email} on {formatDateTime(accreditation.createdAt)}
-                  </p>
-                </CardContent>
-              </Card>
-
               {/* Scan Logs */}
               {accreditation.status === 'APPROVED' && (
                 <ScanHistory
