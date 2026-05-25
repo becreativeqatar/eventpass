@@ -257,6 +257,16 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
         throw new Error(data.error || 'Failed to update accreditation');
       }
 
+      // Upload photo if a new one was selected
+      if (photoFile && accreditationId) {
+        const photoFormData = new FormData();
+        photoFormData.append('photo', photoFile);
+        await fetch(`/api/accreditations/${accreditationId}/photo`, {
+          method: 'POST',
+          body: photoFormData,
+        });
+      }
+
       // If submitForApproval and status is DRAFT, submit for approval
       if (submitForApproval && currentStatus === 'DRAFT') {
         const submitResponse = await fetch(`/api/accreditations/${accreditationId}/submit`, {

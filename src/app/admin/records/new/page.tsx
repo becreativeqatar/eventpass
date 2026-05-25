@@ -213,6 +213,18 @@ export default function NewRecordPage() {
         throw new Error(data.error || 'Failed to create accreditation');
       }
 
+      const { data: created } = await response.json();
+
+      // Upload photo if selected
+      if (photoFile && created?.id) {
+        const photoFormData = new FormData();
+        photoFormData.append('photo', photoFile);
+        await fetch(`/api/accreditations/${created.id}/photo`, {
+          method: 'POST',
+          body: photoFormData,
+        });
+      }
+
       toast.success(status === 'DRAFT' ? 'Draft saved successfully' : 'Submitted for approval');
       router.push('/admin/records');
       router.refresh();
