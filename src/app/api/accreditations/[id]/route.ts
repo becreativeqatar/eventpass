@@ -144,9 +144,16 @@ export const PATCH = withErrorHandler(async (
   for (const key of Object.keys(updateData)) {
     const oldVal = existing[key as keyof typeof existing];
     const newVal = updateData[key];
-    if (oldVal instanceof Date || newVal instanceof Date) {
-      if (String(oldVal) !== String(newVal)) changedFields.push(key);
-    } else if (oldVal !== newVal) {
+    // Normalize: treat null and undefined as equal
+    const normOld = oldVal ?? null;
+    const normNew = newVal ?? null;
+    if (normOld === null && normNew === null) continue;
+    if (normOld instanceof Date || normNew instanceof Date) {
+      // Compare timestamps to avoid timezone/ms drift
+      const oldMs = normOld instanceof Date ? normOld.getTime() : null;
+      const newMs = normNew instanceof Date ? (normNew as Date).getTime() : null;
+      if (oldMs !== newMs) changedFields.push(key);
+    } else if (normOld !== normNew) {
       changedFields.push(key);
     }
   }
