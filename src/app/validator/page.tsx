@@ -56,11 +56,17 @@ export default function ValidatorDashboard() {
     setScanError(null);
 
     try {
-      // First check if we have camera permissions
+      // Stop any existing scanner first
+      if (html5QrCodeRef.current?.isScanning) {
+        await html5QrCodeRef.current.stop().catch(() => {});
+      }
+
+      // Check camera permissions — acquire and immediately release
+      // so Html5Qrcode can manage its own stream without conflicts
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         try {
-          // Request camera permission first
-          await navigator.mediaDevices.getUserMedia({ video: true });
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          stream.getTracks().forEach((track) => track.stop());
         } catch (permErr) {
           console.error('Camera permission denied:', permErr);
           setScanError('Camera permission denied. Please allow camera access.');
