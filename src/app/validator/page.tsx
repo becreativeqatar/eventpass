@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, X, Camera, LogOut } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import type { Html5Qrcode } from 'html5-qrcode';
 import Link from 'next/link';
 import { ScanHistoryList } from '@/components/validator/scan-history-list';
@@ -52,8 +53,12 @@ export default function ValidatorDashboard() {
   };
 
   const handleScan = async () => {
-    setIsScanning(true);
-    setScanError(null);
+    // flushSync ensures React updates the DOM synchronously,
+    // so the #qr-reader container exists before Html5Qrcode tries to find it
+    flushSync(() => {
+      setIsScanning(true);
+      setScanError(null);
+    });
 
     try {
       // Stop any existing scanner and clear the previous instance
