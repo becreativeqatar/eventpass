@@ -56,9 +56,15 @@ export default function ValidatorDashboard() {
     setScanError(null);
 
     try {
-      // Stop any existing scanner first
-      if (html5QrCodeRef.current?.isScanning) {
-        await html5QrCodeRef.current.stop().catch(() => {});
+      // Stop any existing scanner and clear the previous instance
+      if (html5QrCodeRef.current) {
+        if (html5QrCodeRef.current.isScanning) {
+          await html5QrCodeRef.current.stop().catch(() => {});
+        }
+        html5QrCodeRef.current.clear();
+        html5QrCodeRef.current = null;
+        // Brief delay to let the browser fully release the camera
+        await new Promise((resolve) => setTimeout(resolve, 300));
       }
 
       // Check camera permissions — acquire and immediately release
@@ -151,17 +157,24 @@ export default function ValidatorDashboard() {
       console.error('Error starting QR scanner:', err);
 
       let errorMsg = 'Failed to access camera. ';
-      const error = err as { name?: string };
+      const error = err as { name?: string; message?: string };
       if (error.name === 'NotAllowedError') {
-        errorMsg += 'Please allow camera access.';
+        errorMsg += 'Please allow camera access in your browser settings.';
       } else if (error.name === 'NotFoundError') {
-        errorMsg += 'No camera found.';
+        errorMsg += 'No camera found on this device.';
       } else if (error.name === 'NotReadableError') {
-        errorMsg += 'Camera is already in use.';
+        errorMsg += 'Camera is already in use by another app. Close other apps using the camera and try again.';
       } else if (error.name === 'NotSupportedError') {
         errorMsg += 'HTTPS is required for camera access.';
+      } else if (error.name === 'AbortError') {
+        errorMsg += 'Camera was interrupted. Please try again.';
+      } else if (error.name === 'OverconstrainedError') {
+        errorMsg += 'No camera matches the required settings. Try a different device.';
+      } else if (error.message?.includes('already scanning')) {
+        errorMsg = 'Scanner is still stopping. Please wait a moment and try again.';
       } else {
-        errorMsg += (err as { message?: string }).message || 'Unknown error occurred.';
+        const details = [error.name, error.message].filter(Boolean).join(': ');
+        errorMsg += details || `Unexpected error (${typeof err === 'string' ? err : 'unknown'}). Try closing and reopening the browser.`;
       }
 
       setScanError(errorMsg);
