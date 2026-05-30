@@ -69,7 +69,7 @@ export function formatError(
   error: Error | AppError | ZodError,
   requestId?: string
 ): { response: APIError; statusCode: number } {
-  const timestamp = new Date().toISOString();
+  const timestamp = new Date().toLocaleString('en-CA', { timeZone: 'Asia/Qatar', hour12: false }).replace(',', '');
 
   // Handle Zod validation errors
   if (error instanceof ZodError) {
@@ -121,7 +121,7 @@ export function formatErrorResponse(
     error: message,
     details,
     requestId,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toLocaleString('en-CA', { timeZone: 'Asia/Qatar', hour12: false }).replace(',', ''),
   };
 
   return NextResponse.json(errorResponse, { status: statusCode });

@@ -100,6 +100,25 @@ export function formatQatarDateTime(iso: string | Date | null | undefined): stri
 }
 
 /**
+ * Format a date+time as "YYYY-MM-DD HH:mm:ss" in Qatar timezone.
+ * Use for exports and logs instead of .toISOString().
+ */
+export function formatQatarTimestamp(date: Date | string | null | undefined): string {
+  if (!date) return '';
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toLocaleString('en-CA', {
+    timeZone: 'Asia/Qatar',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).replace(',', '');
+}
+
+/**
  * Get today's date as YYYY-MM-DD in Qatar timezone.
  */
 export function todayQatar(): string {

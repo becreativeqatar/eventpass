@@ -4,7 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { withErrorHandler } from '@/lib/http/handler';
 import ExcelJS from 'exceljs';
-import { todayQatar } from '@/lib/date';
+import { todayQatar, formatQatarTimestamp } from '@/lib/date';
 
 // GET /api/scans/export - Export scans to Excel
 export const GET = withErrorHandler(async (request: NextRequest) => {
@@ -100,7 +100,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
       result: scan.result,
       location: scan.location || '',
       scannedBy: scan.scannedBy.name || scan.scannedBy.email,
-      scannedAt: scan.scannedAt.toISOString().replace('T', ' ').slice(0, 19),
+      scannedAt: formatQatarTimestamp(scan.scannedAt),
       device: scan.device || '',
       ipAddress: scan.ipAddress || '',
       notes: scan.notes || '',

@@ -92,7 +92,7 @@ export async function GET(
     );
   }
 
-  // Build phase information
+  // Build phase information — return ISO strings for client-side formatting
   const phases = {
     bumpIn: accreditation.hasBumpInAccess ? {
       start: (accreditation.bumpInStart || accreditation.project.bumpInStart)?.toISOString(),

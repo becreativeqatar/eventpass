@@ -55,7 +55,7 @@ export async function GET() {
 
   const scanActivity = Object.entries(scansByDay).map(([date, count]) => ({
     date,
-    label: new Date(date + 'T00:00:00+03:00').toLocaleDateString('en-US', { timeZone: 'Asia/Qatar', weekday: 'short' }),
+    label: new Date(date + 'T00:00:00').toLocaleDateString('en-US', { timeZone: 'Asia/Qatar', weekday: 'short' }),
     scans: count,
   }));
 
