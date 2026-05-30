@@ -1,10 +1,10 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, X, Camera } from 'lucide-react';
+import { Search, X, Camera, LogOut } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import type { Html5Qrcode } from 'html5-qrcode';
 import Link from 'next/link';
@@ -268,10 +268,17 @@ export default function ValidatorDashboard() {
             )}
 
             {/* User Info */}
-            <div className="pt-6 border-t border-border text-center">
+            <div className="pt-6 border-t border-border flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 Logged in as <span className="font-semibold text-foreground">{session?.user?.name || session?.user?.email}</span>
               </p>
+              <button
+                onClick={() => signOut({ callbackUrl: '/login' })}
+                className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
+              >
+                <LogOut className="h-3 w-3" />
+                Logout
+              </button>
             </div>
           </div>
         </div>
