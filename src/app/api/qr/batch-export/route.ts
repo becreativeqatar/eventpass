@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { withErrorHandler } from '@/lib/http/handler';
 import QRCode from 'qrcode';
 import JSZip from 'jszip';
+import { todayQatar } from '@/lib/date';
 
 // GET /api/qr/batch-export - Export QR codes as a ZIP file
 export const GET = withErrorHandler(async (request: NextRequest) => {
@@ -85,7 +86,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
 
   // Return as downloadable file
   const projectCode = project.code || project.name.replace(/[^a-zA-Z0-9]/g, '_');
-  const filename = `QR-Codes-${projectCode}-${new Date().toISOString().split('T')[0]}.zip`;
+  const filename = `QR-Codes-${projectCode}-${todayQatar()}.zip`;
 
   return new NextResponse(zipBlob, {
     status: 200,

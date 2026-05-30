@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { CheckCircle, XCircle, Eye, AlertTriangle, CheckCircle2, Search } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatQatarDate } from '@/lib/date';
 import Image from 'next/image';
 
 interface Accreditation {
@@ -220,11 +221,7 @@ export default function ProjectApprovalsPage({ params }: ProjectApprovalsPagePro
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return formatQatarDate(dateString);
   };
 
   return (

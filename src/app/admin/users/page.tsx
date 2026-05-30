@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { DataTable, type Column } from '@/components/data-table';
+import { formatQatarDate } from '@/lib/date';
 import {
   Dialog,
   DialogContent,
@@ -23,7 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Plus, Pencil, Trash2, Search, Users, KeyRound } from 'lucide-react';
-import { format } from 'date-fns';
+
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { toast } from 'sonner';
 
@@ -191,7 +192,7 @@ export default function UsersPage() {
     {
       key: 'created',
       header: 'Created',
-      render: (user) => format(new Date(user.createdAt), 'MMM d, yyyy'),
+      render: (user) => formatQatarDate(user.createdAt),
       mobileRender: false,
     },
     {

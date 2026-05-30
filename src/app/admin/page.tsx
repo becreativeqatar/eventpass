@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { prisma } from '@/lib/prisma';
 import { getSelectedProject } from '@/lib/active-project';
 import { AccreditationStatus } from '@/lib/validations/accreditation';
+import { formatQatarDate } from '@/lib/date';
 import { PendingApprovals } from '@/components/dashboard/pending-approvals';
 import {
   Plus,
@@ -126,7 +127,7 @@ export default async function AdminDashboardPage() {
           <span className="font-semibold text-sm truncate">{activeProject.name}</span>
         </div>
         <span className="text-xs text-white/60 shrink-0">
-          {activeProject.eventDate && new Date(activeProject.eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          {activeProject.eventDate && formatQatarDate(activeProject.eventDate)}
           {activeProject.venue && ` · ${activeProject.venue}`}
         </span>
       </div>

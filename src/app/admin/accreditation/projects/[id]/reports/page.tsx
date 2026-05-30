@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Download, Users, CheckCircle2, XCircle, Clock, BarChart3, Activity } from 'lucide-react';
 import { ScanHistory } from '@/components/accreditation/scan-history';
 import { toast } from 'sonner';
+import { formatQatarDate } from '@/lib/date';
 
 interface ProjectReportData {
   project: {
@@ -105,11 +106,7 @@ export default function ProjectReportsPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return formatQatarDate(dateString);
   };
 
   if (isLoading) {

@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConfirmDialog } from '@/components/confirm-dialog';
-import { format } from 'date-fns';
+import { formatQatarDate } from '@/lib/date';
 
 interface EventDetail {
   id: string;
@@ -52,8 +52,7 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 function formatDate(date: string | null) {
-  if (!date) return '—';
-  return format(new Date(date), 'MMM d, yyyy');
+  return formatQatarDate(date);
 }
 
 export default function EventDetailPage() {

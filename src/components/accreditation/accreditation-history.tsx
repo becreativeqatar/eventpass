@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { formatQatarDateTime } from '@/lib/date';
 
 interface HistoryEntry {
   id: string;
@@ -94,7 +95,7 @@ export function AccreditationHistory({ accreditationId }: AccreditationHistoryPr
                   )}
                   <p className="text-xs text-muted-foreground">
                     by {entry.performedBy.name || entry.performedBy.email} on{' '}
-                    {new Date(entry.performedAt).toLocaleString()}
+                    {formatQatarDateTime(entry.performedAt)}
                   </p>
                 </div>
               </div>

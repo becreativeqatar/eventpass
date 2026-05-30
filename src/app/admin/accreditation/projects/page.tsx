@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Calendar, Plus, Edit } from 'lucide-react';
+import { formatQatarDate } from '@/lib/date';
 import { toQatarDateString } from '@/lib/date';
 import { toast } from 'sonner';
 
@@ -193,11 +194,7 @@ export default function AccreditationProjectsPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return formatQatarDate(dateString);
   };
 
   return (

@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { withErrorHandler } from '@/lib/http/handler';
 import ExcelJS from 'exceljs';
+import { todayQatar } from '@/lib/date';
 
 // GET /api/scans/export - Export scans to Excel
 export const GET = withErrorHandler(async (request: NextRequest) => {
@@ -138,7 +139,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   return new NextResponse(buffer, {
     headers: {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'Content-Disposition': `attachment; filename="scans-${new Date().toISOString().split('T')[0]}.xlsx"`,
+      'Content-Disposition': `attachment; filename="scans-${todayQatar()}.xlsx"`,
     },
   });
 }, { requireAuth: true });

@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { formatQatarDateTime, todayQatar } from '@/lib/date';
 import {
   Table,
   TableHeader,
@@ -118,7 +119,7 @@ export function ScanHistory({
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `scans-${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.download = `scans-${todayQatar()}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -195,7 +196,7 @@ export function ScanHistory({
                   {scans.map((scan) => (
                     <TableRow key={scan.id}>
                       <TableCell className="whitespace-nowrap">
-                        {new Date(scan.scannedAt).toLocaleString()}
+                        {formatQatarDateTime(scan.scannedAt)}
                       </TableCell>
                       {showAccreditation && scan.accreditation && (
                         <TableCell>

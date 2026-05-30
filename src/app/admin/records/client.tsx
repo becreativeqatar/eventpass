@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Plus, Search, Download, Upload, Eye, QrCode, Users, CheckCircle, FileText, XCircle } from 'lucide-react';
+import { todayQatar } from '@/lib/date';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -256,7 +257,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `accreditations-${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `accreditations-${todayQatar()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -284,7 +285,7 @@ export default function ProjectRecordsClient({ projectId }: ProjectRecordsClient
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `qr-codes-${new Date().toISOString().split('T')[0]}.zip`;
+      link.download = `qr-codes-${todayQatar()}.zip`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

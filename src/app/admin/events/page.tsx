@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Calendar, MapPin, Users } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatQatarDate } from '@/lib/date';
 
 interface Event {
   id: string;
@@ -134,7 +135,7 @@ export default function EventsPage() {
                   )}
                   {event.eventDate && (
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-3.5 w-3.5" />{new Date(event.eventDate).toLocaleDateString()}
+                      <Calendar className="h-3.5 w-3.5" />{formatQatarDate(event.eventDate)}
                     </div>
                   )}
                   <div className="flex items-center gap-2">

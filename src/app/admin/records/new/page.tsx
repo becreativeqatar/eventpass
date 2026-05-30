@@ -13,7 +13,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { ArrowLeft, Upload, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import NextImage from 'next/image';
-import { toQatarDateString } from '@/lib/date';
+import { toQatarDateString, formatQatarDate } from '@/lib/date';
 import { CountryInput } from '@/components/ui/country-input';
 
 interface ActiveProject {
@@ -422,7 +422,7 @@ export default function NewRecordPage() {
                     <Label htmlFor="bumpIn" className="font-semibold">Bump-In Access</Label>
                     {project?.bumpInStart && (
                       <span className="text-xs text-muted-foreground ml-2">
-                        (Event: {new Date(project.bumpInStart).toLocaleDateString()} – {new Date(project.bumpInEnd).toLocaleDateString()})
+                        (Event: {formatQatarDate(project.bumpInStart)} – {formatQatarDate(project.bumpInEnd)})
                       </span>
                     )}
                   </div>
@@ -451,7 +451,7 @@ export default function NewRecordPage() {
                     <Label htmlFor="live" className="font-semibold">Live Access</Label>
                     {project?.liveStart && (
                       <span className="text-xs text-muted-foreground ml-2">
-                        (Event: {new Date(project.liveStart).toLocaleDateString()} – {new Date(project.liveEnd).toLocaleDateString()})
+                        (Event: {formatQatarDate(project.liveStart)} – {formatQatarDate(project.liveEnd)})
                       </span>
                     )}
                   </div>
@@ -480,7 +480,7 @@ export default function NewRecordPage() {
                     <Label htmlFor="bumpOut" className="font-semibold">Bump-Out Access</Label>
                     {project?.bumpOutStart && (
                       <span className="text-xs text-muted-foreground ml-2">
-                        (Event: {new Date(project.bumpOutStart).toLocaleDateString()} – {new Date(project.bumpOutEnd).toLocaleDateString()})
+                        (Event: {formatQatarDate(project.bumpOutStart)} – {formatQatarDate(project.bumpOutEnd)})
                       </span>
                     )}
                   </div>

@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { withErrorHandler } from '@/lib/http/handler';
 import { AccreditationStatus } from '@/lib/validations/accreditation';
+import { toQatarDateString } from '@/lib/date';
 
 // GET /api/reports - Get aggregated reports
 export const GET = withErrorHandler(async (request: NextRequest) => {
@@ -147,7 +148,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
       const byDate: Record<string, { total: number; results: Record<string, number> }> = {};
 
       scans.forEach((s) => {
-        const date = s.scannedAt.toISOString().split('T')[0];
+        const date = toQatarDateString(s.scannedAt);
         if (!byDate[date]) {
           byDate[date] = { total: 0, results: {} };
         }

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Download, Activity, CheckCircle, XCircle } from 'lucide-react';
 import { ScanHistory } from '@/components/accreditation/scan-history';
 import { toast } from 'sonner';
+import { todayQatar } from '@/lib/date';
 
 interface ScanStats {
   totalScans: number;
@@ -71,7 +72,7 @@ export default function ProjectScansPage() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `scans-${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.download = `scans-${todayQatar()}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

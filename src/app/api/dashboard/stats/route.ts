@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getSelectedProject } from '@/lib/active-project';
+import { toQatarDateString } from '@/lib/date';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -40,21 +41,21 @@ export async function GET() {
     select: { scannedAt: true },
   });
 
-  // Group by day
+  // Group by day (Qatar timezone)
   const scansByDay: Record<string, number> = {};
   for (let i = 6; i >= 0; i--) {
     const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-    const key = d.toISOString().split('T')[0];
+    const key = toQatarDateString(d);
     scansByDay[key] = 0;
   }
   for (const scan of recentScans) {
-    const key = new Date(scan.scannedAt).toISOString().split('T')[0];
+    const key = toQatarDateString(scan.scannedAt);
     if (key in scansByDay) scansByDay[key]++;
   }
 
   const scanActivity = Object.entries(scansByDay).map(([date, count]) => ({
     date,
-    label: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
+    label: new Date(date + 'T00:00:00+03:00').toLocaleDateString('en-US', { timeZone: 'Asia/Qatar', weekday: 'short' }),
     scans: count,
   }));
 

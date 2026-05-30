@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/date-picker';
-import { toQatarDateString } from '@/lib/date';
+import { toQatarDateString, formatQatarDateTime } from '@/lib/date';
 import { DataTable, type Column } from '@/components/data-table';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -65,8 +65,8 @@ const columns: Column<Scan>[] = [
   { key: 'location', header: 'Location', render: (scan) => scan.location || '-', mobileRender: false },
   { key: 'scannedBy', header: 'Scanned By', render: (scan) => scan.scannedBy.name || scan.scannedBy.email, mobileRender: false },
   {
-    key: 'time', header: 'Time', render: (scan) => new Date(scan.scannedAt).toLocaleString(),
-    mobileRender: (scan) => <span className="text-xs">{new Date(scan.scannedAt).toLocaleString()}</span>,
+    key: 'time', header: 'Time', render: (scan) => formatQatarDateTime(scan.scannedAt),
+    mobileRender: (scan) => <span className="text-xs">{formatQatarDateTime(scan.scannedAt)}</span>,
   },
 ];
 

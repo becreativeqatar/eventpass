@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Download, CheckCircle, XCircle, Eye, Edit, Ban, Undo, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatQatarDate, formatQatarDateTime } from '@/lib/date';
 import Image from 'next/image';
 import { ScanHistory } from '@/components/accreditation/scan-history';
 import { RevokeDialog } from '@/components/accreditation/revoke-dialog';
@@ -252,22 +253,12 @@ export default function AccreditationDetailPage({ params }: { params: Promise<{ 
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return formatQatarDate(dateString);
   };
 
   const formatDateTime = (dateString: string | null) => {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return formatQatarDateTime(dateString);
   };
 
   if (isLoading) {

@@ -5,6 +5,7 @@ import { ArrowLeft, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { formatQatarDate } from '@/lib/date';
 
 interface ProjectLayoutProps {
   children: React.ReactNode;
@@ -48,11 +49,7 @@ export default function ProjectLayout({ children, params }: ProjectLayoutProps) 
 
   const formatDate = (date: string | null) => {
     if (!date) return 'N/A';
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatQatarDate(date);
   };
 
   // Determine back button label and destination based on current path

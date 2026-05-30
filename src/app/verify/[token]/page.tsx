@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle, Calendar, Building2, Shield, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import { formatQatarDate } from '@/lib/date';
 
 interface AccreditationData {
   id: string;
@@ -114,11 +115,7 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    return formatQatarDate(dateString);
   };
 
   const formatDateRange = (start: string, end: string) => {

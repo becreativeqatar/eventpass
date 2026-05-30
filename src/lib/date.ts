@@ -82,3 +82,28 @@ export function formatQatarDate(iso: string | Date | null | undefined): string {
     year: 'numeric',
   });
 }
+
+/**
+ * Format a date+time for display in Qatar timezone (e.g., "Jun 1, 2026, 02:30 PM").
+ */
+export function formatQatarDateTime(iso: string | Date | null | undefined): string {
+  if (!iso) return '—';
+  const d = typeof iso === 'string' ? new Date(iso) : iso;
+  return d.toLocaleString('en-US', {
+    timeZone: 'Asia/Qatar',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+/**
+ * Get today's date as YYYY-MM-DD in Qatar timezone.
+ */
+export function todayQatar(): string {
+  const now = new Date();
+  const qatarTime = new Date(now.getTime() + QATAR_OFFSET_HOURS * 60 * 60 * 1000);
+  return `${qatarTime.getUTCFullYear()}-${String(qatarTime.getUTCMonth() + 1).padStart(2, '0')}-${String(qatarTime.getUTCDate()).padStart(2, '0')}`;
+}
