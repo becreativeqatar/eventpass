@@ -96,18 +96,12 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
   else if (accreditation.identificationType === 'qid' && isExpired(accreditation.qidExpiry)) {
     result = ScanResult.ID_EXPIRED;
     message = 'QID has expired';
-  } else if (accreditation.identificationType === 'passport') {
-    if (isExpired(accreditation.passportExpiry)) {
-      result = ScanResult.ID_EXPIRED;
-      message = 'Passport has expired';
-    } else if (isExpired(accreditation.hayyaExpiry)) {
-      result = ScanResult.ID_EXPIRED;
-      message = 'Hayya visa has expired';
-    } else {
-      // Passport and Hayya are valid, continue checks
-      result = '';
-      message = '';
-    }
+  } else if (accreditation.identificationType === 'passport' && isExpired(accreditation.passportExpiry)) {
+    result = ScanResult.ID_EXPIRED;
+    message = 'Passport has expired';
+  } else if (accreditation.identificationType === 'passport' && isExpired(accreditation.hayyaExpiry)) {
+    result = ScanResult.ID_EXPIRED;
+    message = 'Hayya visa has expired';
   }
   // Check 3: Phase access
   else if (!phasesArray.includes(phase)) {
