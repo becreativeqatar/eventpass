@@ -25,7 +25,7 @@ export function AutocompleteInput({
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!value || value.length < 1) {
@@ -33,7 +33,7 @@ export function AutocompleteInput({
       return;
     }
 
-    clearTimeout(debounceRef.current);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       try {
         const res = await fetch(`${fetchUrl}?q=${encodeURIComponent(value)}`);
@@ -51,7 +51,7 @@ export function AutocompleteInput({
       }
     }, 200);
 
-    return () => clearTimeout(debounceRef.current);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [value, fetchUrl]);
 
   useEffect(() => {
