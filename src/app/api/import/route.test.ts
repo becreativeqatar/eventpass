@@ -203,7 +203,7 @@ describe('POST /api/import', () => {
     mockGetSession.mockResolvedValue(mockSession({ id: 'user-1', role: 'ADMIN' }));
     mockPrisma.accreditationProject.findUnique.mockResolvedValue(buildProject() as never);
     mockPrisma.accreditation.findFirst.mockResolvedValue({
-      accreditationNumber: 'ACC-0010',
+      accreditationNumber: 'TP1-0010',
     } as never);
     mockPrisma.$transaction.mockResolvedValue([
       { id: 'acc-new-1' },
@@ -236,7 +236,7 @@ describe('POST /api/import', () => {
     mockGetSession.mockResolvedValue(mockSession({ role: 'ADMIN' }));
     mockPrisma.accreditationProject.findUnique.mockResolvedValue(buildProject() as never);
     mockPrisma.accreditation.findFirst.mockResolvedValue({
-      accreditationNumber: 'ACC-0042',
+      accreditationNumber: 'TP1-0042',
     } as never);
     mockPrisma.$transaction.mockResolvedValue([{ id: 'new' }] as never);
 

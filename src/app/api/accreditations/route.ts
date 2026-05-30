@@ -20,22 +20,24 @@ function transformAccreditation(acc: { phases: string; [key: string]: unknown })
   };
 }
 
-// Generate unique accreditation number (ACC-0001, ACC-0002, etc.)
-async function generateAccreditationNumber(): Promise<string> {
+// Generate unique accreditation number scoped to event (e.g., TEST-0001)
+async function generateAccreditationNumber(projectId: string, eventCode: string): Promise<string> {
+  const prefix = eventCode.toUpperCase();
   const lastAccreditation = await prisma.accreditation.findFirst({
+    where: { projectId },
     orderBy: { accreditationNumber: 'desc' },
     select: { accreditationNumber: true },
   });
 
   let nextNumber = 1;
   if (lastAccreditation?.accreditationNumber) {
-    const match = lastAccreditation.accreditationNumber.match(/ACC-(\d+)/);
+    const match = lastAccreditation.accreditationNumber.match(/-(\d+)$/);
     if (match) {
       nextNumber = parseInt(match[1], 10) + 1;
     }
   }
 
-  return `ACC-${nextNumber.toString().padStart(4, '0')}`;
+  return `${prefix}-${nextNumber.toString().padStart(4, '0')}`;
 }
 
 // GET /api/accreditations - List accreditations
@@ -139,8 +141,8 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     hayyaExpiry: parsePhaseEnd(restData.hayyaExpiry as string | null),
   };
 
-  // Generate unique accreditation number
-  const accreditationNumber = await generateAccreditationNumber();
+  // Generate unique accreditation number scoped to event
+  const accreditationNumber = await generateAccreditationNumber(project.id, project.code || project.id.slice(0, 6));
 
   const accreditation = await prisma.accreditation.create({
     data: {

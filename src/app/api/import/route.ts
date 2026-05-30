@@ -93,15 +93,17 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     return NextResponse.json({ error: 'No valid records found', errors }, { status: 400 });
   }
 
-  // Get the last accreditation number to generate new ones
+  // Get the last accreditation number for this project to generate new ones
+  const prefix = (project.code || project.id.slice(0, 6)).toUpperCase();
   const lastAccreditation = await prisma.accreditation.findFirst({
+    where: { projectId },
     orderBy: { accreditationNumber: 'desc' },
     select: { accreditationNumber: true },
   });
 
   let nextNumber = 1;
   if (lastAccreditation?.accreditationNumber) {
-    const match = lastAccreditation.accreditationNumber.match(/ACC-(\d+)/);
+    const match = lastAccreditation.accreditationNumber.match(/-(\d+)$/);
     if (match) {
       nextNumber = parseInt(match[1], 10) + 1;
     }
@@ -112,7 +114,7 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     records.map((record, index) =>
       prisma.accreditation.create({
         data: {
-          accreditationNumber: `ACC-${(nextNumber + index).toString().padStart(4, '0')}`,
+          accreditationNumber: `${prefix}-${(nextNumber + index).toString().padStart(4, '0')}`,
           projectId,
           firstName: record.firstName,
           lastName: record.lastName,

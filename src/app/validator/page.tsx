@@ -48,14 +48,7 @@ export default function ValidatorDashboard() {
   };
 
   const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.toUpperCase();
-
-    // Auto-add dash after 3 characters (ACC-)
-    if (value.length === 3 && !value.includes('-')) {
-      value = value + '-';
-    }
-
-    setQrToken(value);
+    setQrToken(e.target.value.toUpperCase());
   };
 
   const handleScan = async () => {
@@ -249,7 +242,7 @@ export default function ValidatorDashboard() {
               <div className="flex gap-2">
                 <Input
                   type="text"
-                  placeholder="Enter accreditation number (e.g., ACC-0001)..."
+                  placeholder="Enter accreditation number..."
                   value={qrToken}
                   onChange={handleTokenChange}
                   className="flex-1 h-12 text-base"

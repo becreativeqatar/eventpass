@@ -240,16 +240,16 @@ describe('POST /api/accreditations', () => {
     expect(body.error).toBe('Project not found');
   });
 
-  it('generates accreditation number starting at ACC-0001', async () => {
+  it('generates accreditation number scoped to event code', async () => {
     mockGetSession.mockResolvedValue(mockSession());
-    const project = buildProject();
+    const project = buildProject({ code: 'EXPO' });
     mockPrisma.accreditationProject.findUnique.mockResolvedValue(project as never);
     mockPrisma.accreditation.findFirst.mockResolvedValue(null as never);
 
     const createdAcc = buildAccreditation({
-      accreditationNumber: 'ACC-0001',
+      accreditationNumber: 'EXPO-0001',
       status: 'PENDING',
-      project: { id: 'project-1', name: 'Test' },
+      project: { id: project.id, name: 'Test' },
       createdBy: { id: 'user-1', name: 'Admin', email: 'admin@test.com' },
     });
     mockPrisma.accreditation.create.mockResolvedValue(createdAcc as never);
@@ -261,21 +261,21 @@ describe('POST /api/accreditations', () => {
     await POST(req, createMockContext());
 
     const createArgs = (mockPrisma.accreditation.create as ReturnType<typeof vi.fn>).mock.calls[0][0];
-    expect(createArgs.data.accreditationNumber).toBe('ACC-0001');
+    expect(createArgs.data.accreditationNumber).toBe('EXPO-0001');
   });
 
-  it('increments accreditation number from last existing', async () => {
+  it('increments accreditation number from last existing in same project', async () => {
     mockGetSession.mockResolvedValue(mockSession());
-    const project = buildProject();
+    const project = buildProject({ code: 'EXPO' });
     mockPrisma.accreditationProject.findUnique.mockResolvedValue(project as never);
     mockPrisma.accreditation.findFirst.mockResolvedValue({
-      accreditationNumber: 'ACC-0042',
+      accreditationNumber: 'EXPO-0042',
     } as never);
 
     const createdAcc = buildAccreditation({
-      accreditationNumber: 'ACC-0043',
+      accreditationNumber: 'EXPO-0043',
       status: 'PENDING',
-      project: { id: 'project-1', name: 'Test' },
+      project: { id: project.id, name: 'Test' },
       createdBy: { id: 'user-1', name: 'Admin', email: 'admin@test.com' },
     });
     mockPrisma.accreditation.create.mockResolvedValue(createdAcc as never);
@@ -287,7 +287,7 @@ describe('POST /api/accreditations', () => {
     await POST(req, createMockContext());
 
     const createArgs = (mockPrisma.accreditation.create as ReturnType<typeof vi.fn>).mock.calls[0][0];
-    expect(createArgs.data.accreditationNumber).toBe('ACC-0043');
+    expect(createArgs.data.accreditationNumber).toBe('EXPO-0043');
   });
 
   it('creates accreditation with session user as createdById', async () => {

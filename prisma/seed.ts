@@ -95,7 +95,7 @@ async function main() {
     where: { verificationToken: 'demo-token-1' },
     update: {},
     create: {
-      accreditationNumber: 'ACC-0001',
+      accreditationNumber: 'DEMO-2024-0001',
       projectId: project.id,
       firstName: 'John',
       lastName: 'Doe',
@@ -124,7 +124,7 @@ async function main() {
     where: { verificationToken: 'demo-token-2' },
     update: {},
     create: {
-      accreditationNumber: 'ACC-0002',
+      accreditationNumber: 'DEMO-2024-0002',
       projectId: project.id,
       firstName: 'Jane',
       lastName: 'Smith',
@@ -154,7 +154,7 @@ async function main() {
     where: { verificationToken: 'demo-token-3' },
     update: {},
     create: {
-      accreditationNumber: 'ACC-0003',
+      accreditationNumber: 'DEMO-2024-0003',
       projectId: project.id,
       firstName: 'Bob',
       lastName: 'Wilson',
