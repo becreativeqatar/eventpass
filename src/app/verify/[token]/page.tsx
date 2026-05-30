@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -66,7 +65,6 @@ interface AccreditationData {
 }
 
 export default function VerifyAccreditationPage({ params }: { params: Promise<{ token: string }> }) {
-  const { data: session } = useSession();
   const router = useRouter();
   const [accreditation, setAccreditation] = useState<AccreditationData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,9 +92,8 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
     }
   }, [unwrappedParams]);
 
-  /** Record the scan via POST /api/scan if user is a validator */
+  /** Record the scan via POST /api/scan (server checks auth — no-op for public users) */
   const recordScan = (token: string, phase = 'LIVE') => {
-    if (!session?.user?.role || !['ADMIN', 'MANAGER', 'VALIDATOR'].includes(session.user.role)) return;
     if (scanRecorded.current) return;
     scanRecorded.current = true;
 
@@ -104,7 +101,9 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ verificationToken: token, phase }),
-    }).catch((err) => console.error('Failed to record scan:', err));
+    }).catch(() => {
+      // Silently ignore — user may not be authenticated (public access)
+    });
   };
 
   const fetchAccreditation = async () => {
