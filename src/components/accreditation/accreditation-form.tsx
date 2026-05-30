@@ -27,6 +27,7 @@ import {
 import { toast } from 'sonner';
 import { toQatarDateString } from '@/lib/date';
 import { CountryInput } from '@/components/ui/country-input';
+import { AutocompleteInput } from '@/components/ui/autocomplete-input';
 import {
   createAccreditationSchema,
   AccreditationStatus,
@@ -301,12 +302,24 @@ export function AccreditationForm({ projectId, project, accreditation, mode }: A
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="company">Company / Organization *</Label>
-                <Input id="company" {...register('company')} placeholder="Company name" />
+                <AutocompleteInput
+                  id="company"
+                  value={watchedValues.company || ''}
+                  onChange={(v) => setValue('company', v)}
+                  fetchUrl={`/api/autocomplete/companies?projectId=${projectId}`}
+                  placeholder="Company name"
+                />
                 {errors.company && <p className="text-sm text-destructive">{String(errors.company.message)}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="role">Role / Position *</Label>
-                <Input id="role" {...register('role')} placeholder="e.g., Photographer, Crew, VIP" />
+                <AutocompleteInput
+                  id="role"
+                  value={watchedValues.role || ''}
+                  onChange={(v) => setValue('role', v)}
+                  fetchUrl={`/api/autocomplete/roles?projectId=${projectId}`}
+                  placeholder="e.g., Photographer, Crew, VIP"
+                />
                 {errors.role && <p className="text-sm text-destructive">{String(errors.role.message)}</p>}
               </div>
             </div>
