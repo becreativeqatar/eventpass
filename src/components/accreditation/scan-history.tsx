@@ -14,13 +14,7 @@ import {
   TableRow,
   TableCell,
 } from '@/components/ui/table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { ScanLine, Monitor, MapPin, Download } from 'lucide-react';
+import { ScanLine, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Scan {
@@ -186,10 +180,7 @@ export function ScanHistory({
                     {showAccreditation && <TableHead>Person</TableHead>}
                     <TableHead>Phase</TableHead>
                     <TableHead>Result</TableHead>
-                    <TableHead>Location</TableHead>
                     <TableHead>Scanned By</TableHead>
-                    <TableHead>Device Info</TableHead>
-                    <TableHead>Notes</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -218,44 +209,7 @@ export function ScanHistory({
                           {scan.result.replace('_', ' ')}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        {scan.location ? (
-                          <div className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-muted-foreground" />
-                            {scan.location}
-                          </div>
-                        ) : (
-                          '-'
-                        )}
-                      </TableCell>
                       <TableCell>{scan.scannedBy.name || scan.scannedBy.email}</TableCell>
-                      <TableCell>
-                        {scan.device || scan.ipAddress ? (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="flex items-center gap-1 cursor-help">
-                                  <Monitor className="h-3 w-3 text-muted-foreground" />
-                                  <span className="text-xs text-muted-foreground truncate max-w-[100px]">
-                                    {scan.ipAddress || 'Device info'}
-                                  </span>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-[300px]">
-                                <div className="text-xs space-y-1">
-                                  {scan.ipAddress && <div><strong>IP:</strong> {scan.ipAddress}</div>}
-                                  {scan.device && <div><strong>Device:</strong> {scan.device}</div>}
-                                </div>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        ) : (
-                          '-'
-                        )}
-                      </TableCell>
-                      <TableCell className="max-w-[200px] truncate">
-                        {scan.notes || '-'}
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
