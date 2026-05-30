@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, X, Camera, LogOut } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { flushSync } from 'react-dom';
 import type { Html5Qrcode } from 'html5-qrcode';
 import Link from 'next/link';
 import { ScanHistoryList } from '@/components/validator/scan-history-list';
@@ -19,6 +18,143 @@ export default function ValidatorDashboard() {
   const [scanError, setScanError] = useState<string | null>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const [autoScanTriggered, setAutoScanTriggered] = useState(false);
+  const [pendingScanInit, setPendingScanInit] = useState(false);
+
+  // Initialize scanner AFTER React has rendered the #qr-reader element
+  useEffect(() => {
+    if (!pendingScanInit || !isScanning) return;
+    setPendingScanInit(false);
+
+    const initScanner = async () => {
+      try {
+        // Stop any existing scanner and clear the previous instance
+        if (html5QrCodeRef.current) {
+          if (html5QrCodeRef.current.isScanning) {
+            await html5QrCodeRef.current.stop().catch(() => {});
+          }
+          html5QrCodeRef.current.clear();
+          html5QrCodeRef.current = null;
+          // Brief delay to let the browser fully release the camera
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+
+        // Check camera permissions — acquire and immediately release
+        // so Html5Qrcode can manage its own stream without conflicts
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            stream.getTracks().forEach((track) => track.stop());
+          } catch (permErr) {
+            console.error('Camera permission denied:', permErr);
+            setScanError('Camera permission denied. Please allow camera access.');
+            setIsScanning(false);
+            return;
+          }
+        } else {
+          setScanError('Camera not supported on this device or browser.');
+          setIsScanning(false);
+          return;
+        }
+
+        // Dynamically import html5-qrcode to reduce initial bundle size
+        const { Html5Qrcode } = await import('html5-qrcode');
+        const html5QrCode = new Html5Qrcode("qr-reader");
+        html5QrCodeRef.current = html5QrCode;
+
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+          },
+          (decodedText) => {
+            console.log('[Scanner] Decoded QR:', decodedText);
+
+            // First, try to extract token from URL pattern (our accreditation URLs)
+            const urlPattern = /\/verify\/([a-zA-Z0-9-]+)$/;
+            const match = decodedText.match(urlPattern);
+            const token = match ? match[1] : decodedText.trim();
+
+            console.log('[Scanner] Extracted token:', token);
+
+            // If we extracted a token from our URL pattern, use it directly
+            if (match) {
+              html5QrCode.stop().then(() => {
+                setIsScanning(false);
+                router.push(`/verify/${token}`);
+              }).catch(console.error);
+              return;
+            }
+
+            // If it's not our URL pattern, validate the raw token
+            // Check if it looks like an external URL (not our accreditation)
+            if (token.startsWith('http://') || token.startsWith('https://')) {
+              html5QrCode.stop().then(() => {
+                setIsScanning(false);
+                setScanError('Invalid QR Code - This appears to be an external link, not an accreditation code.');
+              }).catch(console.error);
+              return;
+            }
+
+            // Limit token length to prevent abuse
+            if (token.length > 50) {
+              html5QrCode.stop().then(() => {
+                setIsScanning(false);
+                setScanError('Invalid QR Code - The scanned code is too long to be a valid accreditation.');
+              }).catch(console.error);
+              return;
+            }
+
+            // Only allow alphanumeric and hyphens (accreditation format: ACC-0001 or UUID)
+            if (!/^[a-zA-Z0-9-]+$/.test(token)) {
+              html5QrCode.stop().then(() => {
+                setIsScanning(false);
+                setScanError('Invalid QR Code - This does not appear to be a valid accreditation code.');
+              }).catch(console.error);
+              return;
+            }
+
+            // Stop scanning and verify
+            html5QrCode.stop().then(() => {
+              setIsScanning(false);
+              router.push(`/verify/${token}`);
+            }).catch(console.error);
+          },
+          () => {
+            // QR code scan error - ignore, fires continuously while scanning
+          }
+        );
+      } catch (err: unknown) {
+        console.error('Error starting QR scanner:', err);
+
+        let errorMsg = 'Failed to access camera. ';
+        const error = err as { name?: string; message?: string };
+        if (error.name === 'NotAllowedError') {
+          errorMsg += 'Please allow camera access in your browser settings.';
+        } else if (error.name === 'NotFoundError') {
+          errorMsg += 'No camera found on this device.';
+        } else if (error.name === 'NotReadableError') {
+          errorMsg += 'Camera is already in use by another app. Close other apps using the camera and try again.';
+        } else if (error.name === 'NotSupportedError') {
+          errorMsg += 'HTTPS is required for camera access.';
+        } else if (error.name === 'AbortError') {
+          errorMsg += 'Camera was interrupted. Please try again.';
+        } else if (error.name === 'OverconstrainedError') {
+          errorMsg += 'No camera matches the required settings. Try a different device.';
+        } else if (error.message?.includes('already scanning')) {
+          errorMsg = 'Scanner is still stopping. Please wait a moment and try again.';
+        } else {
+          const details = [error.name, error.message].filter(Boolean).join(': ');
+          errorMsg += details || `Unexpected error (${typeof err === 'string' ? err : 'unknown'}). Try closing and reopening the browser.`;
+        }
+
+        setScanError(errorMsg);
+        setIsScanning(false);
+      }
+    };
+
+    initScanner();
+  }, [pendingScanInit, isScanning, router]);
 
   useEffect(() => {
     // Check if we should auto-scan (from URL parameter)
@@ -52,139 +188,11 @@ export default function ValidatorDashboard() {
     setQrToken(e.target.value.toUpperCase());
   };
 
-  const handleScan = async () => {
-    // flushSync ensures React updates the DOM synchronously,
-    // so the #qr-reader container exists before Html5Qrcode tries to find it
-    flushSync(() => {
-      setIsScanning(true);
-      setScanError(null);
-    });
-
-    try {
-      // Stop any existing scanner and clear the previous instance
-      if (html5QrCodeRef.current) {
-        if (html5QrCodeRef.current.isScanning) {
-          await html5QrCodeRef.current.stop().catch(() => {});
-        }
-        html5QrCodeRef.current.clear();
-        html5QrCodeRef.current = null;
-        // Brief delay to let the browser fully release the camera
-        await new Promise((resolve) => setTimeout(resolve, 300));
-      }
-
-      // Check camera permissions — acquire and immediately release
-      // so Html5Qrcode can manage its own stream without conflicts
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          stream.getTracks().forEach((track) => track.stop());
-        } catch (permErr) {
-          console.error('Camera permission denied:', permErr);
-          setScanError('Camera permission denied. Please allow camera access.');
-          setIsScanning(false);
-          return;
-        }
-      } else {
-        setScanError('Camera not supported on this device or browser.');
-        setIsScanning(false);
-        return;
-      }
-
-      // Dynamically import html5-qrcode to reduce initial bundle size
-      const { Html5Qrcode } = await import('html5-qrcode');
-      const html5QrCode = new Html5Qrcode("qr-reader");
-      html5QrCodeRef.current = html5QrCode;
-
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-        },
-        (decodedText) => {
-          console.log('[Scanner] Decoded QR:', decodedText);
-
-          // First, try to extract token from URL pattern (our accreditation URLs)
-          const urlPattern = /\/verify\/([a-zA-Z0-9-]+)$/;
-          const match = decodedText.match(urlPattern);
-          const token = match ? match[1] : decodedText.trim();
-
-          console.log('[Scanner] Extracted token:', token);
-
-          // If we extracted a token from our URL pattern, use it directly
-          if (match) {
-            html5QrCode.stop().then(() => {
-              setIsScanning(false);
-              router.push(`/verify/${token}`);
-            }).catch(console.error);
-            return;
-          }
-
-          // If it's not our URL pattern, validate the raw token
-          // Check if it looks like an external URL (not our accreditation)
-          if (token.startsWith('http://') || token.startsWith('https://')) {
-            html5QrCode.stop().then(() => {
-              setIsScanning(false);
-              setScanError('Invalid QR Code - This appears to be an external link, not an accreditation code.');
-            }).catch(console.error);
-            return;
-          }
-
-          // Limit token length to prevent abuse
-          if (token.length > 50) {
-            html5QrCode.stop().then(() => {
-              setIsScanning(false);
-              setScanError('Invalid QR Code - The scanned code is too long to be a valid accreditation.');
-            }).catch(console.error);
-            return;
-          }
-
-          // Only allow alphanumeric and hyphens (accreditation format: ACC-0001 or UUID)
-          if (!/^[a-zA-Z0-9-]+$/.test(token)) {
-            html5QrCode.stop().then(() => {
-              setIsScanning(false);
-              setScanError('Invalid QR Code - This does not appear to be a valid accreditation code.');
-            }).catch(console.error);
-            return;
-          }
-
-          // Stop scanning and verify
-          html5QrCode.stop().then(() => {
-            setIsScanning(false);
-            router.push(`/verify/${token}`);
-          }).catch(console.error);
-        },
-        (errorMessage) => {
-          // QR code scan error - ignore, fires continuously while scanning
-        }
-      );
-    } catch (err: unknown) {
-      console.error('Error starting QR scanner:', err);
-
-      let errorMsg = 'Failed to access camera. ';
-      const error = err as { name?: string; message?: string };
-      if (error.name === 'NotAllowedError') {
-        errorMsg += 'Please allow camera access in your browser settings.';
-      } else if (error.name === 'NotFoundError') {
-        errorMsg += 'No camera found on this device.';
-      } else if (error.name === 'NotReadableError') {
-        errorMsg += 'Camera is already in use by another app. Close other apps using the camera and try again.';
-      } else if (error.name === 'NotSupportedError') {
-        errorMsg += 'HTTPS is required for camera access.';
-      } else if (error.name === 'AbortError') {
-        errorMsg += 'Camera was interrupted. Please try again.';
-      } else if (error.name === 'OverconstrainedError') {
-        errorMsg += 'No camera matches the required settings. Try a different device.';
-      } else if (error.message?.includes('already scanning')) {
-        errorMsg = 'Scanner is still stopping. Please wait a moment and try again.';
-      } else {
-        const details = [error.name, error.message].filter(Boolean).join(': ');
-        errorMsg += details || `Unexpected error (${typeof err === 'string' ? err : 'unknown'}). Try closing and reopening the browser.`;
-      }
-
-      setScanError(errorMsg);
-      setIsScanning(false);
-    }
+  const handleScan = () => {
+    setScanError(null);
+    setIsScanning(true);
+    // Triggers the useEffect to init the scanner after DOM renders #qr-reader
+    setPendingScanInit(true);
   };
 
   const handleStopScan = () => {
