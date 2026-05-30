@@ -12,7 +12,6 @@ import {
   Users,
   Pencil,
   Play,
-  CheckCircle,
   Archive,
   ArrowLeft,
   ClipboardList,
@@ -153,11 +152,6 @@ export default function EventDetailPage() {
           {event.status === 'DRAFT' && (
             <Button variant="outline" size="sm" onClick={() => setActionEvent({ action: 'activate' })}>
               <Play className="h-4 w-4 mr-1" /> Activate
-            </Button>
-          )}
-          {event.status === 'ACTIVE' && (
-            <Button variant="outline" size="sm" onClick={() => setActionEvent({ action: 'complete' })}>
-              <CheckCircle className="h-4 w-4 mr-1" /> Complete
             </Button>
           )}
           {event.status === 'COMPLETED' && (
@@ -304,17 +298,15 @@ export default function EventDetailPage() {
       <ConfirmDialog
         open={!!actionEvent}
         onOpenChange={() => setActionEvent(null)}
-        title={`${actionEvent?.action === 'delete' ? 'Delete' : actionEvent?.action === 'activate' ? 'Activate' : actionEvent?.action === 'complete' ? 'Complete' : 'Archive'} Event`}
+        title={`${actionEvent?.action === 'delete' ? 'Delete' : actionEvent?.action === 'activate' ? 'Activate' : 'Archive'} Event`}
         description={
           actionEvent?.action === 'delete'
             ? `Permanently delete "${event.name}"? This cannot be undone.`
             : actionEvent?.action === 'activate'
             ? `Activate "${event.name}"? This will make the event live for scanning and accreditation.`
-            : actionEvent?.action === 'complete'
-            ? `Mark "${event.name}" as completed?`
             : `Archive "${event.name}"? Archived events are read-only.`
         }
-        confirmLabel={actionEvent?.action === 'delete' ? 'Delete' : actionEvent?.action === 'activate' ? 'Activate' : actionEvent?.action === 'complete' ? 'Complete' : 'Archive'}
+        confirmLabel={actionEvent?.action === 'delete' ? 'Delete' : actionEvent?.action === 'activate' ? 'Activate' : 'Archive'}
         variant={actionEvent?.action === 'delete' ? 'destructive' : 'default'}
         onConfirm={handleAction}
         loading={processing}
