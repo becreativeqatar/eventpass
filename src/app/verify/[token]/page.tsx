@@ -1,12 +1,38 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle, Calendar, Building2, Shield, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { formatQatarDate } from '@/lib/date';
+
+/** Determine the currently active phase from accreditation phase dates */
+function detectCurrentPhase(phases: AccreditationData['phases']): string {
+  const now = new Date();
+  if (phases.bumpIn) {
+    const start = new Date(phases.bumpIn.start);
+    const end = new Date(phases.bumpIn.end);
+    if (now >= start && now <= end) return 'BUMP_IN';
+  }
+  if (phases.live) {
+    const start = new Date(phases.live.start);
+    const end = new Date(phases.live.end);
+    if (now >= start && now <= end) return 'LIVE';
+  }
+  if (phases.bumpOut) {
+    const start = new Date(phases.bumpOut.start);
+    const end = new Date(phases.bumpOut.end);
+    if (now >= start && now <= end) return 'BUMP_OUT';
+  }
+  // Fallback: pick the first available phase
+  if (phases.live) return 'LIVE';
+  if (phases.bumpIn) return 'BUMP_IN';
+  if (phases.bumpOut) return 'BUMP_OUT';
+  return 'LIVE';
+}
 
 interface AccreditationData {
   id: string;
@@ -40,6 +66,7 @@ interface AccreditationData {
 }
 
 export default function VerifyAccreditationPage({ params }: { params: Promise<{ token: string }> }) {
+  const { data: session } = useSession();
   const router = useRouter();
   const [accreditation, setAccreditation] = useState<AccreditationData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +82,7 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
 } | null>(null);
   const [unwrappedParams, setUnwrappedParams] = useState<{ token: string } | null>(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const scanRecorded = useRef(false);
 
   useEffect(() => {
     params.then(setUnwrappedParams);
@@ -65,6 +93,19 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
       fetchAccreditation();
     }
   }, [unwrappedParams]);
+
+  /** Record the scan via POST /api/scan if user is a validator */
+  const recordScan = (token: string, phase = 'LIVE') => {
+    if (!session?.user?.role || !['ADMIN', 'MANAGER', 'VALIDATOR'].includes(session.user.role)) return;
+    if (scanRecorded.current) return;
+    scanRecorded.current = true;
+
+    fetch('/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ verificationToken: token, phase }),
+    }).catch((err) => console.error('Failed to record scan:', err));
+  };
 
   const fetchAccreditation = async () => {
     if (!unwrappedParams) return;
@@ -101,11 +142,18 @@ export default function VerifyAccreditationPage({ params }: { params: Promise<{ 
           setError(errorData.message || 'Verification Failed - Unable to process this accreditation');
           setErrorType('UNKNOWN');
         }
+
+        // Record denied/failed scans too (scan API handles its own validation)
+        recordScan(unwrappedParams.token);
         return;
       }
 
       const data = await response.json();
       setAccreditation(data.data);
+
+      // Record successful scan with auto-detected phase
+      const phase = detectCurrentPhase(data.data.phases);
+      recordScan(unwrappedParams.token, phase);
     } catch (error) {
       console.error('Error fetching accreditation:', error);
       setError('Failed to verify accreditation');
