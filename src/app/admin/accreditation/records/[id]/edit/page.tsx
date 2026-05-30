@@ -526,7 +526,12 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   <Checkbox
                     id="bumpIn"
                     checked={formData.hasBumpInAccess}
-                    onCheckedChange={(checked) => setFormData({ ...formData, hasBumpInAccess: checked === true })}
+                    onCheckedChange={(checked) => setFormData(prev => ({
+                      ...prev,
+                      hasBumpInAccess: checked === true,
+                      bumpInStart: checked && !prev.bumpInStart && project ? toQatarDateString(project.bumpInStart) : prev.bumpInStart,
+                      bumpInEnd: checked && !prev.bumpInEnd && project ? toQatarDateString(project.bumpInEnd) : prev.bumpInEnd,
+                    }))}
                   />
                   <Label htmlFor="bumpIn" className="font-semibold">Bump-In Access</Label>
                 </div>
@@ -550,7 +555,12 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   <Checkbox
                     id="live"
                     checked={formData.hasLiveAccess}
-                    onCheckedChange={(checked) => setFormData({ ...formData, hasLiveAccess: checked === true })}
+                    onCheckedChange={(checked) => setFormData(prev => ({
+                      ...prev,
+                      hasLiveAccess: checked === true,
+                      liveStart: checked && !prev.liveStart && project ? toQatarDateString(project.liveStart) : prev.liveStart,
+                      liveEnd: checked && !prev.liveEnd && project ? toQatarDateString(project.liveEnd) : prev.liveEnd,
+                    }))}
                   />
                   <Label htmlFor="live" className="font-semibold">Live Access</Label>
                 </div>
@@ -574,7 +584,12 @@ export default function EditAccreditationPage({ params }: { params: Promise<{ id
                   <Checkbox
                     id="bumpOut"
                     checked={formData.hasBumpOutAccess}
-                    onCheckedChange={(checked) => setFormData({ ...formData, hasBumpOutAccess: checked === true })}
+                    onCheckedChange={(checked) => setFormData(prev => ({
+                      ...prev,
+                      hasBumpOutAccess: checked === true,
+                      bumpOutStart: checked && !prev.bumpOutStart && project ? toQatarDateString(project.bumpOutStart) : prev.bumpOutStart,
+                      bumpOutEnd: checked && !prev.bumpOutEnd && project ? toQatarDateString(project.bumpOutEnd) : prev.bumpOutEnd,
+                    }))}
                   />
                   <Label htmlFor="bumpOut" className="font-semibold">Bump-Out Access</Label>
                 </div>
