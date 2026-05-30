@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { X, Plus, Loader2, CalendarDays } from 'lucide-react';
 import { toast } from 'sonner';
 import { createProjectSchema, type CreateProjectRequest, ProjectStatus, stringToAccessGroups } from '@/lib/validations/accreditation';
+import { toQatarDateString } from '@/lib/date';
 
 interface ProjectFormProps {
   project?: {
@@ -104,10 +105,19 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
       const url = mode === 'create' ? '/api/events' : `/api/events/${project?.id}`;
       const method = mode === 'create' ? 'POST' : 'PATCH';
 
+      const dateFields = ['eventDate', 'bumpInStart', 'bumpInEnd', 'liveStart', 'liveEnd', 'bumpOutStart', 'bumpOutEnd'] as const;
+      const payload = { ...data };
+      for (const field of dateFields) {
+        const val = payload[field];
+        if (val) {
+          (payload as Record<string, unknown>)[field] = val instanceof Date ? toQatarDateString(val) : val;
+        }
+      }
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
