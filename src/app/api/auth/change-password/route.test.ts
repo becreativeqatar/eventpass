@@ -40,7 +40,7 @@ beforeEach(() => {
 });
 
 describe('POST /api/auth/change-password', () => {
-  const validBody = { currentPassword: 'oldpass123', newPassword: 'newpass456' };
+  const validBody = { currentPassword: 'oldpass123', newPassword: 'NewPass456!' };
 
   it('returns 401 when not authenticated', async () => {
     mockGetSession.mockResolvedValue(null);
@@ -61,7 +61,7 @@ describe('POST /api/auth/change-password', () => {
 
     const req = createMockRequest('/api/auth/change-password', {
       method: 'POST',
-      body: { newPassword: 'newpass456' },
+      body: { newPassword: 'NewPass456!' },
     });
     const res = await POST(req);
     const body = await parseJsonResponse<{ error: string }>(res);
@@ -75,13 +75,13 @@ describe('POST /api/auth/change-password', () => {
 
     const req = createMockRequest('/api/auth/change-password', {
       method: 'POST',
-      body: { currentPassword: 'oldpass123', newPassword: '12345' },
+      body: { currentPassword: 'oldpass123', newPassword: 'Ab1!' },
     });
     const res = await POST(req);
     const body = await parseJsonResponse<{ error: string }>(res);
 
     expect(res.status).toBe(400);
-    expect(body.error).toContain('at least 6 characters');
+    expect(body.error).toContain('at least 8 characters');
   });
 
   it('returns 404 when user not found or has no password hash', async () => {
@@ -138,7 +138,7 @@ describe('POST /api/auth/change-password', () => {
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
     expect(mockCompare).toHaveBeenCalledWith('oldpass123', '$2b$12$existinghash');
-    expect(mockHash).toHaveBeenCalledWith('newpass456', 12);
+    expect(mockHash).toHaveBeenCalledWith('NewPass456!', 12);
     expect(mockPrisma.user.update).toHaveBeenCalledWith({
       where: { id: 'user-1' },
       data: { passwordHash: '$2b$12$newhashedpassword' },

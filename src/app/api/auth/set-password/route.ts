@@ -3,10 +3,11 @@ import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { validatePasswordToken, consumePasswordToken } from '@/lib/tokens';
 import { z } from 'zod';
+import { passwordSchema } from '@/lib/validations/password';
 
 const schema = z.object({
   token: z.string().min(1),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: passwordSchema,
 });
 
 export async function POST(request: NextRequest) {

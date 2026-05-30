@@ -4,10 +4,11 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { compare, hash } from 'bcryptjs';
 import { z } from 'zod';
+import { passwordSchema } from '@/lib/validations/password';
 
 const schema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),
-  newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+  newPassword: passwordSchema,
 });
 
 export async function POST(request: NextRequest) {

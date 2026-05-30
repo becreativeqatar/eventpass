@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { LogOut, ChevronsUpDown, KeyRound, Loader2, Users, CalendarDays } from 'lucide-react';
+import { LogOut, ChevronsUpDown, KeyRound, Loader2, Users, CalendarDays, Check, X } from 'lucide-react';
+import { PASSWORD_REQUIREMENTS } from '@/lib/validations/password';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -65,8 +66,15 @@ export function UserNav() {
     e.preventDefault();
     setPwError('');
 
-    if (newPassword.length < 6) {
-      setPwError('New password must be at least 6 characters');
+    const checks = [
+      newPassword.length >= 8,
+      /[A-Z]/.test(newPassword),
+      /[a-z]/.test(newPassword),
+      /[0-9]/.test(newPassword),
+      /[^A-Za-z0-9]/.test(newPassword),
+    ];
+    if (checks.some((c) => !c)) {
+      setPwError('Password does not meet all requirements');
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -197,10 +205,29 @@ export function UserNav() {
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Min 6 characters"
+                  placeholder="Min 8 characters"
                   required
-                  minLength={6}
+                  minLength={8}
                 />
+                {newPassword.length > 0 && (
+                  <ul className="mt-1.5 space-y-0.5">
+                    {PASSWORD_REQUIREMENTS.map((req, i) => {
+                      const passed = [
+                        newPassword.length >= 8,
+                        /[A-Z]/.test(newPassword),
+                        /[a-z]/.test(newPassword),
+                        /[0-9]/.test(newPassword),
+                        /[^A-Za-z0-9]/.test(newPassword),
+                      ][i];
+                      return (
+                        <li key={req} className={`flex items-center gap-1.5 text-xs ${passed ? 'text-green-600' : 'text-muted-foreground'}`}>
+                          {passed ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                          {req}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPw">Confirm New Password</Label>
@@ -210,7 +237,7 @@ export function UserNav() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  minLength={6}
+                  minLength={8}
                 />
               </div>
             </div>

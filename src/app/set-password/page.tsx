@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Lock, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, Lock, CheckCircle, XCircle, Check, X } from 'lucide-react';
+import { PASSWORD_REQUIREMENTS } from '@/lib/validations/password';
 
 function SetPasswordForm() {
   const router = useRouter();
@@ -100,8 +101,15 @@ function SetPasswordForm() {
     e.preventDefault();
     setError('');
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    const checks = [
+      password.length >= 8,
+      /[A-Z]/.test(password),
+      /[a-z]/.test(password),
+      /[0-9]/.test(password),
+      /[^A-Za-z0-9]/.test(password),
+    ];
+    if (checks.some((c) => !c)) {
+      setError('Password does not meet all requirements');
       return;
     }
 
@@ -163,13 +171,32 @@ function SetPasswordForm() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min 6 characters"
+                placeholder="Min 8 characters"
                 required
-                minLength={6}
+                minLength={8}
                 autoFocus
                 className="pl-10 h-11 bg-[#f5f3f0] border-0 focus-visible:ring-primary"
               />
             </div>
+            {password.length > 0 && (
+              <ul className="mt-2 space-y-1">
+                {PASSWORD_REQUIREMENTS.map((req, i) => {
+                  const passed = [
+                    password.length >= 8,
+                    /[A-Z]/.test(password),
+                    /[a-z]/.test(password),
+                    /[0-9]/.test(password),
+                    /[^A-Za-z0-9]/.test(password),
+                  ][i];
+                  return (
+                    <li key={req} className={`flex items-center gap-1.5 text-xs ${passed ? 'text-green-600' : 'text-muted-foreground'}`}>
+                      {passed ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                      {req}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
           <div className="space-y-1.5">
@@ -185,7 +212,7 @@ function SetPasswordForm() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Repeat password"
                 required
-                minLength={6}
+                minLength={8}
                 className="pl-10 h-11 bg-[#f5f3f0] border-0 focus-visible:ring-primary"
               />
             </div>

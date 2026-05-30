@@ -36,7 +36,7 @@ beforeEach(() => {
 });
 
 describe('POST /api/auth/set-password', () => {
-  const validBody = { token: 'valid-token-abc', password: 'newpassword123' };
+  const validBody = { token: 'valid-token-abc', password: 'NewPass123!' };
 
   it('returns 400 when token is missing', async () => {
     const req = createMockRequest('/api/auth/set-password', {
@@ -53,13 +53,25 @@ describe('POST /api/auth/set-password', () => {
   it('returns 400 when password is too short', async () => {
     const req = createMockRequest('/api/auth/set-password', {
       method: 'POST',
-      body: { token: 'some-token', password: '12345' },
+      body: { token: 'some-token', password: 'Ab1!' },
     });
     const res = await POST(req);
     const body = await parseJsonResponse<{ error: string }>(res);
 
     expect(res.status).toBe(400);
-    expect(body.error).toContain('at least 6 characters');
+    expect(body.error).toContain('at least 8 characters');
+  });
+
+  it('returns 400 when password lacks required complexity', async () => {
+    const req = createMockRequest('/api/auth/set-password', {
+      method: 'POST',
+      body: { token: 'some-token', password: 'alllowercase1!' },
+    });
+    const res = await POST(req);
+    const body = await parseJsonResponse<{ error: string }>(res);
+
+    expect(res.status).toBe(400);
+    expect(body.error).toContain('uppercase');
   });
 
   it('returns 400 when token is invalid or expired', async () => {
@@ -108,7 +120,7 @@ describe('POST /api/auth/set-password', () => {
 
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
-    expect(mockHash).toHaveBeenCalledWith('newpassword123', 12);
+    expect(mockHash).toHaveBeenCalledWith('NewPass123!', 12);
     expect(mockPrisma.user.update).toHaveBeenCalledWith({
       where: { email: 'user@test.com' },
       data: { passwordHash: '$2b$12$newhashedpassword' },
